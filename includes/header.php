@@ -43,7 +43,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             
                     
             
-                        <div class="user_profile_dropdown">
+                        <!-- <div class="user_profile_dropdown">
                             <div class="profile_trigger" id="profileTrigger">
                                 <i class="fa-regular fa-circle-user profile_icon"></i>
                                 <i class="fa-solid fa-chevron-down dropdown_arrow"></i>
@@ -67,7 +67,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <a href="logout.php" class="logout_btn">Logout</a>
 
                         
-                    
+                     -->
                     <a href="#" class="login_btn">Login</a>
                     <a href="#" class="join_btn">Register</a>
             
