@@ -108,6 +108,208 @@
     transform: translateY(-2px);
 }
 
+
+
+.latest_section {
+    padding: 70px 40px;
+    background-color: var(--bg_color);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section_header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.section_title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color_primary);
+    margin-bottom: 8px;
+}
+
+.section_subtitle {
+    font-size: 14px;
+    color: var(--color_gray);
+}
+
+
+.places_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.place_card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    display: block;
+    aspect-ratio: 2 / 3;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    background: #000;
+}
+
+.place_card_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+.place_card:hover .place_card_img {
+    transform: scale(1.08);
+    filter: brightness(0.55);
+}
+
+.place_card_overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 20px 20px;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(0, 0, 0, 0.5) 50%,
+        transparent 100%
+    );
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transform: translateY(60px);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.place_card:hover .place_card_overlay {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.place_card_category {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(6px);
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+}
+
+.place_card_name {
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.place_card_views {
+    font-size: 15px;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.place_card_btn {
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color_primary, #3b82f6);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 30px;
+    width: fit-content;
+    transition: gap 0.2s, background 0.2s;
+}
+
+.place_card:hover .place_card_btn {
+    gap: 12px;
+    background: #1d4ed8;
+}
+
+
+@media (max-width: 1024px) {
+    .places_grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .place_card_overlay {
+        transform: translateY(0);
+        opacity: 1;
+        background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.88) 0%,
+            rgba(0, 0, 0, 0.45) 55%,
+            transparent 100%
+        );
+    }
+
+    .place_card:hover .place_card_img {
+        transform: scale(1.03);
+        filter: brightness(0.7);
+    }
+
+    .place_card_btn {
+        display: inline-flex;
+    }
+}
+
+@media (max-width: 600px) {
+    .places_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .place_card {
+        aspect-ratio: 16 / 9;
+    }
+
+    .place_card_name {
+        font-size: 20px;
+    }
+
+    .place_card_views {
+        font-size: 13px;
+    }
+}
+
+
+
+.section_footer {
+    text-align: center;
+    margin-top: 32px;
+}
+
+.view_all_link {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color_primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s, color 0.2s;
+}
+
+.view_all_link:hover {
+    gap: 10px;
+    color: #1d4ed8;
+}
+
 @media (max-width: 768px) {
     .hero_section {
         height: 75vh;
@@ -128,7 +330,7 @@
 
 @media (max-width: 480px) {
     .hero_section {
-        height: 70vh;
+        height: 80vh;
     }
 
     .hero_title {
@@ -143,5 +345,26 @@
     .hero_btn_outline {
         font-size: 14px;
         padding: 10px 20px;
+    }
+
+    .latest_section {
+        padding: 40px 16px;
+    }
+
+    .section_title {
+        font-size: 22px;
+    }
+
+    .place_card {
+        gap: 12px;
+    }
+
+    .place_img {
+        width: 56px;
+        height: 44px;
+    }
+
+    .place_name {
+        font-size: 14px;
     }
 }
