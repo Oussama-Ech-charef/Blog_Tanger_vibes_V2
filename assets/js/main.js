@@ -32,3 +32,9 @@ const controlMenu = (triggerId, menuId, closeId) => {
     controlMenu('mobileMenuTrigger', 'mobileNav', 'closeMenu');
     controlMenu('mobileSearchTrigger', 'mobileSearchBar', 'closeSearch');
     controlMenu('mobileProfileTrigger', 'mobileProfileMenu', 'closeProfile');
+
+
+
+    function toggleShare() {
+            document.getElementById('mobileShareMenu').classList.toggle('active');
+     }
