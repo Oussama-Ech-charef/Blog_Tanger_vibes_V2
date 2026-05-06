@@ -61,7 +61,26 @@
             <p class="section_subtitle">The newest additions to TangierVibes</p>
         </div>
 
+
+        <div class="swipe_hint">
+            <i class="fa-solid fa-arrows-left-right"></i> Swipe to explore
+        </div>
+
         <div class="places_grid">
+        
+        <a href="#" class="place_card">
+                <img src="assets/img/home.jpg" class="place_card_img" alt="plage achakare">
+                <div class="place_card_overlay">
+                    <span class="place_card_category">
+                        <i class="fa-solid fa-location-dot"></i> Beache
+                    </span>
+                    <h3 class="place_card_name">Plage Achakare</h3>
+                    <p class="place_card_views">
+                        <i class="fa-solid fa-eye"></i> 10,000 views
+                    </p>
+                    <span class="place_card_btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+            </a>
         <a href="#" class="place_card">
                 <img src="assets/img/home.jpg" class="place_card_img" alt="plage achakare">
                 <div class="place_card_overlay">
