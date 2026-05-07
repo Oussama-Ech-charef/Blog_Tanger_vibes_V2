@@ -234,13 +234,20 @@
     line-height: 1.3;
 }
 
-.place_card_views {
-    font-size: 15px;
-    color: rgba(255,255,255,0.8);
+.place_card_location {
+    font-size: 14px;
+    color: #ffffff !important; 
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 6px;
     margin: 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.place_card_location i {
+    color: #ffffff !important; 
+    font-size: 12px;
 }
 
 .place_card_btn {
