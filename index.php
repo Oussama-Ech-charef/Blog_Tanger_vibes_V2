@@ -1,5 +1,13 @@
 <?php
+require_once 'config/db_connection.php';
+require_once 'includes/Post.php';
 
+
+$database = new Database();
+$db = $database->getConnection();
+
+$postObj = new Post($db);
+$posts = $postObj->getHomePosts();
 
 ?>
 
@@ -41,7 +49,7 @@
             </p>
 
             <div class="hero_btns">
-                <a href="explore.php" class="hero_btn_primary">
+                <a href="pages/explore.php" class="hero_btn_primary">
                     Start Exploring
                 </a>
 
@@ -67,39 +75,34 @@
         </div>
 
         <div class="places_grid">
+
+         <?php if(!empty($posts)): ?>
+                <?php foreach($posts as $post): ?>
+                    
         
-        <a href="pages/post.php" class="place_card">
-                <img src="assets/img/home.jpg" class="place_card_img" alt="plage achakare">
-                <div class="place_card_overlay">
-                    <span class="place_card_category">
-                        <i class="fa-solid fa-location-dot"></i> Beach
-                    </span>
-                    <h3 class="place_card_name">Plage Achakare</h3>
-                    <p class="place_card_views">
-                        <i class="fa-solid fa-eye"></i> 10,000 views
-                    </p>
-                    <span class="place_card_btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
-            </a>
-        <a href="pages/post.php" class="place_card">
-                <img src="assets/img/home.jpg" class="place_card_img" alt="plage achakare">
-                <div class="place_card_overlay">
-                    <span class="place_card_category">
-                        <i class="fa-solid fa-location-dot"></i> Beache
-                    </span>
-                    <h3 class="place_card_name">Plage Achakare</h3>
-                    <p class="place_card_views">
-                        <i class="fa-solid fa-eye"></i> 10,000 views
-                    </p>
-                    <span class="place_card_btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
-            </a>
+                <a href="pages/post_detail.php?id=<?= $post['id']; ?>" class="place_card">
+                        <img src="<?php echo htmlspecialchars($post['image']); ?>" class="place_card_img" alt="<?=   htmlspecialchars($post['title']); ?>">
+                        <div class="place_card_overlay">
+                            <span class="place_card_category"> <i class="fa-solid fa-location-dot"></i> <?= htmlspecialchars($post['cat_name']); ?></span>
+                            <h3 class="place_card_name"><?=   htmlspecialchars($post['title']); ?></h3>
+                            <p class="place_card_location">
+                                <i class="fa-solid fa-location-dot"></i> Tangier, Morocco
+                            </p>
+                            <span class="place_card_btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+
+                    <?php endforeach; ?>
+            <?php else: ?>
+                <p>No places found.</p>
+            <?php endif; ?>
+        
           
             
         </div>
 
         <div class="section_footer">
-            <a href="explore.php" class="view_all_link">
+            <a href="pages/explore.php" class="view_all_link">
                 View All Places <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
