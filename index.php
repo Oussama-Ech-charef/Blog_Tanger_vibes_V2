@@ -30,7 +30,7 @@ $posts = $postObj->getHomePosts();
     
      <section class="hero_section">
 
-        <img src="assets/img/home.jpg" alt="Tangier - backgrond image hero" class="hero_bg_img" loading="lazy">
+        <img src="assets/img/cc.jpg" alt="Tangier - backgrond image hero" class="hero_bg_img" loading="lazy">
 
         <div class="hero_overlay"></div>
 
