@@ -25,16 +25,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <!-- nav links desktop -->
             <ul class="nav_links desktop_only">
-                <li><a href="../index.php" class="nav_link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">Home</a></li>
+                <li><a href="<?= ($current_page == 'index.php') ? 'index.php' : '../index.php' ?>" class="nav_link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">Home</a></li>
                 <li><a href="#" class="nav_link <?php echo ($current_page == 'top_places.php') ? 'active' : ''; ?>">Top Places</a></li>
-                <li><a href="../pages/explore.php" class="nav_link <?php echo ($current_page == 'explore.php') ? 'active' : ''; ?>">Explore</a></li>
+                <li><a href="<?= ($current_page == 'index.php') ? 'pages/explore.php' : 'explore.php' ?>" class="nav_link <?php echo ($current_page == 'explore.php') ? 'active' : ''; ?>">Explore</a></li>
                 <li><a href="#" class="nav_link <?php echo ($current_page == 'favorites.php') ? 'active' : ''; ?>"><i class="fa-regular fa-heart"></i> Favorites</a></li>
             </ul>
 
             <div class="header_search_container desktop_only">
-                <form class="header_search_form">
+                <form class="header_search_form" action="<?= ($current_page == 'index.php') ? 'pages/explore.php' : 'explore.php' ?>" method="GET">
                     <i class="fa-solid fa-magnifying-glass search_icon"></i>
-                    <input type="text" name="search" placeholder="Search places..." class="header_search_input" >
+                    <input type="text" name="search" placeholder="Search places..." class="header_search_input" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" >
                 </form>
             </div>
 
@@ -84,9 +84,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <div class="mobile_search_overlay" id="mobileSearchBar">
         <div class="search_container_inner">
-            <form class="mobile_search_form">
+            <form class="mobile_search_form" action="<?= ($current_page == 'index.php') ? 'pages/explore.php' : 'explore.php' ?>" method="GET">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" name="search" placeholder="Search..." class="mobile_input">
+                <input type="text" name="search" placeholder="Search..." class="mobile_input" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
                 <button type="button" id="closeSearch"><i class="fa-solid fa-xmark"></i></button>
             </form>
         </div>
