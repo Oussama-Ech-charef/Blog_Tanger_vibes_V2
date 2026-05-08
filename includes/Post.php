@@ -38,4 +38,19 @@ class Post {
         ]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function getCategories() {
+        $query = "select * from categories order by name asc";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+   
+  
+
+
+
+
+
 }
