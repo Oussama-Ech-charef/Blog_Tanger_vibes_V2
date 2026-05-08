@@ -80,7 +80,7 @@ if (!$post) {
 
                 <!-- Location Map Section -->
                 <div class="detail_info_section">
-                    <h3>Location</h3>
+                    <h1>Location</h1>
                     <div class="map_container">
                         <iframe 
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12950.342125557762!2d-5.9427438!3d35.7904838!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0b875cf026777f%3A0x86702e1b1b22e1a2!2sCap%20Spartel!5e0!3m2!1sen!2sma!4v1714954500000!5m2!1sen!2sma" 
@@ -186,7 +186,7 @@ if (!$post) {
                                 </div>
                                 <div class="item_text">
                                     <span class="item_label">ADDED</span>
-                                    <span class="item_value"><?= date('M d, Y', strtotime('created_at')); ?></span>
+                                    <span class="item_value"><?= date('M d, Y', strtotime($post['created_at'])); ?></span>
                                 </div>
                             </div>
 
