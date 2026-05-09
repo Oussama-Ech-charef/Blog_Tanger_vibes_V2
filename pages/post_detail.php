@@ -41,6 +41,7 @@ if (!$post) {
     
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/header.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/post_detail.css">
 </head>
 
@@ -218,9 +219,7 @@ if (!$post) {
 
 
 
-    <footer class="footer_post" >
-        <p>&copy; 2026 Tangier Vibes. All rights reserved.</p>
-    </footer>
+    <?php require '../includes/footer.php'; ?>
 
 
     <!-- Mobile sticky action bar  -->
