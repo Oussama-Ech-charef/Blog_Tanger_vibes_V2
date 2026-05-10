@@ -69,7 +69,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         
                     
                     <a href="#" class="login_btn">Login</a>
-                    <a href="#" class="join_btn">Register</a>
+                    <a href="../pages/register.php" class="join_btn">Register</a>
             
             </div> 
 
@@ -130,7 +130,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <a href="#" class="profile_link logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                         
                     <a href="#" class="profile_link"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
-                    <a href="#" class="profile_link"><i class="fa-solid fa-user-plus"></i> Register</a>
+                    <a href="../pages/register.php" class="profile_link"><i class="fa-solid fa-user-plus"></i> Register</a>
                     
             </div>
         </div>
