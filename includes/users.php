@@ -45,6 +45,23 @@ public function register($full_name, $email, $password){
 }
 
 
+public function login($email, $password) {
+    $query = "select * from users where email = :email limit 1";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute([
+        ':email' => $email
+    ]);
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    if ($user && password_verify($password, $user['password'])){
+        return $user;
+    }
+
+    return false;
+
+}
 
 
 }
