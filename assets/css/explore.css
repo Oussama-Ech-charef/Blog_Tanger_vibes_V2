@@ -61,20 +61,16 @@
     flex-wrap: wrap;
     margin-bottom: 30px;
 }
-
 .cat_filter_btn {
-    padding: 10px 22px;
-    border-radius: 40px;
-    background: var(--color_light);
-    color: var(--color_dark);
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 1px solid var(--color_border);
+    padding: 8px 20px;
+    border-radius: 50px;
+    background: #ffffff;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .cat_filter_btn:hover {
@@ -84,9 +80,10 @@
 
 .cat_filter_btn.active {
     background: var(--color_primary);
-    color: #fff;
+    color: #ffffff;
     border-color: var(--color_primary);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+    font-weight: 600;
 }
 
 
