@@ -1,40 +1,49 @@
+
+
+
 const profileTrigger = document.getElementById('profileTrigger');
 const dropdownMenu = document.getElementById('dropdownMenu');
 
-if (profileTrigger) {
-    profileTrigger.addEventListener('click', () => {
+if (profileTrigger && dropdownMenu) {
+    profileTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
         dropdownMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => {
+        dropdownMenu.classList.remove('show');
     });
 }
 
 
+const mobileMenuTrigger = document.getElementById('mobileMenuTrigger');
+const mobileNav = document.getElementById('mobileNav');
+const closeMenu = document.getElementById('closeMenu');
 
-const controlMenu = (triggerId, menuId, closeId) => {
-        const btn = document.getElementById(triggerId);
-        const menu = document.getElementById(menuId);
-        const close = document.getElementById(closeId);
-
-        if (btn && menu) {
-            btn.onclick = () => {
-                menu.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            };
-        }
-
-        if (close && menu) {
-            close.onclick = () => {
-                menu.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            };
-        }
+if (mobileMenuTrigger && mobileNav) {
+    mobileMenuTrigger.onclick = () => {
+        mobileNav.classList.add('active');
+        document.body.style.overflow = 'hidden';
     };
+}
 
-    controlMenu('mobileMenuTrigger', 'mobileNav', 'closeMenu');
-    controlMenu('mobileSearchTrigger', 'mobileSearchBar', 'closeSearch');
-    controlMenu('mobileProfileTrigger', 'mobileProfileMenu', 'closeProfile');
+if (closeMenu && mobileNav) {
+    closeMenu.onclick = () => {
+        mobileNav.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    };
+}
 
 
 
-    function toggleShare() {
-            document.getElementById('mobileShareMenu').classList.toggle('active');
-     }
+
+function toggleShare() {
+    const shareMenu = document.getElementById('mobileShareMenu');
+    if (shareMenu) {
+        shareMenu.classList.toggle('active');
+    }
+}
+
+
+
+
