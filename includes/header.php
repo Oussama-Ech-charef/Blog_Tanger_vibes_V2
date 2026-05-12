@@ -1,6 +1,15 @@
 
 <?php
+
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
 $current_page = basename($_SERVER['PHP_SELF']);
+
+
 
 ?>
 
@@ -40,7 +49,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 
             <div class="auth_actions desktop_only">
-            
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
                     
             
                         <div class="user_profile_dropdown">
@@ -50,89 +60,86 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             </div>
                             <div class="dropdown_menu" id="dropdownMenu">
                                 <div class="dropdown_header">
-                                    <span class="user_name">oussama</span>
+                                    <span class="user_name"><?= htmlspecialchars($_SESSION['full_name']); ?></span>
                                     <span class="user_role">Administrator</span>
                                 </div>
                                 <hr>
-                                <a href="#" class="dropdown_item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                                <a href="#" class="dropdown_item logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                                <a href="<?= ($current_page == 'index.php') ? 'pages/dashboard.php' : 'dashboard.php' ?>" class="dropdown_item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                                <a href="<?= ($current_page == 'index.php') ? 'pages/logout.php' : 'logout.php' ?>" class="dropdown_item logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                             </div>
                         </div>
+
+
+                        <?php else: ?>
 
                     
                     
                         <div class="welcome_group">
-                            <span class="welcome_text">Welcome, <strong>oussama</strong></span>
+                            <span class="welcome_text">Welcome, <strong><?= htmlspecialchars($_SESSION['full_name']); ?></strong></span>
                         </div>
-                        <a href="logout.php" class="logout_btn">Logout</a>
-
+                        <a href="<?= ($current_page == 'index.php') ? 'pages/logout.php' : 'logout.php' ?>" class="logout_btn">Logout</a>
+                        <?php endif; ?>
                         
-                    
-                    <a href="#" class="login_btn">Login</a>
+                    <?php else: ?>
+                    <a href="../pages/login.php" class="login_btn">Login</a>
                     <a href="../pages/register.php" class="join_btn">Register</a>
-            
+                    <?php endif; ?>
             </div> 
 
 
             <div class="mobile_triggers">
-                <button class="mobile_icon_btn" id="mobileSearchTrigger"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <button class="mobile_icon_btn" id="mobileProfileTrigger"><i class="fa-regular fa-circle-user"></i></button>
+                
                 <button class="mobile_icon_btn" id="mobileMenuTrigger"><i class="fa-solid fa-bars"></i></button>
             </div>
 
     </nav>
 
-    <div class="mobile_search_overlay" id="mobileSearchBar">
-        <div class="search_container_inner">
-            <form class="mobile_search_form" action="<?= ($current_page == 'index.php') ? 'pages/explore.php' : 'explore.php' ?>" method="GET">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" name="search" placeholder="Search..." class="mobile_input" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
-                <button type="button" id="closeSearch"><i class="fa-solid fa-xmark"></i></button>
-            </form>
-        </div>
-    </div>
+    
 
     <div class="mobile_nav_overlay" id="mobileNav">
         <div class="mobile_nav_content">
-            <a href="../index.php" class="mobile_nav_header">
-                <span class="logo_text">Tangier <span class="highlight">Vibes</span></span>
+            <div class="mobile_nav_header">
+                <a href="../index.php" class="logo">
+                    <div class="logo_icon">
+                        <i class="fa-solid fa-compass"></i>
+                    </div>
+
+                    <span class="logo_text">Tangier <span class="highlight">Vibes</span></span>
+                </a>
                 <button id="closeMenu"><i class="fa-solid fa-xmark"></i></button>
-            </a >
+            </div>
+
+            <div class="mobile_search_in_menu">
+                <form action="<?= ($current_page == 'index.php') ? 'pages/explore.php' : 'explore.php' ?>" method="GET">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="search" placeholder="Search..." value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+                </form>
+            </div>
+
             <ul class="mobile_menu_links">
                 <li><a href="../index.php" class="nav_link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>"><i class="fa-solid fa-house "></i> Home</a></li>
-                <li><a href="#" class="nav_link <?php echo ($current_page == 'top_places.php') ? 'active' : ''; ?>"><i class="fa-solid fa-star"></i> Top Places</a></li>
+                <li><a href="#" class="nav_link <?php echo ($current_page == 'topplaces.php') ? 'active' : ''; ?>"><i class="fa-solid fa-house "></i> Top Places</a></li>
                 <li><a href="../pages/explore.php" class="nav_link <?php echo ($current_page == 'explore.php') ? 'active' : ''; ?>"><i class="fa-solid fa-compass"></i> Explore</a></li>
-                <li><a href="#" class="nav_link <?php echo ($current_page == 'favorites.php') ? 'active' : ''; ?>"><i class="fa-regular fa-heart"></i> Favorites</a></li>
-            </ul>
-        </div>
-    </div>
+                <li><a href="#" class="nav_link <?php echo ($current_page == 'favorites.php') ? 'active' : ''; ?>"><i class="fa-solid fa-compass"></i> Favorites</a></li>
+                
+                <hr class="menu_divider">
 
-
-
-    <div class="mobile_profile_overlay" id="mobileProfileMenu">
-        <div class="mobile_profile_content">
-            <div class="profile_menu_header">
-                <h3>Profile</h3>
-                <button id="closeProfile"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="profile_menu_body">
-               
-                    <div class="user_info_card">
-                        <i class="fa-regular fa-circle-user"></i>
-                        <div class="info_text">
-                            <span class="name">oussama</span>
-                            <span class="role">user</span>
-                        </div>
-                    </div>
-                   
-                        <a href="#" class="profile_link"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                    
-                    <a href="#" class="profile_link logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <li class="mobile_user_info">
                         
-                    <a href="#" class="profile_link"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
-                    <a href="../pages/register.php" class="profile_link"><i class="fa-solid fa-user-plus"></i> Register</a>
-                    
-            </div>
+                        <i class="fa-regular fa-circle-user"></i>
+                        <span class="name"><?= htmlspecialchars($_SESSION['full_name']) ?></span>
+                        <span class="role"><?= htmlspecialchars($_SESSION['role']) ?></span>
+                    </li>
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                        <li><a href="../pages/dashboard.php"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+                    <?php endif; ?>
+                    <li><a href="../pages/logout.php" class="logout_link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+                <?php else: ?>
+                    <li><a href="../pages/login.php"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
+                    <li><a href="../pages/register.php"><i class="fa-solid fa-user-plus"></i> Register</a></li>
+                <?php endif; ?>
+            </ul>
         </div>
     </div>
 
