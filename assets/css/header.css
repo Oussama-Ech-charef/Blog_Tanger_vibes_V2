@@ -1,6 +1,7 @@
 
 
 
+
 .site_header {
     background-color: #ffffff;
     border-bottom: 1px solid #eef2f6;
@@ -552,7 +553,7 @@
     }
 
 
-    .user_info_card {
+    .mobile_user_info {
         display: flex;
         align-items: center;
         gap: 15px;
@@ -562,23 +563,27 @@
         margin-bottom: 20px;
     }
 
-    .user_info_card i {
-         font-size: 32px;
-          color: var(--color_primary);
-         }
-    .user_info_card .info_text {
-         display: flex;
-          flex-direction: column;
-         }
-    .user_info_card .name {
-         font-weight: 600;
-          color: #1e293b; 
-          font-size: 15px;
-         }
-    .user_info_card .role {
-         font-size: 12px;
-          color: #64748b;
-         }
+    .mobile_user_info i {
+        font-size: 32px;
+        color: var(--color_primary);
+    }
+
+    .mobile_user_info .info_text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile_user_info .name {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 15px;
+    }
+
+    .mobile_user_info .role {
+        font-size: 12px;
+        color: #64748b;
+    }
+    
 
     .profile_link {
         display: flex;
@@ -605,7 +610,58 @@
 
 }
 
+/* الإصلاحات الجديدة للمينيو الموحد */
+.mobile_search_in_menu {
+    margin: 20px 0;
+    background: #f1f5f9;
+    padding: 12px 16px;
+    border-radius: 12px;
+}
 
+.mobile_search_in_menu form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
+.mobile_search_in_menu i {
+    color: #64748b;
+    font-size: 16px;
+}
 
+.mobile_search_in_menu input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-size: 15px;
+    color: #1e293b;
+}
 
+.menu_divider {
+    border: 0;
+    border-top: 1px solid #f1f5f9;
+    margin: 15px 0;
+}
+
+.mobile_user_info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    color: #1e293b;
+    font-weight: 700;
+    font-size: 16px;
+    background: #f8fafc;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.mobile_user_info i {
+    color: var(--color_primary);
+    font-size: 20px;
+}
+
+.mobile_menu_links .logout_link {
+    color: #ef4444 !important;
+}
