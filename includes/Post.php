@@ -48,7 +48,7 @@ class Post {
 
    
 
-    public function filterPosts($cat = null, $search = null, $limit = 6, $offset = 0) {
+    public function filterPosts($cat = null, $search = null) {
         $sql = "select p.*, c.name as cat_name from posts p
                 join categories c on p.category_id = c.id
                 where p.status = 'published'";
@@ -65,7 +65,7 @@ class Post {
         }
 
 
-        $sql .= " order by p.created_at desc limit $limit offset $offset";
+        $sql .= " order by p.created_at desc";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($params);
@@ -73,27 +73,7 @@ class Post {
     }
 
 
-    public function countPosts($cat = null, $search = null) {
-        $sql = "select count(*) from posts where status = 'published'";
-        $params = [];
-
-        if ($cat ) {
-            $sql .= " and category_id = :cat";
-            $params[':cat'] = $cat;
-
-        }
-
-        if ($search) {
-            $sql .= " and (title like :s or content like :s)";
-            $params[':s'] = "%$search%";
-        }
-
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-
-        return $stmt->fetchColumn();
-    }
+    
   
 
 
