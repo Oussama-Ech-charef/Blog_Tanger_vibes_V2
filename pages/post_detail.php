@@ -219,7 +219,7 @@ if (!$post) {
 
 
 
-    <?php require '../includes/footer.php'; ?>
+    
 
 
     <!-- Mobile sticky action bar  -->
