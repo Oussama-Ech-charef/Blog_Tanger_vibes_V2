@@ -207,9 +207,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
 
 
-        <div class="swipe_hint">
-            <i class="fa-solid fa-arrows-left-right"></i> Swipe to explore
-        </div>
+       
 
         <div class="places_grid">
 
