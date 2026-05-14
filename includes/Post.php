@@ -10,9 +10,8 @@ class Post {
 
 
     public function getHomePosts(){
-        $query = "select p.*, c.name as cat_name
+        $query = "select p.*
         from posts p
-        join categories c on p.category_id = c.id
         where p.status = 'published'
         order by p.created_at desc
         limit 3";
@@ -27,9 +26,8 @@ class Post {
 
     public function detailById($id) {
         $query = " 
-        select p.*, c.name as cat_name
+        select p.*
         from posts p
-        join categories c on p.category_id = c.id
         where p.id = :id and p.status = 'published'
         limit 1";
         $stmt = $this->conn->prepare($query);
@@ -39,39 +37,14 @@ class Post {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getCategories() {
-        $query = "select * from categories order by name asc";
-        $stmt = $this->conn->prepare($query);
+       public function allposts() {
+        $sql = "select p.* from posts p
+                where p.status = 'published'
+                order by p.created_at desc";
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-   
-
-    public function filterPosts($cat = null, $search = null) {
-        $sql = "select p.*, c.name as cat_name from posts p
-                join categories c on p.category_id = c.id
-                where p.status = 'published'";
-        $params = [];
-
-        if ($cat) {
-            $sql .= " and p.category_id = :cat";
-            $params[':cat'] = $cat;
-        }
-
-        if ($search) {
-            $sql .= " and (p.title like :s or p.content like :s)";
-            $params[':s'] = "%$search%";
-        }
-
-
-        $sql .= " order by p.created_at desc";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
 
     
   

@@ -10,31 +10,21 @@ $db = $database->getConnection();
 $postObj = new Post($db);
 
 
-$search = isset($_GET['search']) ? $_GET['search'] : null;
-$category_id = isset($_GET['cat']) ? $_GET['cat'] : null;
+
+
+
+
+$posts = $postObj->allposts();
 
 
 
 
 
 
-$categories = $postObj->getCategories();
 
 
 
-$posts = $postObj->filterPosts($category_id, $search);
 
-
-
-$current_category_name = "All Places";
-if ($category_id) {
-    foreach ($categories as $cat) {
-        if ($cat['id'] == $category_id) {
-            $current_category_name = $cat['name'];
-            break;
-        }
-    }
-}
 
 
 
@@ -69,25 +59,17 @@ if ($category_id) {
             </div>
         </section>
 
-        <!-- Filters Section -->
         <section class="filters_container">
             <div class="category_filters">
-                <a href="explore.php" class="cat_filter_btn <?= !$category_id ? 'active' : '' ?>">
-                     All
-                </a>
-                <?php foreach($categories as $cat): ?>
-                    <a href="explore.php?cat=<?= $cat['id'] ?><?= $search ? '&search='.urlencode($search) : '' ?>" 
-                       class="cat_filter_btn <?= $category_id == $cat['id'] ? 'active' : '' ?>">
-                       <?= htmlspecialchars($cat['name']) ?>
-                    </a>
-                <?php endforeach; ?>
+                <a href="#" class="cat_filter_btn active">All</a>
+                <a href="#" class="cat_filter_btn">Beaches</a>
+                <a href="#" class="cat_filter_btn">Cafes</a>
+                <a href="#" class="cat_filter_btn">Historical Sites</a>
+                <a href="#" class="cat_filter_btn">Hotels</a>
+                <a href="#" class="cat_filter_btn">Museums</a>
+                <a href="#" class="cat_filter_btn">Parks</a>
+                <a href="#" class="cat_filter_btn">Restaurants</a>
             </div>
-
-            <?php if ($search): ?>
-                 <div class="search_status">
-                    Search: <strong>"<?= htmlspecialchars($search) ?>"</strong>
-                </div>
-            <?php endif; ?>
         </section>
 
         <!-- Results Grid -->
@@ -99,7 +81,7 @@ if ($category_id) {
                             <img src="<?= htmlspecialchars($post['image']); ?>" class="place_card_img" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy">
                             <div class="place_card_overlay">
                                 <span class="place_card_category">
-                                    <i class="fa-solid fa-location-dot"></i> <?= htmlspecialchars($post['cat_name']); ?>
+                                    <i class="fa-solid fa-location-dot"></i> Tangier Spot
                                 </span>
                                 <h3 class="place_card_name"><?= htmlspecialchars($post['title']); ?></h3>
                                 <p class="place_card_location">
@@ -123,14 +105,7 @@ if ($category_id) {
                     </div>
                 </div>
 
-            <?php else: ?>
-                <div class="no_results">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <h3>No places found</h3>
-                    <p>Try adjusting your search or category filters to find what you're looking for.</p>
-                    <br>
-                    <a href="explore.php" class="hero_btn_primary">Reset All Filters</a>
-                </div>
+            
             <?php endif; ?>
         </section>
     </main>

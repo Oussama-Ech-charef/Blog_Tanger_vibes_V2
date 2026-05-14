@@ -1,49 +1,38 @@
 
+const profileBtn = document.getElementById('profileTrigger');
+const dropdown = document.getElementById('dropdownMenu');
 
-
-const profileTrigger = document.getElementById('profileTrigger');
-const dropdownMenu = document.getElementById('dropdownMenu');
-
-if (profileTrigger && dropdownMenu) {
-    profileTrigger.addEventListener('click', (e) => {
+if (profileBtn && dropdown) {
+    profileBtn.onclick = function(e) {
         e.stopPropagation();
-        dropdownMenu.classList.toggle('show');
-    });
-
-    document.addEventListener('click', () => {
-        dropdownMenu.classList.remove('show');
-    });
-}
-
-
-const mobileMenuTrigger = document.getElementById('mobileMenuTrigger');
-const mobileNav = document.getElementById('mobileNav');
-const closeMenu = document.getElementById('closeMenu');
-
-if (mobileMenuTrigger && mobileNav) {
-    mobileMenuTrigger.onclick = () => {
-        mobileNav.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        dropdown.classList.toggle('show');
+    };
+    document.onclick = function() {
+        dropdown.classList.remove('show');
     };
 }
 
-if (closeMenu && mobileNav) {
-    closeMenu.onclick = () => {
+const openMenu = document.getElementById('mobileMenuTrigger');
+const mobileNav = document.getElementById('mobileNav');
+const closeBtn = document.getElementById('closeMobileNav');
+
+if (mobileNav) {
+    
+    const close = function() {
         mobileNav.classList.remove('active');
         document.body.style.overflow = 'auto';
     };
-}
 
-
-
-
-function toggleShare() {
-    const shareMenu = document.getElementById('mobileShareMenu');
-    if (shareMenu) {
-        shareMenu.classList.toggle('active');
+    if (openMenu) {
+        openMenu.onclick = function() {
+            mobileNav.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
     }
+
+    if (closeBtn) closeBtn.onclick = close;
+    
+    mobileNav.onclick = function(e) {
+        if (e.target === mobileNav) close();
+    };
 }
-
-
-
-

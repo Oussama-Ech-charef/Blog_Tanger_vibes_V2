@@ -1,16 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
+
 :root {
+    --header-height: 72px;
+    --card_shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     --bg_color: #ffffff;
     --color_primary: #2563eb;
-    --color_gold: #f59e0b;
     --color_dark: #1e293b;
     --color_gray: #64748b;
     --color_light: #f1f5f9;
     --color_border: #e2e8f0;
     --font_main: 'Inter', sans-serif;
     --detail_shadow: 0 10px 40px rgba(0,0,0,0.1);
+    --text-dark: #1e293b;
+    --text-slate: #64748b;
+    --border-light: #e2e8f0;
+    --primary: #2563eb;
+    --color_gold: #f3c653;
 }
 
 * {

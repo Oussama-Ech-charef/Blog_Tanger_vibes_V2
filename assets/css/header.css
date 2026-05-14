@@ -1,12 +1,5 @@
 
 
-:root {
-    --header-height: 72px;
-    --primary: #2563eb;
-    --text-dark: #1e293b;
-    --text-slate: #64748b;
-    --border-light: #f1f5f9;
-}
 
 /* Main Container */
 .site_header {
@@ -39,7 +32,7 @@
 .logo_icon {
     width: 35px;
     height: 35px;
-    background: var(--primary);
+    background: var(--color_primary);
     color: #fff;
     display: flex;
     align-items: center;
@@ -56,8 +49,9 @@
     letter-spacing: -0.5px;
 }
 
-.logo_text .highlight {
-    color: #b45309;
+.logo_text
+ .highlight {
+    color: #f3c653;
 }
 
 /* --- Desktop Nav Links --- */

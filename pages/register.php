@@ -6,7 +6,7 @@ session_start();
 
 
 if (isset($_SESSION['user_id'])) {
-    header("Location: ../index.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Register - Tangier Vibes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/register_login.css">
 </head>
 <body>
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <nav class="header_nav">
 
 
-            <a href="../index.php" class="logo">
+            <a href="index.php" class="logo">
                 <div class="logo_icon">
                     <i class="fa-solid fa-compass"></i>
                 </div>

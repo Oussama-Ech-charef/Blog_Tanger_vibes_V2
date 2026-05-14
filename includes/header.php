@@ -10,27 +10,25 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <header class="site_header">
     <nav class="header_nav">
 
-        <a href="../index.php" class="logo">
+        <a href="../pages/index.php" class="logo">
             <div class="logo_icon"><i class="fa-solid fa-compass"></i></div>
             <span class="logo_text">Tangier <span class="highlight">Vibes</span></span>
         </a>
 
         <!-- Desktop Navigation -->
         <ul class="nav_links desktop_only">
-            <li><a href="../index.php" class="nav_link <?= ($current_page == 'index.php') ? 'active' : ''; ?>">Home</a></li>
-            <li><a href="pages/explore.php" class="nav_link <?= ($current_page == 'explore.php') ? 'active' : ''; ?>">Explore</a></li>
+            <li><a href="index.php" class="nav_link <?= ($current_page == 'index.php') ? 'active' : ''; ?>">Home</a></li>
+            <li><a href="explore.php" class="nav_link <?= ($current_page == 'explore.php') ? 'active' : ''; ?>">Explore</a></li>
             <li><a href="#" class="nav_link"><i class="fa-regular fa-heart"></i> Favorites</a></li>
         </ul>
 
-        <!-- Global Search -->
         <div class="header_search_container desktop_only">
-            <form class="header_search_form" action="explore.php" method="GET">
+            <form class="header_search_form" action="#" method="GET">
                 <i class="fa-solid fa-magnifying-glass search_icon"></i>
-                <input type="text" name="search" placeholder="Search places..." class="header_search_input" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" >
+                <input type="text" name="search" placeholder="Search places..." class="header_search_input">
             </form>
         </div>
 
-        
         <div class="auth_actions desktop_only">
             <?php if (isset($_SESSION['user_id'])): ?>
                 
@@ -53,14 +51,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <a href="#" class="dropdown_item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
                         <?php endif; ?>
                         
-                        <a href="../pages/logout.php" class="dropdown_item logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                        <a href="logout.php" class="dropdown_item logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 </div>
 
             <?php else: ?>
                 
-                <a href="../pages/login.php" class="login_link">Login</a>
-                <a href="../pages/register.php" class="register_btn">Register</a>
+                <a href="login.php" class="login_link">Login</a>
+                <a href="register.php" class="register_btn">Register</a>
             <?php endif; ?>
         </div> 
 
@@ -86,18 +84,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <button class="close_mobile_btn" id="closeMobileNav"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- 2. Mobile Search Bar -->
             <div class="mobile_search_box">
-                <form action="explore.php" method="GET">
+                <form action="#" method="GET">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" name="search" placeholder="Search...">
                 </form>
             </div>
 
-         
             <ul class="mobile_links_list">
-                <li class="<?= ($current_page == 'index.php') ? 'active' : ''; ?>"><a href="../index.php"> Home</a></li>
-                <li class="<?= ($current_page == 'explore.php') ? 'active' : ''; ?>"><a href="pages/explore.php"> Explore</a> </li>
+                <li class="<?= ($current_page == 'index.php') ? 'active' : ''; ?>"><a href="index.php"> Home</a></li>
+                <li class="<?= ($current_page == 'explore.php') ? 'active' : ''; ?>"><a href="explore.php"> Explore</a> </li>
                 <li><a href="#">Favorites</a> </li>
             </ul>
 
@@ -118,13 +114,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </div>
                     </div>
                     
-                    <a href="pages/logout.php" class="mobile_logout_btn">
+                    <a href="../pages/logout.php" class="mobile_logout_btn">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                     </a>
                 <?php else: ?>
                     <div class="auth_mobile_btns">
-                        <a href="pages/login.php" class="mobile_login_btn">Login</a>
-                        <a href="../pages/register.php" class="mobile_register_btn">Register</a>
+                        <a href="login.php" class="mobile_login_btn">Login</a>
+                        <a href="register.php" class="mobile_register_btn">Register</a>
                     </div>
                 <?php endif; ?>
             </div>

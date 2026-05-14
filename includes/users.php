@@ -31,13 +31,13 @@ public function register($full_name, $email, $password){
     $stmt = $this->conn->prepare($query);
    
 
-    $stmt->execute([
+    $executed = $stmt->execute([
         ':name' => $full_name,
         ':email' => $email,
         ':password' => $hashed
     ]);
 
-    if ($stmt) {
+    if ($executed) {
          return ['status' => true, 'message' => 'Registration successful!'];
     }
 
