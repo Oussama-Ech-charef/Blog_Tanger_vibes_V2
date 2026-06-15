@@ -152,6 +152,49 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
         </div>
     </section>
+
+<section class="latest_section">
+        <div class="section_header">
+            <h2 class="section_title">Latest Places</h2>
+            <p class="section_subtitle">The newest additions to TangierVibes</p>
+        </div>
+
+
+       
+
+        <div class="places_grid">
+
+         <?php if(!empty($posts)): ?>
+                <?php foreach($posts as $post): ?>
+                    
+        
+                <a href="post_detail.php?id=<?= $post['id']; ?>" class="place_card">
+                        <img src="<?php echo htmlspecialchars($post['image']); ?>" class="place_card_img" alt="<?=   htmlspecialchars($post['title']); ?>" loading="lazy">
+                        <div class="place_card_overlay">
+                            <span class="place_card_category"> <i class="fa-solid fa-location-dot"></i> Tangier Spot</span>
+                            <h3 class="place_card_name"><?=   htmlspecialchars($post['title']); ?></h3>
+                            <p class="place_card_location">
+                                <i class="fa-solid fa-location-dot"></i> Tangier, Morocco
+                            </p>
+                            <span class="place_card_btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+
+                    <?php endforeach; ?>
+            <?php else: ?>
+                <p>No places found.</p>
+            <?php endif; ?>
+        
+          
+            
+        </div>
+
+        <div class="section_footer">
+            <a href="explore.php" class="view_all_link">
+                View All Places <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
     
     
     <?php require '../includes/footer.php'; ?>
