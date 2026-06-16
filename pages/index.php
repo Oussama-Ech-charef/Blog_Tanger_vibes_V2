@@ -1,19 +1,36 @@
 <?php
 session_start();
-require_once '../config/db_connection.php';
-require_once '../includes/Post.php';
+ require '../config/connection.php';
+ require_once '../includes/security.php';
+
+ send_security_headers();
+
+ // get latest posts
+ $stmt = $conn->prepare("
+        select posts.*, categories.cat_name, users.user_name
+        from posts
+        inner join categories on posts.id_category = categories.id_category
+        inner join users on posts.id_user = users.id_user
+        where posts.status = 'published'
+        order by posts.created_at desc
+        limit 3
+ ");
+
+ $stmt->execute();
+
+ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-$database = new Database();
-$db = $database->getConnection();
-
-$postObj = new Post($db);
-$posts = $postObj->getHomePosts();
-
-
-$current_page = basename($_SERVER['PHP_SELF']);
 
 ?>
+
+
+
+
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,183 +42,114 @@ $current_page = basename($_SERVER['PHP_SELF']);
     
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/home.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
 </head>
 <body>
 
-    <?php require '../includes/header.php'; ?>
-    
-     <section class="hero_section">
 
-        <img src="../assets/img/home.jpg" alt="Tangier - backgrond image hero" class="hero_bg_img" loading="lazy">
+<?php require '../includes/header.php'; ?>
 
-        <div class="hero_overlay"></div>
+        <!-- hero -->
+        <section class="hero_section">
+            <picture>
+                <source srcset="../assets/images/home_1920.jpg 1920w, ../assets/images/home_1200.jpg 1200w, ../assets/images/home_768.jpg 768w, ../assets/images/home_480.jpg 480w" sizes="100vw" type="image/jpeg">
+                <img src="../assets/images/home.jpg" alt="Tangier Vibes" width="1920" height="1280" fetchpriority="high">
+            </picture>
+            <div class="hero_shadow"></div>
 
-        <div class="hero_content">
 
-            <p class="hero_label">WELCOME TO YOUR GATEWAY TO AFRICA</p>
+            <div class="hero_content">
+               
+                <p class="hero_label">WELCOME TO YOUR GATEWAY TO AFRICA</p>
+                <h1 class="hero_title">Experience the Magic<br> of <span class="hero_highlight">Tangier</span></h1>
 
-            <h1 class="hero_title">
-                Experience the Magic<br>
-                of <span class="hero_highlight">Tangier</span>
-            </h1>
+                <p class="hero_desc">Discover hidden beaches, legendary cafes, exquisite<br>restaurants, and historic landmarks in the Pearl of the North.</p>
+                
+                <div class="hero_btns">
 
-            <p class="hero_desc">
-                Discover hidden beaches, legendary cafes, exquisite<br>
-                restaurants, and historic landmarks in the Pearl of the North.
-            </p>
+                    <a href="explore.php" class="btn_explor">
+                        Start Exploring
+                    </a>
 
-            <div class="hero_btns">
-                <a href="explore.php" class="hero_btn_primary">
-                    Start Exploring
-                </a>
+                </div>
+            </div>
+        </section>
 
-                <a href="#" class="hero_btn_outline">
-                    Top Picks <i class="fa-solid fa-arrow-right"></i>
-                </a>
+
+        <!-- latest posts -->
+        <section class="latest_section">
+            <div class="section_header">
+                <h2 class="title">Latest Places</h2>
+                <p class="description">The newest additions to TangierVibes</p>
             </div>
 
-        </div>
-
-    </section>
 
 
-    <section class="latest_section">
-        <div class="section_header">
-            <h2 class="section_title">Latest Places</h2>
-            <p class="section_subtitle">The newest additions to TangierVibes</p>
-        </div>
+            <div class="grid_place">
+                    <?php if (!empty($posts)): ?>
+                        <?php foreach ($posts as $post): ?>
+
+                            <!-- post card -->
+                            <a href="detail.php?id=<?= $post['id_post']; ?>" class="card_place">
+
+                                <img     src="<?= htmlspecialchars($post['image']); ?>"     alt="<?= htmlspecialchars($post['title']); ?>"     loading="lazy">
+
+                                <div class="card_content">
+
+                                    <span class="category">
+                                        <i class="fa-solid fa-layer-group"></i>
+                                        <?= htmlspecialchars($post['cat_name']); ?>
+                                    </span>
+
+                                    <h3 class="title">
+                                        <?= htmlspecialchars($post['title']); ?>
+                                    </h3>
+
+                                    <p class="location">
+                                        <i class="fa-solid fa-user"></i>
+                                        By <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?>
+                                    </p>
+
+                                    <p class="location">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                        <?= date('M d, Y', strtotime($post['created_at'])); ?>
+                                    </p>
+
+                                    <span class="btn">
+                                        Read More <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+
+                                </div>
 
 
-       
+                            </a>
 
-        <div class="places_grid">
+                        <?php endforeach; ?>
+                    <?php else: ?>
 
-         <?php if(!empty($posts)): ?>
-                <?php foreach($posts as $post): ?>
-                    
-        
-                <a href="post_detail.php?id=<?= $post['id']; ?>" class="place_card">
-                        <img src="<?php echo htmlspecialchars($post['image']); ?>" class="place_card_img" alt="<?=   htmlspecialchars($post['title']); ?>" loading="lazy">
-                        <div class="place_card_overlay">
-                            <span class="place_card_category"> <i class="fa-solid fa-location-dot"></i> Tangier Spot</span>
-                            <h3 class="place_card_name"><?=   htmlspecialchars($post['title']); ?></h3>
-                            <p class="place_card_location">
-                                <i class="fa-solid fa-location-dot"></i> Tangier, Morocco
-                            </p>
-                            <span class="place_card_btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
-                        </div>
+                        <p class="description">No published places yet.</p>
+
+                    <?php endif; ?>
+                </div>
+
+            
+
+
+                <div class="footer_section">
+
+                    <a href="explore.php" class="view_explor">
+
+                        View All Places <i class="fa-solid fa-arrow-right"></i>
+
                     </a>
 
-                    <?php endforeach; ?>
-            <?php else: ?>
-                <p>No places found.</p>
-            <?php endif; ?>
-        
-          
-            
-        </div>
+                </div>
 
-        <div class="section_footer">
-            <a href="explore.php" class="view_all_link">
-                View All Places <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
-    </section>
-
-<section class="latest_section">
-        <div class="section_header">
-            <h2 class="section_title">Latest Places</h2>
-            <p class="section_subtitle">The newest additions to TangierVibes</p>
-        </div>
+        </section>
 
 
-       
-
-        <div class="places_grid">
-
-         <?php if(!empty($posts)): ?>
-                <?php foreach($posts as $post): ?>
-                    
-        
-                <a href="post_detail.php?id=<?= $post['id']; ?>" class="place_card">
-                        <img src="<?php echo htmlspecialchars($post['image']); ?>" class="place_card_img" alt="<?=   htmlspecialchars($post['title']); ?>" loading="lazy">
-                        <div class="place_card_overlay">
-                            <span class="place_card_category"> <i class="fa-solid fa-location-dot"></i> Tangier Spot</span>
-                            <h3 class="place_card_name"><?=   htmlspecialchars($post['title']); ?></h3>
-                            <p class="place_card_location">
-                                <i class="fa-solid fa-location-dot"></i> Tangier, Morocco
-                            </p>
-                            <span class="place_card_btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
-                        </div>
-                    </a>
-
-                    <?php endforeach; ?>
-            <?php else: ?>
-                <p>No places found.</p>
-            <?php endif; ?>
-        
-          
-            
-        </div>
-
-        <div class="section_footer">
-            <a href="explore.php" class="view_all_link">
-                View All Places <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
-    </section>
-
-<section class="latest_section">
-        <div class="section_header">
-            <h2 class="section_title">Latest Places</h2>
-            <p class="section_subtitle">The newest additions to TangierVibes</p>
-        </div>
-
-
-       
-
-        <div class="places_grid">
-
-         <?php if(!empty($posts)): ?>
-                <?php foreach($posts as $post): ?>
-                    
-        
-                <a href="post_detail.php?id=<?= $post['id']; ?>" class="place_card">
-                        <img src="<?php echo htmlspecialchars($post['image']); ?>" class="place_card_img" alt="<?=   htmlspecialchars($post['title']); ?>" loading="lazy">
-                        <div class="place_card_overlay">
-                            <span class="place_card_category"> <i class="fa-solid fa-location-dot"></i> Tangier Spot</span>
-                            <h3 class="place_card_name"><?=   htmlspecialchars($post['title']); ?></h3>
-                            <p class="place_card_location">
-                                <i class="fa-solid fa-location-dot"></i> Tangier, Morocco
-                            </p>
-                            <span class="place_card_btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
-                        </div>
-                    </a>
-
-                    <?php endforeach; ?>
-            <?php else: ?>
-                <p>No places found.</p>
-            <?php endif; ?>
-        
-          
-            
-        </div>
-
-        <div class="section_footer">
-            <a href="explore.php" class="view_all_link">
-                View All Places <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
-    </section>
-    
-    
-    <?php require '../includes/footer.php'; ?>
+<?php require '../includes/footer.php' ?>
     <script src="../assets/js/main.js"></script>
-    
 </body>
 </html>
-
-    
-

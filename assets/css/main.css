@@ -2,42 +2,43 @@
 
 
 
+/* colors */
 :root {
-    --header-height: 72px;
-    --card_shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --font_main: 'Inter', sans-serif;
     --bg_color: #ffffff;
     --color_primary: #2563eb;
+    --color_gold: #f3c653;
     --color_dark: #1e293b;
     --color_gray: #64748b;
     --color_light: #f1f5f9;
     --color_border: #e2e8f0;
-    --font_main: 'Inter', sans-serif;
-    --detail_shadow: 0 10px 40px rgba(0,0,0,0.1);
-    --text-dark: #1e293b;
-    --text-slate: #64748b;
-    --border-light: #e2e8f0;
-    --primary: #2563eb;
-    --color_gold: #f3c653;
+    --border_light: #e2e8f0;
+    --detail_shadow: 0 10px 40px rgba(0,0,0,0.1);    
+    --card_shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
+/* reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* page */
 body {
-    
     font-family: var(--font_main);
     background-color: var(--bg_color);
     color: var(--color_dark);
+    padding-top: 20px;
 }
 
+/* links */
 a {
     text-decoration: none;
     color: inherit;
 }
 
+/* lists */
 ul {
     list-style: none;
 }
