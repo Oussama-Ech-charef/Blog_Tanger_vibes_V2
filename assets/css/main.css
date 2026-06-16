@@ -6,13 +6,15 @@
 :root {
     --font_main: 'Inter', sans-serif;
     --bg_color: #ffffff;
-    --color_primary: #2563eb;
-    --color_gold: #f3c653;
-    --color_dark: #1e293b;
-    --color_gray: #64748b;
-    --color_light: #f1f5f9;
-    --color_border: #e2e8f0;
-    --border_light: #e2e8f0;
+    --color_primary: #0F6F98;
+    --color_primary_dark: #07597B;
+    --color_primary_light: #3CC5F2;
+    --color_accent: #5ED4F8;
+    --color_dark: #0A3E56;
+    --color_gray: #6B7B8D;
+    --color_light: #EAF8FD;
+    --color_border: #D0DFE8;
+    --border_light: #D0DFE8;
     --detail_shadow: 0 10px 40px rgba(0,0,0,0.1);    
     --card_shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }

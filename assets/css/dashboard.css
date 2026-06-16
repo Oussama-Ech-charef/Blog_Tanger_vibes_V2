@@ -197,8 +197,8 @@ tbody tr:last-child td {
 }
 
 .status.draft {
-    background: #e0f2fe;
-    color: #0369a1;
+    background: #D6ECF5;
+    color: #0F6F98;
 }
 
 .reject_reason {
@@ -235,8 +235,8 @@ tbody tr:last-child td {
 }
 
 .action_btn.view {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: #D6ECF5;
+    color: #0F6F98;
 }
 
 .action_btn.approve {
@@ -255,13 +255,13 @@ tbody tr:last-child td {
 }
 
 .action_btn.edit {
-    background: #f3e8ff;
-    color: #7e22ce;
+    background: #E0F0F8;
+    color: #0F6F98;
 }
 
 .action_btn.reason {
-    background: #e0f2fe;
-    color: #0369a1;
+    background: #D6ECF5;
+    color: #0F6F98;
 }
 
 .action_btn:hover {

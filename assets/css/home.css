@@ -90,7 +90,7 @@
 
 
 .hero_btns .btn_explor:hover {
-    background-color: #1d4ed8;
+    background-color: var(--color_primary_dark);
     transform: translateY(-2px);
 }
 
@@ -219,7 +219,7 @@
 }
 
 .card_content .btn:hover {
-    background: #1d4ed8;
+    background: var(--color_primary_dark);
 }
 
 

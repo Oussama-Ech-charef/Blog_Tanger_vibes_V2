@@ -207,7 +207,7 @@
 .comment_form input:focus,
 .comment_form textarea:focus {
     border-color: var(--color_primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 3px rgba(15, 111, 152, 0.15);
 }
 
 .comment_form button {

@@ -96,7 +96,7 @@ form input {
 
 form input:focus {
     border-color: var(--color_primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 3px rgba(15, 111, 152, 0.15);
 }
 
 /* options */
@@ -142,7 +142,7 @@ a {
 }
 
 .btn:hover {
-    background: #1d4ed8;
+    background: var(--color_primary_dark);
 }
 
 /* switch link */
