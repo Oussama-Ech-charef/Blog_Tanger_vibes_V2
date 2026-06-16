@@ -6,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-
 // generate or retrieve CSRF token
 function get_csrf_token() {
     if (empty($_SESSION['csrf_token'])) {
@@ -53,20 +52,52 @@ function send_security_headers() {
 }
 
 
+// convert PHP ini size value (e.g. "2M", "50M") to bytes
+function parse_ini_size($value) {
+    $value = trim($value);
+    $unit = strtoupper(substr($value, -1));
+    $num = (int)$value;
+    switch ($unit) {
+        case 'G': return $num * 1024 * 1024 * 1024;
+        case 'M': return $num * 1024 * 1024;
+        case 'K': return $num * 1024;
+        default:  return (int)$value;
+    }
+}
+
+// format bytes to MB with 1 decimal place
+function format_file_size($bytes) {
+    return number_format($bytes / (1024 * 1024), 1) . ' MB';
+}
+
+// get effective max upload size (min of target 50MB and actual server limits)
+function get_effective_max_upload() {
+    $target = 50 * 1024 * 1024;
+    $ini_upload = parse_ini_size(ini_get('upload_max_filesize'));
+    $ini_post = parse_ini_size(ini_get('post_max_size'));
+    return min($target, $ini_upload, $ini_post);
+}
+
 // validate uploaded image file
 function validate_uploaded_image($file) {
     $errors = [];
+    $max_size = get_effective_max_upload();
+    $max_size_display = format_file_size($max_size);
 
     // check upload errors
     if ($file['error'] !== UPLOAD_ERR_OK) {
-        $errors[] = "Image upload failed.";
+        if ($file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE) {
+            $errors[] = "Selected image size exceeds the maximum allowed limit of $max_size_display.";
+        } else {
+            $errors[] = "Image upload failed. Please try again.";
+        }
         return $errors;
     }
 
-    // check file size (max 5 MB)
-    $max_size = 5 * 1024 * 1024;
+    // check file size
     if ($file['size'] > $max_size) {
-        $errors[] = "Image must be less than 5 MB.";
+        $actual = format_file_size($file['size']);
+        $errors[] = "Selected image size: $actual. Maximum allowed size: $max_size_display.";
         return $errors;
     }
 
@@ -74,7 +105,7 @@ function validate_uploaded_image($file) {
     $image_data = @getimagesize($file['tmp_name']);
 
     if ($image_data === false) {
-        $errors[] = "File is not a valid image.";
+        $errors[] = "Unsupported image format.";
         return $errors;
     }
 
@@ -82,7 +113,7 @@ function validate_uploaded_image($file) {
     $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
 
     if (!in_array($mime, $allowed_mimes)) {
-        $errors[] = "Only JPG, PNG, and WebP images are allowed.";
+        $errors[] = "Unsupported image format.";
         return $errors;
     }
 
@@ -91,7 +122,7 @@ function validate_uploaded_image($file) {
     $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
 
     if (!in_array($ext, $allowed_exts)) {
-        $errors[] = "Invalid file extension.";
+        $errors[] = "Unsupported image format.";
         return $errors;
     }
 
