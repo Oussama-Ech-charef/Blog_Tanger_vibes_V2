@@ -16,8 +16,7 @@ get_csrf_token();
         <div class="header_nav_desktop">
                     <!-- logo  -->
                     <a href="../pages/index.php" class="logo">
-                        <div class="logo_icon"><i class="fa-solid fa-compass"></i></div> 
-                        <span class="logo_text">Tangier <span class="text2">Vibes</span></span>     
+                        <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img" style="height:40px;width:auto;">
                     </a>
 
                      <!-- links  desktop-->
@@ -27,11 +26,14 @@ get_csrf_token();
                         <li><a href="../pages/explore.php" class="nav_link">Explore</a></li>
                     </ul>
 
-                   <!-- search desktop -->
+                    <!-- search desktop -->
                     <div class="search_desktop">
-                        <form action="#" class="search_desktop_form">
+                        <form action="../pages/explore.php" method="GET" class="search_desktop_form">
                             <i class="fa-solid fa-magnifying-glass search_icon"></i>
-                            <input type="text" placeholder="Search places...">
+                            <input type="text" name="q" placeholder="Search..." value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
+                            <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
+                                <a href="../pages/explore.php" class="search_clear_icon"><i class="fa-solid fa-xmark"></i></a>
+                            <?php endif; ?>
                         </form>
 
                     </div>
@@ -81,9 +83,12 @@ get_csrf_token();
 
                     <!-- search mobile -->
                     <div class="search_mobile">
-                        <form action="#" class="search_mobile_form">
+                        <form action="../pages/explore.php" method="GET" class="search_mobile_form">
                             <i class="fa-solid fa-magnifying-glass search_icon"></i>
-                            <input type="text" placeholder="Search places...">
+                            <input type="text" name="q" placeholder="Search places, restaurants, beaches..." value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
+                            <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
+                                <a href="../pages/explore.php" class="search_clear_icon"><i class="fa-solid fa-xmark"></i></a>
+                            <?php endif; ?>
                         </form>
 
                     </div>

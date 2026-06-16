@@ -7,8 +7,7 @@
         <!-- logo -->
         <div class="footer_logo">
             <a href="../pages/index.php" class="logo">
-                <div class="logo_icon"><i class="fa-solid fa-compass"></i></div>
-                <span class="logo_text">Tangier <span class="highlight">Vibes</span></span>
+                <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img" style="height:40px;width:auto;">
             </a>
             <p class="footer_desc">
                 Your ultimate guide to discovering the magic, culture,
