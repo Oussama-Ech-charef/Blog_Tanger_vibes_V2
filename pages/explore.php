@@ -9,37 +9,65 @@ send_security_headers();
 $per_page = 6;
 $page = get_valid_page();
 $category_id = $_GET['category'] ?? null;
+$keyword = trim($_GET['q'] ?? '');
 
-// Count first to validate pages before fetching
-if (!empty($category_id)) {
-    $count_stmt = $conn->prepare("
-        select count(*) from posts
-        where status = 'published'
-        and id_category = :category_id
-    ");
-    $count_stmt->execute([':category_id' => $category_id]);
-    $total_records = (int)$count_stmt->fetchColumn();
-    $query_params = ['category' => $category_id];
-} else {
-    $count_stmt = $conn->prepare("
-        select count(*) from posts
-        where status = 'published'
-    ");
-    $count_stmt->execute();
-    $total_records = (int)$count_stmt->fetchColumn();
-    $query_params = [];
+// Redirect empty searches
+if (isset($_GET['q']) && $keyword === '') {
+    $redirect_params = [];
+    if (!empty($_GET['category'])) {
+        $redirect_params['category'] = $_GET['category'];
+    }
+    if (!empty($redirect_params)) {
+        header('Location: explore.php?' . http_build_query($redirect_params));
+    } else {
+        header('Location: explore.php');
+    }
+    exit();
 }
+
+$query_params = [];
+
+if (!empty($category_id)) {
+    $query_params['category'] = $category_id;
+}
+if (!empty($keyword)) {
+    $query_params['q'] = $keyword;
+}
+
+// Build WHERE clauses dynamically
+$where = "posts.status = 'published'";
+$params = [];
+
+if (!empty($category_id)) {
+    $where .= " AND posts.id_category = :category_id";
+    $params[':category_id'] = $category_id;
+}
+
+if (!empty($keyword)) {
+    $like_kw = '%' . $keyword . '%';
+    $where .= " AND (posts.title LIKE :kw_title OR categories.cat_name LIKE :kw_cat)";
+    $params[':kw_title'] = $like_kw;
+    $params[':kw_cat'] = $like_kw;
+}
+
+// Count
+$count_sql = "
+    select count(*) from posts
+    inner join categories on posts.id_category = categories.id_category
+    where $where
+";
+$count_stmt = $conn->prepare($count_sql);
+$count_stmt->execute($params);
+$total_records = (int)$count_stmt->fetchColumn();
 
 $total_pages = get_total_pages($total_records, $per_page);
 $current_page = min($page, $total_pages);
 
 // Redirect if page was invalid
 if ($current_page !== $page) {
-    if (!empty($category_id)) {
-        header('Location: explore.php?category=' . urlencode($category_id) . '&page=' . $current_page);
-    } else {
-        header('Location: explore.php?page=' . $current_page);
-    }
+    $redirect_params = $query_params;
+    $redirect_params['page'] = $current_page;
+    header('Location: explore.php?' . http_build_query($redirect_params));
     exit();
 }
 
@@ -49,37 +77,29 @@ $stmt = $conn->prepare("select * from categories order by cat_name asc");
 $stmt->execute();
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (!empty($category_id)) {
-    $stmt = $conn->prepare("
-        select posts.*, categories.cat_name, users.user_name
-        from posts
-        inner join categories on posts.id_category = categories.id_category
-        inner join users on posts.id_user = users.id_user
-        where posts.status = 'published'
-        and posts.id_category = :category_id
-        order by posts.created_at desc
-        limit :lim offset :off
-    ");
-    $stmt->bindValue(':category_id', $category_id, PDO::PARAM_INT);
-    $stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
-    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
-    $stmt->execute();
-} else {
-    $stmt = $conn->prepare("
-        select posts.*, categories.cat_name, users.user_name
-        from posts
-        inner join categories on posts.id_category = categories.id_category
-        inner join users on posts.id_user = users.id_user
-        where posts.status = 'published'
-        order by posts.created_at desc
-        limit :lim offset :off
-    ");
-    $stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
-    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
-    $stmt->execute();
+// Data query
+$data_sql = "
+    select posts.*, categories.cat_name, users.user_name
+    from posts
+    inner join categories on posts.id_category = categories.id_category
+    inner join users on posts.id_user = users.id_user
+    where $where
+    order by posts.created_at desc
+    limit :lim offset :off
+";
+$stmt = $conn->prepare($data_sql);
+
+foreach ($params as $key => $val) {
+    $stmt->bindValue($key, $val, PDO::PARAM_STR);
 }
+$stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
+$stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+$stmt->execute();
 
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$has_search = !empty($keyword);
+$has_filter = !empty($category_id);
 
 ?>
 
@@ -95,9 +115,16 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Tangier Vibes</title>
-    
-  
+    <title>Explore Tangier - Tangier Vibes</title>
+    <meta name="description" content="Browse all published places in Tangier. Filter by category and discover beaches, restaurants, culture, and more.">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/logo.png">
+    <meta property="og:title" content="Explore Tangier - Tangier Vibes">
+    <meta property="og:description" content="Browse all published places in Tangier. Filter by category and discover beaches, restaurants, culture, and more.">
+    <meta property="og:image" content="../assets/images/logo.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tanger.lovestoblog.com/explore.php">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
    
@@ -129,15 +156,25 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             </section>
 
+            <?php if ($has_search): ?>
+                <div class="search_results_info">
+                    <?php if ($total_records > 0): ?>
+                        <p>Showing <?= $total_records; ?> result<?= $total_records !== 1 ? 's' : ''; ?> for "<strong><?= htmlspecialchars($keyword); ?></strong>"</p>
+                    <?php else: ?>
+                        <p>No results found for "<strong><?= htmlspecialchars($keyword); ?></strong>"</p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
             <!-- filters -->
            <section class="explore_filters">
-                <a href="explore.php" class="<?= empty($category_id) ? 'active' : ''; ?>">
+                <a href="explore.php<?= $has_search ? '?q=' . urlencode($keyword) : ''; ?>" class="<?= empty($category_id) ? 'active' : ''; ?>">
                     All
                 </a>
 
                 <?php foreach ($categories as $category): ?>
                     <a 
-                        href="explore.php?category=<?= $category['id_category']; ?>"
+                        href="explore.php?category=<?= $category['id_category']; ?><?= $has_search ? '&q=' . urlencode($keyword) : ''; ?>"
                         class="<?= $category_id == $category['id_category'] ? 'active' : ''; ?>"
                     >
                         <?= htmlspecialchars($category['cat_name']); ?>
@@ -183,6 +220,14 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </a>
 
                     <?php endforeach; ?>
+                <?php elseif ($has_search): ?>
+
+                    <div class="empty_state">
+                        <i class="fa-solid fa-search"></i>
+                        <h3>No results found</h3>
+                        <p>No places found matching "<strong><?= htmlspecialchars($keyword); ?></strong>".<br>Try another keyword or browse all destinations.</p>
+                    </div>
+
                 <?php else: ?>
 
                     <p class="description">No published places yet.</p>
