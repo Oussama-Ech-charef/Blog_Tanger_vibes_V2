@@ -37,7 +37,16 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tangier Vibes - Home</title>
+    <title>Tangier Vibes - Explore Tangier, Morocco</title>
+    <meta name="description" content="Discover the best of Tangier, Morocco. Beaches, restaurants, culture, hotels, and hidden gems curated by locals.">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/logo.png">
+    <meta property="og:title" content="Tangier Vibes - Explore Tangier, Morocco">
+    <meta property="og:description" content="Your ultimate guide to discovering the magic, culture, and coastal beauty of Tangier, Morocco.">
+    <meta property="og:image" content="../assets/images/logo.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tanger.lovestoblog.com/">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     
     <link rel="stylesheet" href="../assets/css/main.css">

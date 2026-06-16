@@ -45,8 +45,15 @@ if (!$post) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($post['title']) ?> - Tangier Vibes</title>
-    
-  
+    <meta name="description" content="<?= htmlspecialchars(substr(strip_tags($post['content']), 0, 150)) ?>">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/logo.png">
+    <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?> - Tangier Vibes">
+    <meta property="og:description" content="<?= htmlspecialchars(substr(strip_tags($post['content']), 0, 150)) ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($post['image'] ?? '../assets/images/logo.png') ?>">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://tanger.lovestoblog.com/detail.php?id=<?= $post['id_post'] ?>">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
    
@@ -66,7 +73,6 @@ if (!$post) {
         <div class="detail_category">
             <i class="fa-solid fa-layer-group"></i> TANGER / <span class="cat_name"><?= htmlspecialchars($post['cat_name']); ?></span>
         </div>
-
 
         <h1><?= htmlspecialchars($post['title']); ?></h1>
 
