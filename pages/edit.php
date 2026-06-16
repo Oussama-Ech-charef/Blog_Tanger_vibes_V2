@@ -139,6 +139,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Post - Tangier Vibes</title>
+    <meta name="description" content="Edit your post about a place, restaurant, beach, or experience in Tangier.">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/logo.png">
+    <meta property="og:title" content="Edit Post - Tangier Vibes">
+    <meta property="og:description" content="Edit your post about a place, restaurant, beach, or experience in Tangier.">
+    <meta property="og:image" content="../assets/images/logo.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/header.css">
@@ -216,7 +224,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form_group">
                         <label for="image">Image</label>
                         <input type="file" id="image" name="image" accept="image/*">
-
+                        <div class="image_preview" id="image_preview">
+                            <?php if (!empty($post['image'])): ?>
+                                <img src="<?= htmlspecialchars($post['image']); ?>" alt="Current image" loading="lazy">
+                            <?php endif; ?>
+                        </div>
                         <?php if (!empty($post['image'])): ?>
                             <p class="current_file">
                                 Current image: <?= htmlspecialchars($post['image']); ?>
@@ -240,5 +252,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 
 <script src="../assets/js/main.js"></script>
+<script>
+document.getElementById('image').addEventListener('change', function(e) {
+    var preview = document.getElementById('image_preview');
+    var file = e.target.files[0];
+    if (file) {
+        if (!file.type.startsWith('image/')) {
+            preview.innerHTML = '<p class="preview_error">Please select an image file.</p>';
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            preview.innerHTML = '<img src="' + ev.target.result + '" alt="Preview">';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
 </body>
 </html>

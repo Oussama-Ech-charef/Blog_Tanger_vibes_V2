@@ -2,7 +2,6 @@
 session_start();
 require '../config/connection.php';
 require_once '../includes/security.php';
-require_once '../includes/pagination.php';
 
 send_security_headers();
 
@@ -15,9 +14,6 @@ if (!isset($_SESSION['id_user'])) {
 $id_user = $_SESSION['id_user'];
 $user_name = $_SESSION['user_name'];
 $role = $_SESSION['role'];
-
-$per_page = 10;
-$page = get_valid_page();
 
 // count stats
 if ($role === 'admin') {
@@ -58,18 +54,7 @@ $published_posts = (int)$stats['published'];
 $rejected_posts = (int)$stats['rejected'];
 $draft_posts = (int)$stats['draft'];
 
-// paginate
-$total_pages = get_total_pages($total_posts, $per_page);
-$current_page = min($page, $total_pages);
-
-if ($current_page !== $page) {
-    header('Location: dashboard.php?page=' . $current_page);
-    exit();
-}
-
-$offset = get_offset($current_page, $per_page);
-
-// get paginated posts
+// get posts
 if ($role === 'admin') {
     $stmt = $conn->prepare("
         select posts.*, categories.cat_name, users.user_name
@@ -77,12 +62,9 @@ if ($role === 'admin') {
         inner join categories on posts.id_category = categories.id_category
         inner join users on posts.id_user = users.id_user
         where posts.status != 'draft' or posts.id_user = :id_user
-        order by posts.created_at desc
-        limit :lim offset :off
+        order by posts.updated_at desc, posts.created_at desc
     ");
     $stmt->bindValue(':id_user', $id_user, PDO::PARAM_INT);
-    $stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
-    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
     $stmt->execute();
 } else {
      $stmt = $conn->prepare("
@@ -90,12 +72,9 @@ if ($role === 'admin') {
         from posts
         inner join categories on posts.id_category = categories.id_category
         where posts.id_user = :id_user
-        order by posts.created_at desc
-        limit :lim offset :off
+        order by posts.updated_at desc, posts.created_at desc
     ");
     $stmt->bindValue(':id_user', $id_user, PDO::PARAM_INT);
-    $stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
-    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
     $stmt->execute();
 }
 
@@ -108,6 +87,14 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Tangier Vibes</title>
+    <meta name="description" content="Manage your posts, track publishing status, and moderate content from your Tangier Vibes dashboard.">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/logo.png">
+    <meta property="og:title" content="Dashboard - Tangier Vibes">
+    <meta property="og:description" content="Manage your posts, track publishing status, and moderate content from your Tangier Vibes dashboard.">
+    <meta property="og:image" content="../assets/images/logo.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/header.css">
@@ -285,7 +272,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             </div>
 
                                             <?php if (!empty($post['image'])): ?>
-                                                <img src="<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>">
+                                                <img src="<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy">
                                             <?php endif; ?>
 
                                             <div class="view_info">
@@ -333,8 +320,6 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </tbody>
                 </table>
             </div>
-
-            <?= render_pagination($current_page, $total_pages, []); ?>
         <?php else: ?>
             <p class="empty_text">No posts yet.</p>
         <?php endif; ?>

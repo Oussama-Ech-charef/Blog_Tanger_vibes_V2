@@ -82,7 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Tangier Vibes</title>
-
+    <meta name="description" content="Log in to your Tangier Vibes account to manage posts and explore Tangier.">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/logo.png">
+    <meta property="og:title" content="Login - Tangier Vibes">
+    <meta property="og:description" content="Log in to your Tangier Vibes account to manage posts and explore Tangier.">
+    <meta property="og:image" content="../assets/images/logo.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
@@ -95,8 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <section class="card">
 
             <a href="index.php" class="logo">
-                <i class="fa-solid fa-compass"></i>
-                Tangier <span>Vibes</span>
+                <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img" style="height:50px;width:auto;">
             </a>
 
             <h1>Login</h1>
