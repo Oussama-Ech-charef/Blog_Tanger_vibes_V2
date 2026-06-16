@@ -2,6 +2,7 @@
 session_start();
 require '../config/connection.php';
 require_once '../includes/security.php';
+require_once '../includes/pagination.php';
 
 send_security_headers();
 
@@ -15,7 +16,60 @@ $id_user = $_SESSION['id_user'];
 $user_name = $_SESSION['user_name'];
 $role = $_SESSION['role'];
 
-// get posts
+$per_page = 10;
+$page = get_valid_page();
+
+// count stats
+if ($role === 'admin') {
+    $count_stmt = $conn->prepare("
+        select
+            count(*) as total,
+            sum(case when status = 'pending' then 1 else 0 end) as pending,
+            sum(case when status = 'published' then 1 else 0 end) as published,
+            sum(case when status = 'rejected' then 1 else 0 end) as rejected,
+            sum(case when status = 'draft' and id_user = :id_user then 1 else 0 end) as draft
+        from posts
+        where status != 'draft' or id_user = :id_user2
+    ");
+    $count_stmt->execute([
+        ':id_user' => $id_user,
+        ':id_user2' => $id_user
+    ]);
+} else {
+    $count_stmt = $conn->prepare("
+        select
+            count(*) as total,
+            sum(case when status = 'pending' then 1 else 0 end) as pending,
+            sum(case when status = 'published' then 1 else 0 end) as published,
+            sum(case when status = 'rejected' then 1 else 0 end) as rejected,
+            sum(case when status = 'draft' then 1 else 0 end) as draft
+        from posts
+        where id_user = :id_user
+    ");
+    $count_stmt->execute([
+        ':id_user' => $id_user
+    ]);
+}
+
+$stats = $count_stmt->fetch(PDO::FETCH_ASSOC);
+$total_posts = (int)$stats['total'];
+$pending_posts = (int)$stats['pending'];
+$published_posts = (int)$stats['published'];
+$rejected_posts = (int)$stats['rejected'];
+$draft_posts = (int)$stats['draft'];
+
+// paginate
+$total_pages = get_total_pages($total_posts, $per_page);
+$current_page = min($page, $total_pages);
+
+if ($current_page !== $page) {
+    header('Location: dashboard.php?page=' . $current_page);
+    exit();
+}
+
+$offset = get_offset($current_page, $per_page);
+
+// get paginated posts
 if ($role === 'admin') {
     $stmt = $conn->prepare("
         select posts.*, categories.cat_name, users.user_name
@@ -24,10 +78,12 @@ if ($role === 'admin') {
         inner join users on posts.id_user = users.id_user
         where posts.status != 'draft' or posts.id_user = :id_user
         order by posts.created_at desc
+        limit :lim offset :off
     ");
-    $stmt->execute([
-        ':id_user' => $id_user
-    ]);
+    $stmt->bindValue(':id_user', $id_user, PDO::PARAM_INT);
+    $stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
+    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+    $stmt->execute();
 } else {
      $stmt = $conn->prepare("
         select posts.*, categories.cat_name
@@ -35,38 +91,15 @@ if ($role === 'admin') {
         inner join categories on posts.id_category = categories.id_category
         where posts.id_user = :id_user
         order by posts.created_at desc
+        limit :lim offset :off
     ");
-    $stmt->execute([
-        ':id_user' => $id_user
-    ]);
+    $stmt->bindValue(':id_user', $id_user, PDO::PARAM_INT);
+    $stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
+    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+    $stmt->execute();
 }
 
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// count posts
-$total_posts = count($posts);
-$pending_posts = 0;
-$published_posts = 0;
-$rejected_posts = 0;
-$draft_posts = 0;
-
-foreach ($posts as $post) {
-    if ($post['status'] === 'pending') {
-        $pending_posts++;
-    }
-
-    if ($post['status'] === 'published') {
-        $published_posts++;
-    }
-
-    if ($post['status'] === 'rejected') {
-        $rejected_posts++;
-    }
-
-    if ($post['status'] === 'draft') {
-        $draft_posts++;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -300,6 +333,8 @@ foreach ($posts as $post) {
                     </tbody>
                 </table>
             </div>
+
+            <?= render_pagination($current_page, $total_pages, []); ?>
         <?php else: ?>
             <p class="empty_text">No posts yet.</p>
         <?php endif; ?>
