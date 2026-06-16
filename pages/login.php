@@ -1,53 +1,76 @@
-
 <?php
 
 session_start();
 
-if(isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit();
-}
+require '../config/connection.php';
+require_once '../includes/security.php';
 
+send_security_headers();
 
+$error = "";
 
+// success message from register
+$success = $_SESSION['success'] ?? "";
 
-require '../config/db_connection.php';
-require '../includes/users.php';
+unset($_SESSION['success']);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$database = new Database();
-$db = $database->getConnection();
-
-$user = new User($db);
-
-
-$error = '';
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
-
-    $loggedInUser = $user->login($email, $password);
-
-    if ($loggedInUser) {
-        $_SESSION['user_id']   = $loggedInUser['id'];
-        $_SESSION['full_name']   = $loggedInUser['full_name'];
-        $_SESSION['role']   = $loggedInUser['role'];
-
-
-
-        header("Location: index.php");
-        exit();
-    }else{
-        $error = "Invalid email or password.";
+    // validate CSRF token
+    $csrf_token = $_POST['csrf_token'] ?? '';
+    if (!validate_csrf_token($csrf_token)) {
+        $error = "Invalid request. Please try again.";
     }
 
+    // get form values
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
+    // validation
+    if (empty($error)) {
+        if (empty($email) || empty($password)) {
 
+            $error = "All fields are required.";
+
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+            $error = "Invalid email format.";
+
+        } else {
+
+            // get user
+            $stmt = $conn->prepare("select * from users where email = :email");
+            $stmt->execute([
+                ':email' => $email
+            ]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // check password
+            if ($user && password_verify($password, $user['password'])) {
+                session_regenerate_id(true);
+
+                // create session
+                $_SESSION['id_user'] = $user['id_user'];
+                $_SESSION['user_name'] = $user['user_name'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['last_activity'] = time();
+
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                $error = "Email or password is incorrect.";
+            }
+        }
+    }
 }
 
+
+
 ?>
+
+
+
+
 
 
 
@@ -59,67 +82,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Tangier Vibes</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/register_login.css">
+    <link rel="stylesheet" href="../assets/css/auth.css">
 </head>
 <body>
-    
-<header class="site_header">
 
+    <main class="login_and_register">
 
-
-    <nav class="header_nav">
-
+        <!-- login card -->
+        <section class="card">
 
             <a href="index.php" class="logo">
-                <div class="logo_icon">
-                    <i class="fa-solid fa-compass"></i>
-                </div>
-
-                <span class="logo_text">Tangier <span class="highlight">Vibes</span></span>
+                <i class="fa-solid fa-compass"></i>
+                Tangier <span>Vibes</span>
             </a>
-    </nav>
-            
-</header>
+
+            <h1>Login</h1>
+
+            <p>Welcome back to Tangier Vibes.</p>
+
+                    <!-- messages -->
+                    <?php if (!empty($success)): ?>
+                        <p class="success_message"><?= $success; ?></p>
+                    <?php endif; ?>
 
 
-    <div class="auth_container">
-        <div class="auth_card">
-            <div class="auth_header">
-                <h1 class="auth_title">Welcome Back</h1>
-                <p class="auth_subtitle">Sign in to continue exploring Tangier.</p>
-            </div>
+                    <?php if (!empty($error)): ?>
+                        <p class="error_message"><?= $error; ?></p>
+                    <?php endif; ?>
 
-         
-           <?php if($error): ?>
-                <div class="auth_error">
-                    <i class="fa-solid fa-circle-exclamation"></i> <?= htmlspecialchars($error) ?>
+
+            <!-- login form -->
+            <form action="#" method="POST">
+                <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" value="<?= htmlspecialchars($email ?? '') ?>" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Your password" required>
+
+                <div class="options">
+                    <label>
+                        <input type="checkbox" name="remember">
+                        Remember me
+                    </label>
+                    <a href="#">Forgot password?</a>
                 </div>
-           <?php endif; ?>
-          
 
-            <form action="login.php" method="POST" class="auth_form">
-                <div class="auth_input_group">
-                    <input type="email" name="email" class="auth_input" placeholder="Email Address" required>
-                    <i class="fa-regular fa-envelope"></i>
-                </div>
-
-                <div class="auth_input_group">
-                    <input type="password" name="password" class="auth_input" placeholder="Password" required>
-                    <i class="fa-solid fa-lock"></i>
-                </div>
-
-                <button type="submit" class="auth_btn">Sign In</button>
+                <button type="submit" class="btn">Login</button>
             </form>
 
-            <div class="auth_footer">
-                Don't have an account yet? <a href="register.php" class="auth_link">Sign up</a>
-            </div>
-        </div>
-    </div>
 
-    <script src="../assets/js/main.js"></script>
+            <p class="switch">Don't have an account? <a href="register.php">Register</a></p>
+
+        </section>
+
+    </main>
+
 </body>
 </html>
