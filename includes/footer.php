@@ -1,10 +1,12 @@
 
-<footer class="site_footer">
+
+<footer class="footer">
+
     <div class="footer_top">
         
-        <!-- Brand Section -->
-        <div class="footer_about">
-            <a href="index.php" class="logo footer_logo">
+        <!-- logo -->
+        <div class="footer_logo">
+            <a href="../pages/index.php" class="logo">
                 <div class="logo_icon"><i class="fa-solid fa-compass"></i></div>
                 <span class="logo_text">Tangier <span class="highlight">Vibes</span></span>
             </a>
@@ -14,18 +16,19 @@
             </p>
         </div>
 
-        <!-- Navigation Columns -->
-        <div class="footer_col">
-            <h4 class="footer_col_title">Quick Links</h4>
+        <!-- links -->
+        <div class="footer_links">
+            <h4 class="title">Quick Links</h4>
             <ul class="footer_links">
-                <li><a href="../index.php" class="footer_link">Home</a></li>
-                <li><a href="#" class="footer_link">Top Places</a></li>
+                <li><a href="../pages/index.php" class="footer_link">Home</a></li>
                 <li><a href="../pages/explore.php" class="footer_link">Explore</a></li>
             </ul>
         </div>
+
+        <!-- categories -->
    
-        <div class="footer_col">
-            <h4 class="footer_col_title">Categories</h4>
+        <div class="footer_category">
+            <h4 class="title">Categories</h4>
             <ul class="footer_links">
                 <li><a href="#" class="footer_link">Restaurants</a></li>
                 <li><a href="#" class="footer_link">Beaches</a></li>
@@ -33,10 +36,10 @@
             </ul>
         </div>
 
-        <!-- Social Connect -->
-        <div class="footer_col">
-            <h4 class="footer_col_title">Follow Us</h4>
-            <div class="footer_socials">
+        <!-- social -->
+        <div class="footer_socials">
+            <h4 class="title">Follow Us</h4>
+            <div class="footer_icons">
                 <a href="#" class="social_icon" title="Facebook">
                     <i class="fa-brands fa-facebook-f"></i>
                 </a>
@@ -51,10 +54,12 @@
 
     </div>
 
-    <!-- Bottom Copyright Bar -->
+     <!-- copyright -->
     <div class="footer_bottom">
         <p class="footer_copy">
-            &copy; <?= date('Y') ?> TangierVibes. Created with passion for Tangier.
+            &copy; 2026 TangierVibes. Created with passion for Tangier.
         </p>
     </div>
+
+
 </footer>
