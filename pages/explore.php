@@ -2,11 +2,48 @@
 session_start();
 require '../config/connection.php';
 require_once '../includes/security.php';
+require_once '../includes/pagination.php';
 
 send_security_headers();
 
-
+$per_page = 6;
+$page = get_valid_page();
 $category_id = $_GET['category'] ?? null;
+
+// Count first to validate pages before fetching
+if (!empty($category_id)) {
+    $count_stmt = $conn->prepare("
+        select count(*) from posts
+        where status = 'published'
+        and id_category = :category_id
+    ");
+    $count_stmt->execute([':category_id' => $category_id]);
+    $total_records = (int)$count_stmt->fetchColumn();
+    $query_params = ['category' => $category_id];
+} else {
+    $count_stmt = $conn->prepare("
+        select count(*) from posts
+        where status = 'published'
+    ");
+    $count_stmt->execute();
+    $total_records = (int)$count_stmt->fetchColumn();
+    $query_params = [];
+}
+
+$total_pages = get_total_pages($total_records, $per_page);
+$current_page = min($page, $total_pages);
+
+// Redirect if page was invalid
+if ($current_page !== $page) {
+    if (!empty($category_id)) {
+        header('Location: explore.php?category=' . urlencode($category_id) . '&page=' . $current_page);
+    } else {
+        header('Location: explore.php?page=' . $current_page);
+    }
+    exit();
+}
+
+$offset = get_offset($current_page, $per_page);
 
 $stmt = $conn->prepare("select * from categories order by cat_name asc");
 $stmt->execute();
@@ -21,11 +58,12 @@ if (!empty($category_id)) {
         where posts.status = 'published'
         and posts.id_category = :category_id
         order by posts.created_at desc
+        limit :lim offset :off
     ");
-
-    $stmt->execute([
-        ':category_id' => $category_id
-    ]);
+    $stmt->bindValue(':category_id', $category_id, PDO::PARAM_INT);
+    $stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
+    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+    $stmt->execute();
 } else {
     $stmt = $conn->prepare("
         select posts.*, categories.cat_name, users.user_name
@@ -34,8 +72,10 @@ if (!empty($category_id)) {
         inner join users on posts.id_user = users.id_user
         where posts.status = 'published'
         order by posts.created_at desc
+        limit :lim offset :off
     ");
-
+    $stmt->bindValue(':lim', $per_page, PDO::PARAM_INT);
+    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
     $stmt->execute();
 }
 
@@ -151,6 +191,8 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
             </section>
+
+            <?= render_pagination($current_page, $total_pages, $query_params); ?>
 
         </main>
         
