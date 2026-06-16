@@ -1,0 +1,53 @@
+/* reject box */
+.reject_box {
+    border: 1px solid var(--color_border);
+    border-radius: 8px;
+    padding: 22px;
+    background: #fff;
+    box-shadow: var(--card_shadow);
+}
+
+/* reject form */
+.reject_form {
+    display: grid;
+    gap: 12px;
+}
+
+.reject_form label {
+    color: var(--color_dark);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.reject_form textarea {
+    width: 100%;
+    min-height: 170px;
+    border: 1px solid var(--color_border);
+    border-radius: 8px;
+    padding: 13px 14px;
+    color: var(--color_dark);
+    font: inherit;
+    resize: vertical;
+    outline: none;
+}
+
+.reject_form textarea:focus {
+    border-color: var(--color_primary);
+}
+
+/* button */
+.reject_form button {
+    justify-self: start;
+    border: 0;
+    cursor: pointer;
+}
+
+/* error */
+.error_message {
+    margin-bottom: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-weight: 700;
+}
