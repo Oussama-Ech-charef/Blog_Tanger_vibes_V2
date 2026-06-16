@@ -1,0 +1,255 @@
+/* page */
+.detail_container {
+    width: min(900px, calc(100% - 32px));
+    margin: 90px auto 48px;
+}
+
+/* category */
+.detail_category {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    color: var(--color_gray);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.detail_category i,
+.cat_name {
+    color: var(--color_primary);
+}
+
+/* title */
+.detail_container h1 {
+    max-width: 760px;
+    margin-bottom: 16px;
+    color: var(--color_dark);
+    font-size: 42px;
+    line-height: 1.15;
+    font-weight: 800;
+}
+
+/* info */
+.icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    margin-bottom: 28px;
+    color: var(--color_gray);
+    font-size: 14px;
+}
+
+.icons span,
+.comment_header span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.icons i,
+.social i,
+.comment_header i {
+    color: var(--color_primary);
+}
+
+/* image */
+.detail_container > img {
+    display: block;
+    width: 100%;
+    height: 460px;
+    margin-bottom: 28px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: var(--card_shadow);
+}
+
+/* content */
+.content {
+    margin-bottom: 26px;
+}
+
+.content p {
+    color: var(--color_dark);
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+/* share */
+.social {
+    margin-bottom: 30px;
+    padding: 16px;
+    border: 1px solid var(--color_border);
+    border-radius: 8px;
+    color: var(--color_gray);
+    font-size: 15px;
+}
+
+.social a {
+    margin: 0 6px;
+    color: var(--color_primary);
+    font-weight: 600;
+}
+
+/* map */
+.map_box {
+    margin-bottom: 34px;
+    overflow: hidden;
+    border: 1px solid var(--color_border);
+    border-radius: 8px;
+}
+
+.map_box iframe {
+    display: block;
+}
+
+/* comments */
+.comments_posts,
+.comment_form {
+    margin-top: 30px;
+}
+
+.comment_title {
+    margin-bottom: 18px;
+    color: var(--color_dark);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.comment_title span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    margin-left: 8px;
+    border-radius: 50%;
+    background-color: var(--color_primary);
+    color: var(--bg_color);
+    font-size: 14px;
+}
+
+.comments_list {
+    display: grid;
+    gap: 14px;
+}
+
+.comment_item {
+    padding: 18px;
+    border: 1px solid var(--color_border);
+    border-radius: 8px;
+    background-color: var(--bg_color);
+    box-shadow: var(--card_shadow);
+}
+
+.comment_header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: var(--color_gray);
+    font-size: 14px;
+}
+
+.comment_name {
+    color: var(--color_dark);
+    font-weight: 700;
+}
+
+.comment_text {
+    color: var(--color_gray);
+    line-height: 1.7;
+}
+
+.comment_form {
+    padding: 22px;
+    border: 1px solid var(--color_border);
+    border-radius: 8px;
+    background-color: var(--color_light);
+}
+
+.comment_form form {
+    display: grid;
+    gap: 16px;
+}
+
+.form_name,
+.form_desc {
+    display: grid;
+    gap: 8px;
+}
+
+.comment_form label {
+    color: var(--color_dark);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.comment_form input,
+.comment_form textarea {
+    width: 100%;
+    border: 1px solid var(--color_border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--color_dark);
+    font: inherit;
+    outline: none;
+}
+
+.comment_form textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.comment_form input:focus,
+.comment_form textarea:focus {
+    border-color: var(--color_primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.comment_form button {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 18px;
+    background-color: var(--color_primary);
+    color: var(--bg_color);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.comment_form button:hover {
+    background-color: var(--color_dark);
+}
+
+/* mobile */
+@media (max-width: 700px) {
+    .detail_container {
+        width: min(100% - 24px, 900px);
+        margin: 60px auto;
+    }
+
+    .detail_container h1 {
+        font-size: 30px;
+    }
+
+    .detail_container > img {
+        height: 280px;
+    }
+
+    .content p {
+        font-size: 16px;
+    }
+
+    .comment_form {
+        padding: 18px;
+    }
+}
