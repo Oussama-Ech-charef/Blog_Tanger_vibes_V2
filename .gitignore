@@ -1,5 +1,9 @@
-jj
-
-home_hero.png
-
-sql
+assets/uploads/
+assets/images/home_original.jpg
+.env
+*.local.php
+config/*.local.php
+*.log
+.DS_Store
+Thumbs.db
+project_reports/
