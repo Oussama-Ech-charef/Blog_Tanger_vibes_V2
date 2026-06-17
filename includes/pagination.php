@@ -25,11 +25,11 @@ function render_pagination($current_page, $total_pages, $query_params = []) {
         $params = $query_params;
         $params['page'] = $current_page - 1;
         $html .= '<a href="?' . http_build_query($params) . '" class="page_btn prev">
-            <i class="fa-solid fa-chevron-left"></i> Prev
+            <i class="fa-solid fa-chevron-left"></i> ' . __('pagination_prev') . '
         </a>';
     } else {
         $html .= '<span class="page_btn prev disabled">
-            <i class="fa-solid fa-chevron-left"></i> Prev
+            <i class="fa-solid fa-chevron-left"></i> ' . __('pagination_prev') . '
         </span>';
     }
 
@@ -67,11 +67,11 @@ function render_pagination($current_page, $total_pages, $query_params = []) {
         $params = $query_params;
         $params['page'] = $current_page + 1;
         $html .= '<a href="?' . http_build_query($params) . '" class="page_btn next">
-            Next <i class="fa-solid fa-chevron-right"></i>
+            ' . __('pagination_next') . ' <i class="fa-solid fa-chevron-right"></i>
         </a>';
     } else {
         $html .= '<span class="page_btn next disabled">
-            Next <i class="fa-solid fa-chevron-right"></i>
+            ' . __('pagination_next') . ' <i class="fa-solid fa-chevron-right"></i>
         </span>';
     }
 
