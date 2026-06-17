@@ -1,0 +1,99 @@
+/* ===== Shared Components ===== */
+
+/* Alerts */
+.error_message,
+.alert_error {
+    margin-bottom: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #ffebee;
+    color: #c62828;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.success_message,
+.alert_success {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    background: #f0fdf4;
+    color: #15803d;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Shared form label + focus ring */
+form label {
+    color: var(--color_dark);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color_primary) !important;
+    box-shadow: 0 0 0 3px rgba(15, 111, 152, 0.15) !important;
+    outline: none;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+}
+
+.page_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 40px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--color_border);
+    background: var(--bg_color);
+    color: var(--color_gray);
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.page_btn:hover {
+    border-color: var(--color_primary);
+    background: var(--color_primary);
+    color: var(--bg_color);
+}
+
+.page_btn.active {
+    border-color: var(--color_primary);
+    background: var(--color_primary);
+    color: var(--bg_color);
+}
+
+.page_btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.page_btn.dots {
+    border: none;
+    min-width: auto;
+    padding: 10px 4px;
+    background: transparent;
+    cursor: default;
+    color: var(--color_gray);
+}
+
+.page_btn.prev,
+.page_btn.next {
+    min-width: auto;
+}

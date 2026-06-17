@@ -49,38 +49,11 @@ p {
     line-height: 1.6;
 }
 
-/* messages */
-.error_message{
-    background: #ffebee;
-    color: #c62828;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-
-.success_message {
-    margin-bottom: 18px;
-    padding: 12px 14px;
-    border: 1px solid #bbf7d0;
-    border-radius: 8px;
-    background: #f0fdf4;
-    color: #15803d;
-    font-size: 14px;
-    font-weight: 600;
-}
-
 /* form */
 form {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-form label {
-    color: var(--color_dark);
-    font-size: 14px;
-    font-weight: 700;
 }
 
 form input {
@@ -92,11 +65,6 @@ form input {
     color: var(--color_dark);
     font: inherit;
     outline: none;
-}
-
-form input:focus {
-    border-color: var(--color_primary);
-    box-shadow: 0 0 0 3px rgba(15, 111, 152, 0.15);
 }
 
 /* options */
