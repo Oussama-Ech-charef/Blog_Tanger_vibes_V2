@@ -152,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/add_post.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
 </head>
 <body>
 
@@ -252,22 +253,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 
 <script src="../assets/js/main.js"></script>
-<script>
-document.getElementById('image').addEventListener('change', function(e) {
-    var preview = document.getElementById('image_preview');
-    var file = e.target.files[0];
-    if (file) {
-        if (!file.type.startsWith('image/')) {
-            preview.innerHTML = '<p class="preview_error">Please select an image file.</p>';
-            return;
-        }
-        var reader = new FileReader();
-        reader.onload = function(ev) {
-            preview.innerHTML = '<img src="' + ev.target.result + '" alt="Preview">';
-        };
-        reader.readAsDataURL(file);
-    }
-});
-</script>
+<script src="../assets/js/add_post.js"></script>
 </body>
 </html>
