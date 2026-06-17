@@ -1,0 +1,90 @@
+/* ─── RTL Overrides ──────────────────────────────────────────────── */
+/* Activated when <html dir="rtl"> is set (Arabic language selected) */
+
+/* ── Language dropdown RTL ──────────────────────────────────────────── */
+
+[dir="rtl"] .lang_menu {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+}
+
+[dir="rtl"] .mobile_switcher .lang_option,
+[dir="rtl"] .lang_option {
+    text-align: right;
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+
+/* search input — swap padding so text doesn't hit the icon */
+[dir="rtl"] .search_desktop_form input {
+    padding-right: 0;
+    padding-left: 4px;
+}
+
+/* mobile menu — slide from left instead of right */
+[dir="rtl"] .header_nav_mobile {
+    right: auto;
+    left: -100%;
+    transition: left 0.3s ease;
+}
+
+[dir="rtl"] .header_nav_mobile.open {
+    left: 0;
+    right: auto;
+}
+
+/* close button — align to the right in RTL */
+[dir="rtl"] .mobile_menu_header {
+    justify-content: flex-start;
+}
+
+/* ── Detail ──────────────────────────────────────────────────────── */
+
+/* comment count badge — spacing on the correct side */
+[dir="rtl"] .comment_title span {
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+/* ── Dashboard ───────────────────────────────────────────────────── */
+
+/* table text — left-aligned by default, use start in RTL */
+[dir="rtl"] table {
+    text-align: right;
+}
+
+/* ── Contact ─────────────────────────────────────────────────────── */
+
+/* FAQ button — left-aligned by default, use start in RTL */
+[dir="rtl"] .faq_question {
+    text-align: right;
+}
+
+/* ── Auth ────────────────────────────────────────────────────────── */
+
+/* form options — keep natural RTL flow */
+[dir="rtl"] .options {
+    flex-direction: row;
+}
+
+/* ── Directional icons — flip arrows in RTL ──────────────────────── */
+
+[dir="rtl"] .fa-arrow-right,
+[dir="rtl"] .fa-arrow-left,
+[dir="rtl"] .fa-arrow-right-long,
+[dir="rtl"] .fa-arrow-left-long,
+[dir="rtl"] .fa-chevron-right,
+[dir="rtl"] .fa-chevron-left,
+[dir="rtl"] .fa-angle-right,
+[dir="rtl"] .fa-angle-left {
+    transform: scaleX(-1);
+}
+
+/* ── Arabic font tweak ───────────────────────────────────────────── */
+
+[dir="rtl"] body,
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] button {
+    font-family: 'Inter', 'Tajawal', sans-serif;
+}
