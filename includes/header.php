@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/lang.php';
 
 check_session_timeout();
 
@@ -22,17 +23,17 @@ get_csrf_token();
                      <!-- links  desktop-->
 
                     <ul class="nav_links desktop">
-                        <li><a href="../pages/index.php" class="nav_link">Home</a></li>
-                        <li><a href="../pages/explore.php" class="nav_link">Explore</a></li>
-                        <li><a href="../pages/about.php" class="nav_link">About</a></li>
-                        <li><a href="../pages/contact.php" class="nav_link">Contact</a></li>
+                        <li><a href="../pages/index.php" class="nav_link"><?= __('nav_home') ?></a></li>
+                        <li><a href="../pages/explore.php" class="nav_link"><?= __('nav_explore') ?></a></li>
+                        <li><a href="../pages/about.php" class="nav_link"><?= __('nav_about') ?></a></li>
+                        <li><a href="../pages/contact.php" class="nav_link"><?= __('nav_contact') ?></a></li>
                     </ul>
 
                     <!-- search desktop -->
                     <div class="search_desktop">
                         <form action="../pages/explore.php" method="GET" class="search_desktop_form">
                             <i class="fa-solid fa-magnifying-glass search_icon"></i>
-                            <input type="text" name="q" placeholder="Search..." value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
+                            <input type="text" name="q" placeholder="<?= __('search_placeholder') ?>" value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
                             <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
                                 <a href="../pages/explore.php" class="search_clear_icon"><i class="fa-solid fa-xmark"></i></a>
                             <?php endif; ?>
@@ -44,22 +45,33 @@ get_csrf_token();
                     <!-- auth links -->
                     <div class="auth_actions_desktop">
 
-
                             <?php if (isset($_SESSION['id_user'])): ?>
 
                             <div class="dashboard_logout">
-                                <a href="../pages/dashboard.php" class="dashboard">Dashboard</a>
-                                <a href="../pages/logout.php" class="logout">Logout</a>
+                                <a href="../pages/dashboard.php" class="dashboard"><?= __('auth_dashboard') ?></a>
+                                <a href="../pages/logout.php" class="logout"><?= __('auth_logout') ?></a>
                             </div>
                             <?php else: ?>
 
-                            <div class="login_register">
-                                <a href="../pages/login.php" class="login_link">Login</a>
-                                <a href="../pages/register.php" class="register_link ">Register</a>
-                            </div>
+                            <a href="#" class="join_btn" data-auth-toggle><?= __('auth_join') ?></a>
 
                             <?php endif; ?>
                     </div>
+
+                    <!-- language switcher desktop -->
+                    <div class="lang_dropdown desktop_switcher">
+                        <button class="lang_trigger" aria-label="Select language" data-lang-dropdown>
+                            <i class="fa-solid fa-globe lang_globe"></i>
+                            <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
+                            <i class="fa-solid fa-chevron-down lang_chevron"></i>
+                        </button>
+                        <div class="lang_menu">
+                            <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en">English</a>
+                            <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr">Français</a>
+                            <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar">العربية</a>
+                        </div>
+                    </div>
+
                         <!-- menu open  -->
                     <div class="menu">
                         <button class="menu_btn" id="menu_btn">
@@ -87,7 +99,7 @@ get_csrf_token();
                     <div class="search_mobile">
                         <form action="../pages/explore.php" method="GET" class="search_mobile_form">
                             <i class="fa-solid fa-magnifying-glass search_icon"></i>
-                            <input type="text" name="q" placeholder="Search..." value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
+                            <input type="text" name="q" placeholder="<?= __('search_placeholder') ?>" value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
                             <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
                                 <a href="../pages/explore.php" class="search_clear_icon"><i class="fa-solid fa-xmark"></i></a>
                             <?php endif; ?>
@@ -100,10 +112,10 @@ get_csrf_token();
                      <!-- links mobile -->
 
                     <ul class="nav_links mobile">
-                        <li><a href="../pages/index.php" class="nav_link">Home</a></li>
-                        <li><a href="../pages/explore.php" class="nav_link">Explore</a></li>
-                        <li><a href="../pages/about.php" class="nav_link">About</a></li>
-                        <li><a href="../pages/contact.php" class="nav_link">Contact</a></li>
+                        <li><a href="../pages/index.php" class="nav_link"><?= __('nav_home') ?></a></li>
+                        <li><a href="../pages/explore.php" class="nav_link"><?= __('nav_explore') ?></a></li>
+                        <li><a href="../pages/about.php" class="nav_link"><?= __('nav_about') ?></a></li>
+                        <li><a href="../pages/contact.php" class="nav_link"><?= __('nav_contact') ?></a></li>
                     </ul>
 
 
@@ -115,22 +127,30 @@ get_csrf_token();
                             <?php if (isset($_SESSION['id_user'])): ?>
 
                             <div class="dashboard_logout">
-                                <a href="../pages/dashboard.php" class="dashboard">Dashboard</a>
-                                <a href="../pages/logout.php" class="logout">Logout</a>
+                                <a href="../pages/dashboard.php" class="dashboard"><?= __('auth_dashboard') ?></a>
+                                <a href="../pages/logout.php" class="logout"><?= __('auth_logout') ?></a>
                             </div>
                             <?php else: ?>
 
+                            <a href="#" class="join_btn" data-auth-toggle><?= __('auth_join') ?></a>
 
-                            <div class="login_register">
-                                <a href="../pages/login.php" class="login_link">Login</a>
-                                <a href="../pages/register.php" class="register_link ">Register</a>
-                            </div>
                             <?php endif; ?>
-                           
+                            
                     </div>
 
-
-                    
+                    <!-- language switcher mobile -->
+                    <div class="lang_dropdown mobile_switcher">
+                        <button class="lang_trigger" aria-label="Select language" data-lang-dropdown>
+                            <i class="fa-solid fa-globe lang_globe"></i>
+                            <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
+                            <i class="fa-solid fa-chevron-down lang_chevron"></i>
+                        </button>
+                        <div class="lang_menu">
+                            <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en">English</a>
+                            <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr">Français</a>
+                            <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar">العربية</a>
+                        </div>
+                    </div>
 
 
         </div>

@@ -15,4 +15,31 @@ document.addEventListener('DOMContentLoaded', function() {
             mobileNav.classList.remove('open');
         });
     }
+
+    // language dropdown toggle
+    const triggers = document.querySelectorAll('[data-lang-dropdown]');
+
+    triggers.forEach(function(trigger) {
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = trigger.closest('.lang_dropdown');
+            const isOpen = dropdown.classList.contains('open');
+
+            // close all other dropdowns
+            document.querySelectorAll('.lang_dropdown.open').forEach(function(d) {
+                d.classList.remove('open');
+            });
+
+            if (!isOpen) {
+                dropdown.classList.add('open');
+            }
+        });
+    });
+
+    // close dropdown when clicking outside
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.lang_dropdown.open').forEach(function(d) {
+            d.classList.remove('open');
+        });
+    });
 });
