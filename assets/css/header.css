@@ -18,10 +18,10 @@
     margin: 0 auto;
     padding: 0 32px;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    gap: 32px;
+    gap: 24px;
     min-height: 60px;
 }
 
@@ -33,6 +33,7 @@
     font-weight: 700;
     font-size: 25px;
     color: var(--color_dark);
+    flex-shrink: 0;
 }
 
 .logo_icon {
@@ -56,6 +57,7 @@
     gap: 28px;
     margin: 0;
     padding: 0;
+    flex-shrink: 0;
 }
 
 .nav_link {
@@ -69,10 +71,13 @@
 }
 
 
-
 /* desktop search */
 
-
+.search_desktop {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 320px;
+}
 
 .search_desktop_form {
     display: flex;
@@ -104,7 +109,9 @@
     background: transparent;
     font-size: 0.9rem;
     outline: none;
-    width: 200px;
+    flex: 1;
+    min-width: 80px;
+    width: auto;
     font-family: var(--font_main);
     padding-right: 4px;
 }
@@ -126,6 +133,7 @@
 .auth_actions_desktop {
     display: flex;
     gap: 12px;
+    flex-shrink: 0;
 }
 
 
@@ -317,10 +325,30 @@
 
 
 
+/* tablet: tighten spacing before mobile switch */
+@media (max-width: 1050px) {
+    .header_nav_desktop {
+        gap: 14px;
+        padding: 0 20px;
+    }
+
+    .nav_links.desktop {
+        gap: 16px;
+    }
+
+    .search_desktop {
+        max-width: 220px;
+    }
+
+    .search_desktop_form {
+        padding: 6px 12px;
+    }
+}
+
 @media (max-width: 900px) {
 
    
-  
+   
     .nav_links.desktop,
     .search_desktop,
     .auth_actions_desktop {

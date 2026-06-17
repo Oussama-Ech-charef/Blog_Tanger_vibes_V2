@@ -24,6 +24,8 @@ get_csrf_token();
                     <ul class="nav_links desktop">
                         <li><a href="../pages/index.php" class="nav_link">Home</a></li>
                         <li><a href="../pages/explore.php" class="nav_link">Explore</a></li>
+                        <li><a href="../pages/about.php" class="nav_link">About</a></li>
+                        <li><a href="../pages/contact.php" class="nav_link">Contact</a></li>
                     </ul>
 
                     <!-- search desktop -->
@@ -85,7 +87,7 @@ get_csrf_token();
                     <div class="search_mobile">
                         <form action="../pages/explore.php" method="GET" class="search_mobile_form">
                             <i class="fa-solid fa-magnifying-glass search_icon"></i>
-                            <input type="text" name="q" placeholder="Search places, restaurants, beaches..." value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
+                            <input type="text" name="q" placeholder="Search..." value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
                             <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
                                 <a href="../pages/explore.php" class="search_clear_icon"><i class="fa-solid fa-xmark"></i></a>
                             <?php endif; ?>
@@ -100,6 +102,8 @@ get_csrf_token();
                     <ul class="nav_links mobile">
                         <li><a href="../pages/index.php" class="nav_link">Home</a></li>
                         <li><a href="../pages/explore.php" class="nav_link">Explore</a></li>
+                        <li><a href="../pages/about.php" class="nav_link">About</a></li>
+                        <li><a href="../pages/contact.php" class="nav_link">Contact</a></li>
                     </ul>
 
 
