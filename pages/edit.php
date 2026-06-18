@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // validate CSRF token
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        $error = "Invalid request. Please try again.";
+        $error = __('add_post_error_invalid');
     }
 
     // get form values
@@ -63,6 +63,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = trim($_POST['content'] ?? '');
     $publish_option = $_POST['publish_option'] ?? 'publish';
     $image = $post['image'];
+
+    // validate category exists
+    if (empty($error) && !empty($category_id)) {
+        $cat_check = $conn->prepare("select id_category from categories where id_category = :id");
+        $cat_check->execute([':id' => $category_id]);
+        if (!$cat_check->fetch()) {
+            $error = __('add_post_error_category');
+        }
+    }
 
     // upload image
     if (empty($error) && !empty($_FILES['image']['name'])) {
@@ -73,14 +82,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
             $secure_name = generate_secure_filename($ext);
-            $image = "../assets/uploads/" . $secure_name;
-            move_uploaded_file($_FILES['image']['tmp_name'], $image);
+            $new_image = "../assets/uploads/" . $secure_name;
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $new_image)) {
+                // delete old image if exists
+                if (!empty($post['image'])) {
+                    $old_path = __DIR__ . '/../' . $post['image'];
+                    if (file_exists($old_path)) {
+                        unlink($old_path);
+                    }
+                }
+                $image = $new_image;
+            }
         }
     }
 
     // validation
     if (empty($error) && (empty($title) || empty($category_id) || empty($content))) {
-        $error = "Title, category and content are required.";
+        $error = __('add_post_error_required');
     }
 
     if (empty($error)) {
@@ -139,12 +157,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Post - Tangier Vibes</title>
-    <meta name="description" content="Edit your post about a place, restaurant, beach, or experience in Tangier.">
+    <title><?= __('edit_post_label') ?> - Tangier Vibes</title>
+    <meta name="description" content="<?= __('edit_post_desc') ?>">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
-    <meta property="og:title" content="Edit Post - Tangier Vibes">
-    <meta property="og:description" content="Edit your post about a place, restaurant, beach, or experience in Tangier.">
+    <meta property="og:title" content="<?= __('edit_post_label') ?> - Tangier Vibes">
+    <meta property="og:description" content="<?= __('edit_post_desc') ?>">
     <meta property="og:image" content="../assets/images/logo.png">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
@@ -166,16 +184,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <span class="dashboard_label">
                 <i class="fa-solid fa-pen"></i>
-                Edit Post
+                <?= __('edit_post_label') ?>
             </span>
 
-            <h1>Edit post</h1>
-            <p>Update your post information.</p>
+            <h1><?= __('edit_post_title') ?></h1>
+            <p><?= __('edit_post_desc') ?></p>
         </div>
 
         <a href="dashboard.php" class="add_post_btn">
             <i class="fa-solid fa-arrow-left"></i>
-            Back
+            <?= __('edit_post_back') ?>
         </a>
     </section>
 
@@ -190,15 +208,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
 
                 <!-- title -->
-                <label for="title">Title</label>
-                <input type="text" id="title" name="title" placeholder="Post title" value="<?= htmlspecialchars($post['title']); ?>"  required>
+                <label for="title"><?= __('add_post_title_label') ?></label>
+                <input type="text" id="title" name="title" placeholder="<?= __('add_post_title_placeholder') ?>" value="<?= htmlspecialchars($post['title']); ?>"  required>
 
                 <!-- category and status -->
                 <div class="form_row">
                     <div class="form_group">
-                        <label for="category_id">Category</label>
+                        <label for="category_id"><?= __('add_post_category_label') ?></label>
                         <select id="category_id" name="category_id" required>
-                            <option value="">Choose category</option>
+                            <option value=""><?= __('add_post_category_placeholder') ?></option>
 
                             <?php foreach ($categories as $category): ?>
                                 <option 
@@ -212,11 +230,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="form_group">
-                        <label for="publish_option">Publish option</label>
+                        <label for="publish_option"><?= __('add_post_publish_label') ?></label>
                         <select id="publish_option" name="publish_option">
-                            <option value="publish">Publish now</option>
+                            <option value="publish"><?= __('add_post_publish_option') ?></option>
                             <option value="draft" <?= $post['status'] === 'draft' ? 'selected' : ''; ?>>
-                                Save as draft
+                                <?= __('add_post_draft_option') ?>
                             </option>
                         </select>
                     </div>
@@ -225,29 +243,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- image -->
                 <div class="form_row">
                     <div class="form_group">
-                        <label for="image">Image</label>
+                        <label for="image"><?= __('add_post_image_label') ?></label>
                         <input type="file" id="image" name="image" accept="image/*">
                         <div class="image_preview" id="image_preview">
                             <?php if (!empty($post['image'])): ?>
-                                <img src="<?= htmlspecialchars($post['image']); ?>" alt="Current image" loading="lazy">
+                                <img src="<?= htmlspecialchars($post['image']); ?>" alt="<?= __('edit_post_label') ?>" loading="lazy">
                             <?php endif; ?>
                         </div>
                         <?php if (!empty($post['image'])): ?>
                             <p class="current_file">
-                                Current image: <?= htmlspecialchars($post['image']); ?>
+                                <?= sprintf(__('edit_post_current_image'), htmlspecialchars($post['image'])); ?>
                             </p>
                         <?php endif; ?>
                     </div>
                 </div>
 
                 <!-- content -->
-                <label for="content">Content</label>
-                <textarea id="content" name="content" placeholder="Write post content..." required><?= htmlspecialchars($post['content']); ?></textarea>
+                <label for="content"><?= __('add_post_content_label') ?></label>
+                <textarea id="content" name="content" placeholder="<?= __('add_post_content_placeholder') ?>" required><?= htmlspecialchars($post['content']); ?></textarea>
 
                 <!-- button -->
                 <button type="submit" class="add_post_btn">
                     <i class="fa-solid fa-paper-plane"></i>
-                    Publish
+                    <?= __('add_post_submit') ?>
                 </button>
 
             </form>

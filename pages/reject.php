@@ -19,13 +19,6 @@ if ($_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// validate CSRF token from GET link
-$csrf_token = $_GET['csrf_token'] ?? '';
-if (!validate_csrf_token($csrf_token)) {
-    header("Location: dashboard.php?error=invalid_request");
-    exit();
-}
-
 // check post id
 if (!isset($_GET['id'])) {
     header("Location: dashboard.php");
@@ -60,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // validate CSRF token from form
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        $error = "Invalid request. Please try again.";
+        $error = __('add_post_error_invalid');
     }
 
     // get reason
@@ -68,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // validation
     if (empty($error) && empty($rejection_reason)) {
-        $error = "Rejection reason is required.";
+        $error = __('reject_error_required');
     }
 
     if (empty($error)) {
@@ -100,12 +93,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reject Post - Tangier Vibes</title>
-    <meta name="description" content="Provide a rejection reason for a pending post on Tangier Vibes.">
+    <title><?= __('reject_label') ?> - Tangier Vibes</title>
+    <meta name="description" content="<?= __('reject_meta_desc') ?>">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
-    <meta property="og:title" content="Reject Post - Tangier Vibes">
-    <meta property="og:description" content="Provide a rejection reason for a pending post on Tangier Vibes.">
+    <meta property="og:title" content="<?= __('reject_label') ?> - Tangier Vibes">
+    <meta property="og:description" content="<?= __('reject_meta_desc') ?>">
     <meta property="og:image" content="../assets/images/logo.png">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
@@ -127,16 +120,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <span class="dashboard_label">
                 <i class="fa-solid fa-xmark"></i>
-                Reject Post
+                <?= __('reject_label') ?>
             </span>
 
             <h1><?= htmlspecialchars($post['title']); ?></h1>
-            <p>Write the reason so the author knows what to fix.</p>
+            <p><?= __('reject_desc') ?></p>
         </div>
 
         <a href="dashboard.php" class="add_post_btn">
             <i class="fa-solid fa-arrow-left"></i>
-            Back
+            <?= __('edit_post_back') ?>
         </a>
     </section>
 
@@ -148,12 +141,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form action="#" method="POST" class="reject_form">
             <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
-            <label for="rejection_reason">Rejection reason</label>
-            <textarea id="rejection_reason" name="rejection_reason" placeholder="Explain what needs to be changed..." required><?= htmlspecialchars($post['rejection_reason'] ?? ''); ?></textarea>
+            <label for="rejection_reason"><?= __('reject_reason_label') ?></label>
+            <textarea id="rejection_reason" name="rejection_reason" placeholder="<?= __('reject_reason_placeholder') ?>" required><?= htmlspecialchars($post['rejection_reason'] ?? ''); ?></textarea>
 
             <button type="submit" class="add_post_btn">
                 <i class="fa-solid fa-ban"></i>
-                Reject Post
+                <?= __('reject_submit') ?>
             </button>
         </form>
     </section>

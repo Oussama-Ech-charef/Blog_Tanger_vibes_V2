@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // validate CSRF token
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        $error = "Invalid request. Please try again.";
+        $error = __('add_post_error_invalid');
     }
 
     // get form values
@@ -38,7 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // validation
     if (empty($error) && (empty($title) || empty($category_id) || empty($content))) {
-        $error = "Title, category and content are required.";
+        $error = __('add_post_error_required');
+    }
+
+    // validate category exists
+    if (empty($error) && !empty($category_id)) {
+        $cat_check = $conn->prepare("select id_category from categories where id_category = :id");
+        $cat_check->execute([':id' => $category_id]);
+        if (!$cat_check->fetch()) {
+            $error = __('add_post_error_category');
+        }
     }
 
     $image = null;
@@ -129,12 +138,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Post - Tangier Vibes</title>
-    <meta name="description" content="Create a new post about a place, restaurant, beach, or experience in Tangier.">
+    <title><?= __('add_post_label') ?> - Tangier Vibes</title>
+    <meta name="description" content="<?= __('add_post_desc') ?>">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
-    <meta property="og:title" content="Add Post - Tangier Vibes">
-    <meta property="og:description" content="Create a new post about a place, restaurant, beach, or experience in Tangier.">
+    <meta property="og:title" content="<?= __('add_post_label') ?> - Tangier Vibes">
+    <meta property="og:description" content="<?= __('add_post_desc') ?>">
     <meta property="og:image" content="../assets/images/logo.png">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
@@ -158,19 +167,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <span class="dashboard_label">
                 <i class="fa-solid fa-plus"></i>
-                Add Post
+                <?= __('add_post_label') ?>
             </span>
 
-            <h1>Create new post</h1>
+            <h1><?= __('add_post_title') ?></h1>
 
             <p>
-                Add a new place to Tangier Vibes.
+                <?= __('add_post_desc') ?>
             </p>
         </div>
 
         <a href="dashboard.php" class="add_post_btn">
             <i class="fa-solid fa-arrow-left"></i>
-            Back
+            <?= __('add_post_back') ?>
         </a>
     </section>
 
@@ -185,15 +194,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
 
                     <!-- title -->
-                    <label for="title">Title</label>
-                    <input type="text" id="title" name="title" placeholder="Post title" required>
+                    <label for="title"><?= __('add_post_title_label') ?></label>
+                    <input type="text" id="title" name="title" placeholder="<?= __('add_post_title_placeholder') ?>" required>
 
                     <!-- category and status -->
                     <div class="form_row">
                         <div class="form_group">
-                            <label for="category_id">Category</label>
+                            <label for="category_id"><?= __('add_post_category_label') ?></label>
                             <select id="category_id" name="category_id" required>
-                                <option value="">Choose category</option>
+                                <option value=""><?= __('add_post_category_placeholder') ?></option>
 
                                 <?php foreach ($categories as $category): ?>
                                     <option value="<?= $category['id_category']; ?>">
@@ -204,10 +213,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="form_group">
-                            <label for="publish_option">Publish option</label>
+                            <label for="publish_option"><?= __('add_post_publish_label') ?></label>
                             <select id="publish_option" name="publish_option">
-                                <option value="publish">Publish now</option>
-                                <option value="draft">Save as draft</option>
+                                <option value="publish"><?= __('add_post_publish_option') ?></option>
+                                <option value="draft"><?= __('add_post_draft_option') ?></option>
                             </select>
                         </div>
                     </div>
@@ -215,20 +224,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- image -->
                     <div class="form_row">
                         <div class="form_group">
-                            <label for="image">Image</label>
+                            <label for="image"><?= __('add_post_image_label') ?></label>
                             <input type="file" id="image" name="image" accept="image/*">
                             <div class="image_preview" id="image_preview"></div>
                         </div>
                     </div>
 
                     <!-- content -->
-                    <label for="content">Content</label>
-                    <textarea id="content" name="content" placeholder="Write post content..." required></textarea>
+                    <label for="content"><?= __('add_post_content_label') ?></label>
+                    <textarea id="content" name="content" placeholder="<?= __('add_post_content_placeholder') ?>" required></textarea>
 
                     <!-- button -->
                     <button type="submit" class="add_post_btn">
                         <i class="fa-solid fa-paper-plane"></i>
-                        Publish
+                        <?= __('add_post_submit') ?>
                     </button>
 
                 </form>
