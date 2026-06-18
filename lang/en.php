@@ -3,17 +3,11 @@
 return [
     'dir' => 'ltr',
 
-    'lang_en' => 'English',
-    'lang_fr' => 'Français',
-    'lang_ar' => 'العربية',
-
     'nav_home' => 'Home',
     'nav_explore' => 'Explore',
     'nav_about' => 'About',
     'nav_contact' => 'Contact',
 
-    'auth_login' => 'Login',
-    'auth_register' => 'Register',
     'auth_dashboard' => 'Dashboard',
     'auth_logout' => 'Logout',
 

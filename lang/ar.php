@@ -3,17 +3,11 @@
 return [
     'dir' => 'rtl',
 
-    'lang_en' => 'English',
-    'lang_fr' => 'Français',
-    'lang_ar' => 'العربية',
-
     'nav_home' => 'الرئيسية',
     'nav_explore' => 'استكشف',
     'nav_about' => 'حول',
     'nav_contact' => 'اتصل بنا',
 
-    'auth_login' => 'تسجيل الدخول',
-    'auth_register' => 'إنشاء حساب',
     'auth_dashboard' => 'لوحة التحكم',
     'auth_logout' => 'تسجيل الخروج',
 
