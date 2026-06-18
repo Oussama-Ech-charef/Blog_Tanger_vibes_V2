@@ -32,7 +32,7 @@ function check_session_timeout() {
         if (time() - $_SESSION['last_activity'] > $timeout) {
             session_unset();
             session_destroy();
-            header("Location: login.php?timeout=1");
+            header("Location: index.php");
             exit();
         }
     }

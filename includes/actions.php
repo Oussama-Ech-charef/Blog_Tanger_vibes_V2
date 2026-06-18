@@ -6,7 +6,7 @@ require_once __DIR__ . '/security.php';
 
 // check login
 if (!isset($_SESSION['id_user'])) {
-    header("Location: ../pages/login.php");
+    header("Location: ../pages/index.php");
     exit();
 }
 

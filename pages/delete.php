@@ -6,7 +6,7 @@ require_once '../includes/security.php';
 
 // check login
 if (!isset($_SESSION['id_user'])) {
-    header("Location: login.php");
+    header("Location: index.php");
     exit();
 }
 
