@@ -36,17 +36,6 @@
     flex-shrink: 0;
 }
 
-.logo_icon {
-    font-size: 30px;
-    color: var(--color_primary);
-}
-
-
-.logo_text .text2 {
-    color: var(--color_gold);
-    font-weight: 600;
-}
-
 
 /* desktop links */
 
@@ -352,14 +341,6 @@
 @media (max-width: 480px) {
     .header_nav_desktop {
         padding: 0 16px;
-    }
-    
-    .logo_text {
-        font-size: 1.2rem;
-    }
-    
-    .logo_icon {
-        font-size: 1.5rem;
     }
 }
 

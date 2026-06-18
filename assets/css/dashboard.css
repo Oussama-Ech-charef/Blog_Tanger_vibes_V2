@@ -201,15 +201,6 @@ tbody tr:last-child td {
     color: #0F6F98;
 }
 
-.reject_reason {
-    max-width: 260px;
-    margin-top: 8px;
-    color: #b91c1c;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.5;
-}
-
 /* actions */
 .table_actions {
     display: flex;
@@ -337,11 +328,6 @@ tbody tr:last-child td {
     font-size: 14px;
     line-height: 1.7;
     white-space: normal;
-}
-
-.table_link {
-    color: var(--color_primary);
-    font-weight: 700;
 }
 
 .empty_text {
