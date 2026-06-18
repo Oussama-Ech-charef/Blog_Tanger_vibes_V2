@@ -3,6 +3,7 @@ session_start();
 require '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/pagination.php';
+require_once '../includes/lang.php';
 
 send_security_headers();
 
@@ -111,7 +112,7 @@ $has_filter = !empty($category_id);
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= get_lang_code() ?>" dir="<?= get_lang_dir() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -134,7 +135,7 @@ $has_filter = !empty($category_id);
     <link rel="stylesheet" href="../assets/css/explor.css">
     <link rel="stylesheet" href="../assets/css/components.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
-    
+    <link rel="stylesheet" href="../assets/css/rtl.css">
 </head>
 <body>
 
@@ -147,13 +148,13 @@ $has_filter = !empty($category_id);
 
                 <span class="explore_label">
                     <i class="fa-solid fa-compass"></i>
-                    Explore Tangier
+                    <?= __('explore_label') ?>
                 </span>
 
-                <h1>Discover all posts</h1>
+                <h1><?= __('explore_title') ?></h1>
 
                 <p>
-                    Explore the best places, beaches, food spots, culture, and hidden vibes around Tangier.
+                    <?= __('explore_desc') ?>
                 </p>
 
             </section>
@@ -161,9 +162,9 @@ $has_filter = !empty($category_id);
             <?php if ($has_search): ?>
                 <div class="search_results_info">
                     <?php if ($total_records > 0): ?>
-                        <p>Showing <?= $total_records; ?> result<?= $total_records !== 1 ? 's' : ''; ?> for "<strong><?= htmlspecialchars($keyword); ?></strong>"</p>
+                        <p><?= __('explore_results_count', $total_records) ?> "<strong><?= htmlspecialchars($keyword); ?></strong>"</p>
                     <?php else: ?>
-                        <p>No results found for "<strong><?= htmlspecialchars($keyword); ?></strong>"</p>
+                        <p><?= __('explore_no_results_title') ?> "<strong><?= htmlspecialchars($keyword); ?></strong>"</p>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -171,7 +172,7 @@ $has_filter = !empty($category_id);
             <!-- filters -->
            <section class="explore_filters">
                 <a href="explore.php<?= $has_search ? '?q=' . urlencode($keyword) : ''; ?>" class="<?= empty($category_id) ? 'active' : ''; ?>">
-                    All
+                    <?= __('explore_filter_all') ?>
                 </a>
 
                 <?php foreach ($categories as $category): ?>
@@ -207,7 +208,7 @@ $has_filter = !empty($category_id);
 
                                 <p class="location">
                                     <i class="fa-solid fa-user"></i>
-                                    By <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?>
+                                    <?= __('latest_by') ?> <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?>
                                 </p>
 
                                 <p class="location">
@@ -216,7 +217,7 @@ $has_filter = !empty($category_id);
                                 </p>
 
                                 <span class="btn">
-                                    Read More <i class="fa-solid fa-arrow-right"></i>
+                                    <?= __('explore_read_more') ?> <i class="fa-solid fa-arrow-right"></i>
                                 </span>
                             </div>
                         </a>
@@ -226,13 +227,13 @@ $has_filter = !empty($category_id);
 
                     <div class="empty_state">
                         <i class="fa-solid fa-search"></i>
-                        <h3>No results found</h3>
-                        <p>No places found matching "<strong><?= htmlspecialchars($keyword); ?></strong>".<br>Try another keyword or browse all destinations.</p>
+                        <h3><?= __('explore_no_results_title') ?></h3>
+                        <p><?= __('explore_no_results_desc') ?></p>
                     </div>
 
                 <?php else: ?>
 
-                    <p class="description">No published places yet.</p>
+                    <p class="description"><?= __('explore_no_posts') ?></p>
 
                 <?php endif; ?>
 

@@ -4,8 +4,9 @@ session_start();
 
 require '../config/connection.php';
 require_once '../includes/security.php';
-
-send_security_headers();
+require_once '../includes/lang.php';
+ 
+ send_security_headers();
 
 // check post id
 if (!isset($_GET['id']) || empty($_GET['id'])) {
@@ -40,7 +41,7 @@ if (!$post) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= get_lang_code() ?>" dir="<?= get_lang_dir() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,7 +61,7 @@ if (!$post) {
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/detail.css">
-    
+    <link rel="stylesheet" href="../assets/css/rtl.css">
 </head>
 <body>
 
@@ -79,7 +80,7 @@ if (!$post) {
         <!-- post info -->
         <div class="icons">
             <span><i class="fa-solid fa-calendar-days"></i><?= date('M d, Y', strtotime($post['created_at'])); ?></span>
-            <span><i class="fa-solid fa-circle-user"></i>By <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?></span>
+            <span><i class="fa-solid fa-circle-user"></i><?= __('detail_by') ?> <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?></span>
             
         </div>
 
@@ -94,7 +95,7 @@ if (!$post) {
 
         <!-- share links -->
         <div class="social">
-            <i class="fas fa-share-alt"></i> Share: <a href="#">Facebook</a> /<a href="#">Twitter</a> /<a href="#">WhatsApp</a>
+            <i class="fas fa-share-alt"></i> <?= __('detail_share') ?>: <a href="#">Facebook</a> /<a href="#">Twitter</a> /<a href="#">WhatsApp</a>
         </div>
 
         <!-- map design -->
@@ -114,7 +115,7 @@ if (!$post) {
         <!-- comments -->
         <div class="comments_posts">
             <div class="comment_title">
-                <i class="fa-solid fa-comment-dots"></i> Comments
+                <i class="fa-solid fa-comment-dots"></i> <?= __('detail_comments_title') ?>
                 <span >1</span>
             </div>
         </div>
@@ -134,18 +135,18 @@ if (!$post) {
         </div>
 
         <div class="comment_form">
-            <h3 class="comment_title">Leave a comment</h3>
+            <h3 class="comment_title"><?= __('detail_comment_leave') ?></h3>
 
             <form action="#" method="POST">
                 <div class="form_name">
-                    <label>Your name :</label>
-                    <input type="text" name="name" placeholder="e.g., Ahmed or Fatima">
+                    <label><?= __('detail_comment_name_label') ?> :</label>
+                    <input type="text" name="name" placeholder="<?= __('detail_comment_name_placeholder') ?>">
                 </div>
                 <div class="form_desc">
-                    <label>Your message :</label>
-                    <textarea name="message" placeholder="Share your vibe..."></textarea>
+                    <label><?= __('detail_comment_message_label') ?> :</label>
+                    <textarea name="message" placeholder="<?= __('detail_comment_message_placeholder') ?>"></textarea>
                 </div>
-                <button type="submit"><i class="fa-solid fa-paper-plane"></i> Post comment</button>
+                <button type="submit"><i class="fa-solid fa-paper-plane"></i> <?= __('detail_comment_btn') ?></button>
             </form>
         </div>
 

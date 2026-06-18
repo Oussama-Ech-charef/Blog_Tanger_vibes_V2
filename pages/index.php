@@ -2,7 +2,8 @@
 session_start();
  require '../config/connection.php';
  require_once '../includes/security.php';
-
+ require_once '../includes/lang.php';
+ 
  send_security_headers();
 
  // get latest posts
@@ -33,7 +34,7 @@ session_start();
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= get_lang_code() ?>" dir="<?= get_lang_dir() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,6 +55,7 @@ session_start();
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/home.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
 </head>
 <body>
 
@@ -71,15 +73,15 @@ session_start();
 
             <div class="hero_content">
                
-                <p class="hero_label">WELCOME TO YOUR GATEWAY TO AFRICA</p>
-                <h1 class="hero_title">Experience the Magic<br> of <span class="hero_highlight">Tangier</span></h1>
+                <p class="hero_label"><?= __('hero_label') ?></p>
+                <h1 class="hero_title"><?= __('hero_title') ?></h1>
 
-                <p class="hero_desc">Discover hidden beaches, legendary cafes, exquisite<br>restaurants, and historic landmarks in the Pearl of the North.</p>
+                <p class="hero_desc"><?= __('hero_desc') ?></p>
                 
                 <div class="hero_btns">
 
                     <a href="explore.php" class="btn_explor">
-                        Start Exploring
+                        <?= __('hero_btn') ?>
                     </a>
 
                 </div>
@@ -90,8 +92,8 @@ session_start();
         <!-- latest posts -->
         <section class="latest_section">
             <div class="section_header">
-                <h2 class="title">Latest Places</h2>
-                <p class="description">The newest additions to TangierVibes</p>
+                <h2 class="title"><?= __('latest_title') ?></h2>
+                <p class="description"><?= __('latest_desc') ?></p>
             </div>
 
 
@@ -118,7 +120,7 @@ session_start();
 
                                     <p class="location">
                                         <i class="fa-solid fa-user"></i>
-                                        By <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?>
+                                        <?= __('latest_by') ?> <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?>
                                     </p>
 
                                     <p class="location">
@@ -127,7 +129,7 @@ session_start();
                                     </p>
 
                                     <span class="btn">
-                                        Read More <i class="fa-solid fa-arrow-right"></i>
+                                        <?= __('latest_read_more') ?> <i class="fa-solid fa-arrow-right"></i>
                                     </span>
 
                                 </div>
@@ -138,7 +140,7 @@ session_start();
                         <?php endforeach; ?>
                     <?php else: ?>
 
-                        <p class="description">No published places yet.</p>
+                        <p class="description"><?= __('latest_no_posts') ?></p>
 
                     <?php endif; ?>
                 </div>
@@ -150,7 +152,7 @@ session_start();
 
                     <a href="explore.php" class="view_explor">
 
-                        View All Places <i class="fa-solid fa-arrow-right"></i>
+                        <?= __('latest_view_all') ?> <i class="fa-solid fa-arrow-right"></i>
 
                     </a>
 
