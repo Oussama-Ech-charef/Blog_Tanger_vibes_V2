@@ -46,6 +46,38 @@ create table if not exists posts (
 );
 
 
+-- contact messages table
+create table if not exists contact_messages (
+    id_message int auto_increment primary key,
+    full_name varchar(150) not null,
+    email varchar(150) not null,
+    subject varchar(255) not null,
+    message text not null,
+    created_at timestamp default current_timestamp
+);
+
+
+-- login attempts table (DB-based rate limiting)
+create table if not exists login_attempts (
+    id_login_attempt int auto_increment primary key,
+    email varchar(150) not null unique,
+    failed_attempts int not null default 0,
+    locked_until datetime null,
+    last_attempt timestamp default current_timestamp on update current_timestamp
+);
+
+
+-- comments table
+create table if not exists comments (
+    id_comment int auto_increment primary key,
+    id_post int not null,
+    author_name varchar(100) not null,
+    comment_text text not null,
+    created_at timestamp default current_timestamp,
+    foreign key (id_post) references posts(id_post) on delete cascade
+);
+
+
 -- default categories
 insert into categories (cat_name) values
     ('Beaches'),
