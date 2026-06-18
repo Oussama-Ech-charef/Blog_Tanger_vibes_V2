@@ -1,0 +1,1 @@
+autoDismissPopup('.comment-success-popup');

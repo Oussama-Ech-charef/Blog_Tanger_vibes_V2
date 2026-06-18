@@ -1,3 +1,12 @@
+function autoDismissPopup(selector, delay) {
+    var el = document.querySelector(selector);
+    if (!el) return;
+    setTimeout(function() {
+        el.classList.add('fade-out');
+        setTimeout(function() { el.remove(); }, 500);
+    }, delay || 3000);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // get menu elements
     const menuBtn = document.getElementById('menu_btn');

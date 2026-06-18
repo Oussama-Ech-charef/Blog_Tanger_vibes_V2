@@ -36,8 +36,64 @@ if (!$post) {
     exit;
 }
 
+$comment_error = '';
+$comment_success = '';
 
+if (isset($_SESSION['comment_added']) && $_SESSION['comment_added']) {
+    $comment_success = __('detail_comment_success');
+    unset($_SESSION['comment_added']);
+}
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrf_token = $_POST['csrf_token'] ?? '';
+    if (!validate_csrf_token($csrf_token)) {
+        $comment_error = __('detail_comment_error_generic');
+    }
+
+    $author_name = trim($_POST['name'] ?? '');
+    $comment_text = trim($_POST['message'] ?? '');
+
+    if (empty($comment_error)) {
+        if (empty($author_name) || empty($comment_text)) {
+            $comment_error = __('detail_comment_error_required');
+        } elseif (strlen($author_name) > 100) {
+            $comment_error = __('detail_comment_error_name_length');
+        } elseif (strlen($comment_text) > 1000) {
+            $comment_error = __('detail_comment_error_text_length');
+        }
+    }
+
+    if (empty($comment_error)) {
+        try {
+            $stmt = $conn->prepare("
+                insert into comments (id_post, author_name, comment_text)
+                values (:id_post, :author_name, :comment_text)
+            ");
+            $stmt->execute([
+                ':id_post' => $post_id,
+                ':author_name' => $author_name,
+                ':comment_text' => $comment_text
+            ]);
+            $_SESSION['comment_added'] = true;
+            header("Location: detail.php?id=" . $post_id . "#comments");
+            exit();
+        } catch (PDOException $e) {
+            error_log("Comment insert error: " . $e->getMessage());
+            $comment_error = __('detail_comment_error_generic');
+        }
+    }
+}
+
+// get comments for this post
+$comment_stmt = $conn->prepare("
+    select id_comment, author_name, comment_text, created_at
+    from comments
+    where id_post = :id_post
+    order by created_at desc
+");
+$comment_stmt->execute([':id_post' => $post_id]);
+$comments = $comment_stmt->fetchAll(PDO::FETCH_ASSOC);
+$comment_count = count($comments);
 ?>
 
 <!DOCTYPE html>
@@ -61,6 +117,8 @@ if (!$post) {
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/detail.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/rtl.css">
 </head>
 <body>
@@ -72,15 +130,15 @@ if (!$post) {
 
         <!-- category -->
         <div class="detail_category">
-            <i class="fa-solid fa-layer-group"></i> TANGER / <span class="cat_name"><?= htmlspecialchars($post['cat_name']); ?></span>
+            <i class="fa-solid fa-layer-group"></i> <?= __('detail_tanger_label') ?> <span class="cat_name"><?= htmlspecialchars($post['cat_name']); ?></span>
         </div>
 
         <h1><?= htmlspecialchars($post['title']); ?></h1>
 
         <!-- post info -->
         <div class="icons">
-            <span><i class="fa-solid fa-calendar-days"></i><?= date('M d, Y', strtotime($post['created_at'])); ?></span>
-            <span><i class="fa-solid fa-circle-user"></i><?= __('detail_by') ?> <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?></span>
+            <span><i class="fa-solid fa-calendar-days"></i><?= date(__('date_format_detail'), strtotime($post['created_at'])); ?></span>
+            <span><i class="fa-solid fa-circle-user"></i><?= __('detail_by') ?> <?= htmlspecialchars($post['user_name'] ?? __('admin_label')); ?></span>
             
         </div>
 
@@ -113,38 +171,45 @@ if (!$post) {
 
 
         <!-- comments -->
-        <div class="comments_posts">
+        <div id="comments" class="comments_posts">
             <div class="comment_title">
                 <i class="fa-solid fa-comment-dots"></i> <?= __('detail_comments_title') ?>
-                <span >1</span>
+                <span><?= $comment_count; ?></span>
             </div>
         </div>
 
         <div class="comments_list">
-            
-            <div class="comment_item">
-                <div class="comment_header">
-                    <span class="comment_name"><i class="fa-solid fa-circle-user"></i>Oussama</span>
-                    <span class="comment_date"><i class="fa-solid fa-calendar-days"></i>May 16, 2026</span>
-                </div>
-                <div class="comment_text">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore, saepe.
-                </div>
-            </div>
-
+            <?php if (!empty($comments)): ?>
+                <?php foreach ($comments as $comment): ?>
+                    <div class="comment_item">
+                        <div class="comment_header">
+                            <span class="comment_name"><?= htmlspecialchars($comment['author_name']) ?></span>
+                            <span><?= date(__('date_format_detail'), strtotime($comment['created_at'])) ?></span>
+                        </div>
+                        <div class="comment_text"><?= htmlspecialchars($comment['comment_text']) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="description"><?= __('detail_comments_empty') ?></p>
+            <?php endif; ?>
         </div>
+
+        <?php if (!empty($comment_error)): ?>
+            <p class="error_message"><?= htmlspecialchars($comment_error); ?></p>
+        <?php endif; ?>
 
         <div class="comment_form">
             <h3 class="comment_title"><?= __('detail_comment_leave') ?></h3>
 
-            <form action="#" method="POST">
+            <form action="" method="POST">
+                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
                 <div class="form_name">
                     <label><?= __('detail_comment_name_label') ?> :</label>
-                    <input type="text" name="name" placeholder="<?= __('detail_comment_name_placeholder') ?>">
+                    <input type="text" name="name" placeholder="<?= __('detail_comment_name_placeholder') ?>" required>
                 </div>
                 <div class="form_desc">
                     <label><?= __('detail_comment_message_label') ?> :</label>
-                    <textarea name="message" placeholder="<?= __('detail_comment_message_placeholder') ?>"></textarea>
+                    <textarea name="message" placeholder="<?= __('detail_comment_message_placeholder') ?>" required></textarea>
                 </div>
                 <button type="submit"><i class="fa-solid fa-paper-plane"></i> <?= __('detail_comment_btn') ?></button>
             </form>
@@ -156,7 +221,13 @@ if (!$post) {
 
 
 
+    <?php if (!empty($comment_success)): ?>
+        <div class="comment-success-popup"><?= htmlspecialchars($comment_success); ?></div>
+    <?php endif; ?>
+
+    <?php require '../includes/footer.php'; ?>
     <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/detail.js"></script>
 </body>
 
 </html>
