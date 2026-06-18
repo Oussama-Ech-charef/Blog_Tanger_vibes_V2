@@ -16,21 +16,27 @@ if ($_SESSION['role'] !== 'admin') {
     exit();
 }
 
+// POST only
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: ../pages/dashboard.php");
+    exit();
+}
+
 // validate CSRF token
-$csrf_token = $_GET['csrf_token'] ?? '';
+$csrf_token = $_POST['csrf_token'] ?? '';
 if (!validate_csrf_token($csrf_token)) {
     header("Location: ../pages/dashboard.php?error=invalid_request");
     exit();
 }
 
 // check action and post id
-if (!isset($_GET['action']) || !isset($_GET['id'])) {
+$action = $_POST['action'] ?? '';
+$post_id = $_POST['id'] ?? '';
+if (empty($action) || empty($post_id)) {
     header("Location: ../pages/dashboard.php");
     exit();
 }
 
-$action = $_GET['action'];
-$post_id = $_GET['id'];
 $id_user = $_SESSION['id_user'];
 
 // approve post

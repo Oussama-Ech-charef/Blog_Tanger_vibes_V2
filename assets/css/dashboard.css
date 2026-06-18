@@ -201,6 +201,13 @@ tbody tr:last-child td {
     color: #0F6F98;
 }
 
+/* inline forms inside table actions */
+.inline_form {
+    display: inline-flex;
+    margin: 0;
+    padding: 0;
+}
+
 /* actions */
 .table_actions {
     display: flex;
@@ -272,7 +279,7 @@ tbody tr:last-child td {
     background: rgba(15, 23, 42, 0.45);
 }
 
-.reason_modal:target {
+.reason_modal.open {
     display: flex;
 }
 
@@ -348,7 +355,7 @@ tbody tr:last-child td {
     z-index: 1000;
 }
 
-.view_modal:target {
+.view_modal.open {
     display: flex;
 }
 

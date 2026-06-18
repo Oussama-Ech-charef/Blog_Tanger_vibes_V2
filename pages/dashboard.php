@@ -87,12 +87,12 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Tangier Vibes</title>
-    <meta name="description" content="Manage your posts, track publishing status, and moderate content from your Tangier Vibes dashboard.">
+    <title><?= __('dashboard_label') ?> - Tangier Vibes</title>
+    <meta name="description" content="<?= __('dashboard_meta_desc') ?>">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
-    <meta property="og:title" content="Dashboard - Tangier Vibes">
-    <meta property="og:description" content="Manage your posts, track publishing status, and moderate content from your Tangier Vibes dashboard.">
+    <meta property="og:title" content="<?= __('dashboard_label') ?> - Tangier Vibes">
+    <meta property="og:description" content="<?= __('dashboard_meta_desc') ?>">
     <meta property="og:image" content="../assets/images/logo.png">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
@@ -204,7 +204,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                 <td>
                                     <span class="status <?= htmlspecialchars($post['status']); ?>">
-                                        <?= htmlspecialchars($post['status']); ?>
+                                        <?= __( 'dashboard_' . $post['status'] ); ?>
                                     </span>
                                 </td>
 
@@ -230,16 +230,19 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                         <?php if ($role === 'admin' && $post['id_user'] != $id_user): ?>
                                             <?php if ($post['status'] === 'pending'): ?>
-                                                <!-- approve -->
-                                                <a href="../includes/actions.php?action=approve&id=<?= $post['id_post']; ?>&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="action_btn approve">
-                                                    <i class="fa-solid fa-check"></i>
-                                                    <span><?= __('dashboard_approve') ?></span>
-                                                </a>
-                                            <?php endif; ?>
+                                                <!-- approve form (POST) -->
+                                                <form method="POST" action="../includes/actions.php" class="inline_form">
+                                                    <input type="hidden" name="action" value="approve">
+                                                    <input type="hidden" name="id" value="<?= $post['id_post']; ?>">
+                                                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
+                                                    <button type="submit" class="action_btn approve" style="border:none;cursor:pointer;">
+                                                        <i class="fa-solid fa-check"></i>
+                                                        <span><?= __('dashboard_approve') ?></span>
+                                                    </button>
+                                                </form>
 
-                                            <?php if ($post['status'] === 'pending'): ?>
                                                 <!-- reject -->
-                                                <a href="reject.php?id=<?= $post['id_post']; ?>&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="action_btn reject">
+                                                <a href="reject.php?id=<?= $post['id_post']; ?>" class="action_btn reject">
                                                     <i class="fa-solid fa-xmark"></i>
                                                     <span><?= __('dashboard_reject') ?></span>
                                                 </a>
@@ -254,11 +257,15 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             </a>
                                         <?php endif; ?>
 
-                                        <!-- delete -->
-                                        <a href="delete.php?id=<?= $post['id_post']; ?>&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="action_btn delete"  onclick="return confirm('<?= __('dashboard_delete_confirm') ?>');">
-                                            <i class="fa-solid fa-trash"></i>
-                                            <span><?= __('dashboard_delete') ?></span>
-                                        </a>
+                                        <!-- delete form (POST) -->
+                                        <form method="POST" action="delete.php" class="inline_form" onsubmit="return confirm('<?= __('dashboard_delete_confirm') ?>');">
+                                            <input type="hidden" name="id" value="<?= $post['id_post']; ?>">
+                                            <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
+                                            <button type="submit" class="action_btn delete" style="border:none;cursor:pointer;">
+                                                <i class="fa-solid fa-trash"></i>
+                                                <span><?= __('dashboard_delete') ?></span>
+                                            </button>
+                                        </form>
                                     </div>
 
 
@@ -269,7 +276,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             <div class="view_head">
                                                 <h3><?= __('dashboard_post_details') ?></h3>
 
-                                                <a href="#" class="view_close">
+                                                <a href="#" class="view_close" data-modal-close>
                                                     <i class="fa-solid fa-xmark"></i>
                                                 </a>
                                             </div>
@@ -306,7 +313,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                         <?= __('dashboard_rejection_reason') ?>
                                                     </span>
 
-                                                    <a href="#" class="reason_close" aria-label="Close">
+                                                    <a href="#" class="reason_close" aria-label="<?= __('auth_modal_close_aria') ?>" data-modal-close>
                                                         <i class="fa-solid fa-xmark"></i>
                                                     </a>
                                                 </div>
@@ -330,5 +337,6 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </main>
 
 <script src="../assets/js/main.js"></script>
+<script src="../assets/js/dashboard.js"></script>
 </body>
 </html>
