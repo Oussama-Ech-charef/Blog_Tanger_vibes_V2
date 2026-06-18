@@ -49,7 +49,10 @@ get_csrf_token();
 
                             <div class="dashboard_logout">
                                 <a href="../pages/dashboard.php" class="dashboard"><?= __('auth_dashboard') ?></a>
-                                <a href="../pages/logout.php" class="logout"><?= __('auth_logout') ?></a>
+                                <form action="../pages/logout.php" method="POST" class="inline_form">
+                                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                                    <button type="submit" class="logout"><?= __('auth_logout') ?></button>
+                                </form>
                             </div>
                             <?php else: ?>
 
@@ -128,7 +131,10 @@ get_csrf_token();
 
                             <div class="dashboard_logout">
                                 <a href="../pages/dashboard.php" class="dashboard"><?= __('auth_dashboard') ?></a>
-                                <a href="../pages/logout.php" class="logout"><?= __('auth_logout') ?></a>
+                                <form action="../pages/logout.php" method="POST" class="inline_form">
+                                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                                    <button type="submit" class="logout"><?= __('auth_logout') ?></button>
+                                </form>
                             </div>
                             <?php else: ?>
 

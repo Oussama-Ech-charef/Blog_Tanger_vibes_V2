@@ -5,6 +5,18 @@ require_once '../includes/security.php';
 
 send_security_headers();
 
+// POST only with CSRF validation
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: index.php");
+    exit();
+}
+
+$csrf_token = $_POST['csrf_token'] ?? '';
+if (!validate_csrf_token($csrf_token)) {
+    header("Location: index.php?error=invalid_request");
+    exit();
+}
+
 // clear session
 session_unset();
 
