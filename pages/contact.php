@@ -9,6 +9,11 @@ require_once '../includes/lang.php';
 $success = "";
 $error = "";
 
+if (isset($_SESSION['contact_submitted'])) {
+    $success = $_SESSION['contact_submitted'];
+    unset($_SESSION['contact_submitted']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // validate CSRF
@@ -33,18 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($error)) {
         try {
-            // create table if not exists
-            $conn->exec("
-                create table if not exists contact_messages (
-                    id_message int auto_increment primary key,
-                    full_name varchar(150) not null,
-                    email varchar(150) not null,
-                    subject varchar(255) not null,
-                    message text not null,
-                    created_at timestamp default current_timestamp
-                )
-            ");
-
             // insert
             $stmt = $conn->prepare("
                 insert into contact_messages (full_name, email, subject, message)
@@ -57,7 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':message' => $message
             ]);
 
-            $success = __('contact_success');
+            $_SESSION['contact_submitted'] = __('contact_success');
+            header('Location: contact.php');
+            exit;
         } catch (PDOException $e) {
             error_log("Contact form error: " . $e->getMessage());
             $error = __('contact_error_generic');
@@ -70,12 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Tangier Vibes</title>
-    <meta name="description" content="Get in touch with the Tangier Vibes team. Send us a message, ask questions, or share your feedback.">
+    <title><?= __('contact_label') ?> - Tangier Vibes</title>
+    <meta name="description" content="<?= __('contact_meta_desc') ?>">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
-    <meta property="og:title" content="Contact Us - Tangier Vibes">
-    <meta property="og:description" content="Get in touch with the Tangier Vibes team. Send us a message, ask questions, or share your feedback.">
+    <meta property="og:title" content="<?= __('contact_label') ?> - Tangier Vibes">
+    <meta property="og:description" content="<?= __('contact_meta_desc') ?>">
     <meta property="og:image" content="../assets/images/logo.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tanger.lovestoblog.com/contact.php">
@@ -135,10 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="section_desc">
             <?= __('contact_form_desc') ?>
         </p>
-
-        <?php if (!empty($success)): ?>
-            <p class="success_message"><?= htmlspecialchars($success); ?></p>
-        <?php endif; ?>
 
         <?php if (!empty($error)): ?>
             <p class="error_message"><?= htmlspecialchars($error); ?></p>
@@ -237,6 +228,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </section>
 
 </main>
+
+<?php if (!empty($success)): ?>
+    <div class="comment-success-popup"><?= htmlspecialchars($success); ?></div>
+<?php endif; ?>
 
 <?php require '../includes/footer.php'; ?>
 <script src="../assets/js/main.js"></script>

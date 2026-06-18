@@ -10,4 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    autoDismissPopup('.comment-success-popup');
 });
