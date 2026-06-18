@@ -2,8 +2,9 @@
 session_start();
 require '../config/connection.php';
 require_once '../includes/security.php';
-
-send_security_headers();
+require_once '../includes/lang.php';
+ 
+ send_security_headers();
 
 $success = "";
 $error = "";
@@ -13,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // validate CSRF
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        $error = "Invalid request. Please try again.";
+        $error = __('contact_error_invalid');
     }
 
     $name = trim($_POST['name'] ?? '');
@@ -24,9 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // validation
     if (empty($error)) {
         if (empty($name) || empty($email) || empty($subject) || empty($message)) {
-            $error = "All fields are required.";
+            $error = __('contact_error_required');
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = "Invalid email format.";
+            $error = __('contact_error_email');
         }
     }
 
@@ -56,16 +57,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':message' => $message
             ]);
 
-            $success = "Thank you for reaching out! We will get back to you soon.";
+            $success = __('contact_success');
         } catch (PDOException $e) {
             error_log("Contact form error: " . $e->getMessage());
-            $error = "An unexpected error occurred. Please try again later.";
+            $error = __('contact_error_generic');
         }
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= get_lang_code() ?>" dir="<?= get_lang_dir() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../assets/css/contact.css">
     <link rel="stylesheet" href="../assets/css/components.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
 </head>
 <body>
 
@@ -96,11 +98,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="contact_head">
         <span class="contact_label">
             <i class="fa-solid fa-envelope"></i>
-            Contact Us
+            <?= __('contact_label') ?>
         </span>
-        <h1>We would love to hear from you.</h1>
+        <h1><?= __('contact_title') ?></h1>
         <p>
-            Have a question, a suggestion, or just want to say hello? Send us a message and we will get back to you.
+            <?= __('contact_desc') ?>
         </p>
     </section>
 
@@ -109,19 +111,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="contact_info_grid">
             <div class="info_card">
                 <div class="info_icon"><i class="fa-solid fa-envelope"></i></div>
-                <h3>Email</h3>
+                <h3><?= __('contact_email_title') ?></h3>
                 <p><a href="mailto:contact@tangiervibes.com">contact@tangiervibes.com</a></p>
             </div>
 
             <div class="info_card">
                 <div class="info_icon"><i class="fa-solid fa-phone"></i></div>
-                <h3>Phone</h3>
+                <h3><?= __('contact_phone_title') ?></h3>
                 <p>+212 600 000 000</p>
             </div>
 
             <div class="info_card">
                 <div class="info_icon"><i class="fa-solid fa-location-dot"></i></div>
-                <h3>Address</h3>
+                <h3><?= __('contact_address_title') ?></h3>
                 <p>Tangier, Morocco</p>
             </div>
         </div>
@@ -129,9 +131,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- form + map layout -->
     <section class="contact_section">
-        <h2 class="section_title">Send us a message</h2>
+        <h2 class="section_title"><?= __('contact_form_title') ?></h2>
         <p class="section_desc">
-            We reply within 24 hours.
+            <?= __('contact_form_desc') ?>
         </p>
 
         <?php if (!empty($success)): ?>
@@ -148,28 +150,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
 
                     <div class="form_group">
-                        <label for="name">Full Name</label>
-                        <input type="text" id="name" name="name" placeholder="Your name" value="<?= htmlspecialchars($name ?? '') ?>" required>
+                        <label for="name"><?= __('contact_form_name_label') ?></label>
+                        <input type="text" id="name" name="name" placeholder="<?= __('contact_form_name_placeholder') ?>" value="<?= htmlspecialchars($name ?? '') ?>" required>
                     </div>
 
                     <div class="form_group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" placeholder="you@example.com" value="<?= htmlspecialchars($email ?? '') ?>" required>
+                        <label for="email"><?= __('contact_form_email_label') ?></label>
+                        <input type="email" id="email" name="email" placeholder="<?= __('contact_form_email_placeholder') ?>" value="<?= htmlspecialchars($email ?? '') ?>" required>
                     </div>
 
                     <div class="form_group">
-                        <label for="subject">Subject</label>
-                        <input type="text" id="subject" name="subject" placeholder="What is this about?" value="<?= htmlspecialchars($subject ?? '') ?>" required>
+                        <label for="subject"><?= __('contact_form_subject_label') ?></label>
+                        <input type="text" id="subject" name="subject" placeholder="<?= __('contact_form_subject_placeholder') ?>" value="<?= htmlspecialchars($subject ?? '') ?>" required>
                     </div>
 
                     <div class="form_group">
-                        <label for="message">Message</label>
-                        <textarea id="message" name="message" placeholder="Write your message..." required><?= htmlspecialchars($message ?? ''); ?></textarea>
+                        <label for="message"><?= __('contact_form_message_label') ?></label>
+                        <textarea id="message" name="message" placeholder="<?= __('contact_form_message_placeholder') ?>" required><?= htmlspecialchars($message ?? ''); ?></textarea>
                     </div>
 
                     <button type="submit">
                         <i class="fa-solid fa-paper-plane"></i>
-                        Send Message
+                        <?= __('contact_form_btn') ?>
                     </button>
                 </form>
             </div>
@@ -186,49 +188,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- faq -->
     <section class="contact_section">
-        <h2 class="section_title">Frequently Asked Questions</h2>
+        <h2 class="section_title"><?= __('faq_title') ?></h2>
         <p class="section_desc">
-            Quick answers to common questions about Tangier Vibes.
+            <?= __('faq_desc') ?>
         </p>
 
         <div class="faq_list">
             <div class="faq_item">
                 <button class="faq_question">
-                    What is Tangier Vibes?
+                    <?= __('faq_q1') ?>
                     <i class="fa-solid fa-chevron-down"></i>
                 </button>
                 <div class="faq_answer">
-                    <p>Tangier Vibes is a community-driven tourism blog and city guide dedicated to Tangier, Morocco. It helps visitors and locals discover places, restaurants, beaches, cultural sites, and hidden gems through authentic user-generated content.</p>
+                    <p><?= __('faq_a1') ?></p>
                 </div>
             </div>
 
             <div class="faq_item">
                 <button class="faq_question">
-                    How can I publish a post?
+                    <?= __('faq_q2') ?>
                     <i class="fa-solid fa-chevron-down"></i>
                 </button>
                 <div class="faq_answer">
-                    <p>Simply create an account, log in, and go to your Dashboard. Click "Add Post" to write about a place, upload images, and submit. Your post will be reviewed by our team before being published to ensure quality.</p>
+                    <p><?= __('faq_a2') ?></p>
                 </div>
             </div>
 
             <div class="faq_item">
                 <button class="faq_question">
-                    How can I contact the team?
+                    <?= __('faq_q3') ?>
                     <i class="fa-solid fa-chevron-down"></i>
                 </button>
                 <div class="faq_answer">
-                    <p>You can reach us through the contact form on this page, or email us directly at contact@tangiervibes.com. We typically respond within 24 hours.</p>
+                    <p><?= __('faq_a3') ?></p>
                 </div>
             </div>
 
             <div class="faq_item">
                 <button class="faq_question">
-                    Is registration free?
+                    <?= __('faq_q4') ?>
                     <i class="fa-solid fa-chevron-down"></i>
                 </button>
                 <div class="faq_answer">
-                    <p>Yes, registration is completely free. Anyone can sign up, start exploring Tangier, and share their own experiences with the community.</p>
+                    <p><?= __('faq_a4') ?></p>
                 </div>
             </div>
         </div>

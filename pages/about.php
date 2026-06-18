@@ -2,8 +2,9 @@
 session_start();
 require '../config/connection.php';
 require_once '../includes/security.php';
-
-send_security_headers();
+require_once '../includes/lang.php';
+ 
+ send_security_headers();
 
 // stats
 $pub_stmt = $conn->prepare("select count(*) from posts where status = 'published'");
@@ -19,7 +20,7 @@ $user_stmt->execute();
 $user_count = (int)$user_stmt->fetchColumn();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= get_lang_code() ?>" dir="<?= get_lang_dir() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,6 +39,7 @@ $user_count = (int)$user_stmt->fetchColumn();
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/about.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
 </head>
 <body>
 
@@ -49,116 +51,116 @@ $user_count = (int)$user_stmt->fetchColumn();
     <section class="about_head">
         <span class="about_label">
             <i class="fa-solid fa-info-circle"></i>
-            About Tangier Vibes
+            <?= __('about_label') ?>
         </span>
-        <h1>Discover Tangier through stories, places,<br>culture and local experiences.</h1>
+        <h1><?= __('about_title') ?></h1>
         <p>
-            Your ultimate guide to exploring the vibrant city of Tangier — from hidden beaches and historic landmarks to legendary cafes and exquisite restaurants.
+            <?= __('about_desc') ?>
         </p>
     </section>
 
     <!-- about -->
     <section class="about_section">
-        <h2 class="section_title">What is Tangier Vibes?</h2>
+        <h2 class="section_title"><?= __('about_section_title') ?></h2>
         <p class="section_desc">
-            A platform built for travelers, locals, and anyone who loves Tangier.
+            <?= __('about_section_desc') ?>
         </p>
         <div class="about_text">
             <p>
-                Tangier Vibes is a community-driven tourism blog that showcases everything this magnificent city has to offer. We bring together authentic stories, practical guides, and insider recommendations — all curated by people who know and love Tangier.
+                <?= __('about_text_p1') ?>
             </p>
             <p>
-                Founded with the mission to make Tangier more accessible, our platform enables anyone to share their experiences, discover new places, and connect with the city's rich culture, history, and natural beauty.
+                <?= __('about_text_p2') ?>
             </p>
             <p>
-                <strong>Our mission</strong> is to create the most comprehensive and trustworthy digital guide to Tangier. <strong>Our vision</strong> is a world where every visitor to Tangier feels like a local — guided by real stories from real people.
+                <?= __('about_text_p3') ?>
             </p>
         </div>
     </section>
 
     <!-- features -->
     <section class="about_section section_center">
-        <h2 class="section_title">Explore Everything Tangier</h2>
+        <h2 class="section_title"><?= __('about_features_title') ?></h2>
         <p class="section_desc">
-            From coastal escapes to cultural treasures — discover what makes Tangier unforgettable.
+            <?= __('about_features_desc') ?>
         </p>
 
         <div class="features_grid">
             <div class="feature_card">
                 <div class="feature_icon"><i class="fa-solid fa-map-location-dot"></i></div>
-                <h3>Discover Places</h3>
-                <p>Uncover the most iconic spots and hidden gems across Tangier, from the Medina to the Caves of Hercules.</p>
+                <h3><?= __('about_feature_discover') ?></h3>
+                <p><?= __('about_feature_discover_desc') ?></p>
             </div>
 
             <div class="feature_card">
                 <div class="feature_icon"><i class="fa-solid fa-landmark"></i></div>
-                <h3>Explore Local Culture</h3>
-                <p>Immerse yourself in Tangier's unique blend of Moroccan, European, and African traditions.</p>
+                <h3><?= __('about_feature_culture') ?></h3>
+                <p><?= __('about_feature_culture_desc') ?></p>
             </div>
 
             <div class="feature_card">
                 <div class="feature_icon"><i class="fa-solid fa-utensils"></i></div>
-                <h3>Find Restaurants</h3>
-                <p>From street food stalls to fine dining — taste the best flavors Tangier has to offer.</p>
+                <h3><?= __('about_feature_restaurants') ?></h3>
+                <p><?= __('about_feature_restaurants_desc') ?></p>
             </div>
 
             <div class="feature_card">
                 <div class="feature_icon"><i class="fa-solid fa-book-open"></i></div>
-                <h3>Learn Tangier History</h3>
-                <p>Dive into the rich past of the Pearl of the North, shaped by Phoenicians, Romans, and countless civilizations.</p>
+                <h3><?= __('about_feature_history') ?></h3>
+                <p><?= __('about_feature_history_desc') ?></p>
             </div>
 
             <div class="feature_card">
                 <div class="feature_icon"><i class="fa-solid fa-pen-fancy"></i></div>
-                <h3>Share Experiences</h3>
-                <p>Write about your favorite places and share your Tangier stories with a growing community.</p>
+                <h3><?= __('about_feature_share') ?></h3>
+                <p><?= __('about_feature_share_desc') ?></p>
             </div>
 
             <div class="feature_card">
                 <div class="feature_icon"><i class="fa-solid fa-users"></i></div>
-                <h3>Community Content</h3>
-                <p>Discover authentic recommendations written by locals and travelers who know Tangier best.</p>
+                <h3><?= __('about_feature_community') ?></h3>
+                <p><?= __('about_feature_community_desc') ?></p>
             </div>
         </div>
     </section>
 
     <!-- why choose us -->
     <section class="about_section">
-        <h2 class="section_title">Why Choose Tangier Vibes</h2>
+        <h2 class="section_title"><?= __('about_why_title') ?></h2>
         <p class="section_desc">
-            We make discovering Tangier simple, trustworthy, and enjoyable.
+            <?= __('about_why_desc') ?>
         </p>
 
         <div class="why_grid">
             <div class="why_item">
                 <div class="why_icon"><i class="fa-solid fa-shield-check"></i></div>
                 <div>
-                    <h3>Trusted Content</h3>
-                    <p>Every post is reviewed by our team to ensure quality and accuracy. You can trust what you read.</p>
+                    <h3><?= __('about_why_trusted') ?></h3>
+                    <p><?= __('about_why_trusted_desc') ?></p>
                 </div>
             </div>
 
             <div class="why_item">
                 <div class="why_icon"><i class="fa-solid fa-compass"></i></div>
                 <div>
-                    <h3>Easy Navigation</h3>
-                    <p>Browse by category, search by keyword, and find exactly what you are looking for in seconds.</p>
+                    <h3><?= __('about_why_navigation') ?></h3>
+                    <p><?= __('about_why_navigation_desc') ?></p>
                 </div>
             </div>
 
             <div class="why_item">
                 <div class="why_icon"><i class="fa-solid fa-star"></i></div>
                 <div>
-                    <h3>Local Recommendations</h3>
-                    <p>Get insider tips from people who live, work, and explore Tangier every day.</p>
+                    <h3><?= __('about_why_local') ?></h3>
+                    <p><?= __('about_why_local_desc') ?></p>
                 </div>
             </div>
 
             <div class="why_item">
                 <div class="why_icon"><i class="fa-solid fa-mobile-screen"></i></div>
                 <div>
-                    <h3>Modern Experience</h3>
-                    <p>Enjoy a fast, responsive interface that works beautifully on your phone, tablet, or desktop.</p>
+                    <h3><?= __('about_why_modern') ?></h3>
+                    <p><?= __('about_why_modern_desc') ?></p>
                 </div>
             </div>
         </div>
@@ -166,38 +168,38 @@ $user_count = (int)$user_stmt->fetchColumn();
 
     <!-- stats -->
     <section class="about_section section_center">
-        <h2 class="section_title">Tangier Vibes by the Numbers</h2>
+        <h2 class="section_title"><?= __('about_stats_title') ?></h2>
         <p class="section_desc">
-            Our growing community of contributors and explorers.
+            <?= __('about_stats_desc') ?>
         </p>
 
         <div class="stats_grid">
             <div class="stat_card">
                 <div class="stat_icon"><i class="fa-solid fa-newspaper"></i></div>
                 <strong><?= $published_count; ?></strong>
-                <span>Published Posts</span>
+                <span><?= __('about_stats_posts') ?></span>
             </div>
 
             <div class="stat_card">
                 <div class="stat_icon"><i class="fa-solid fa-layer-group"></i></div>
                 <strong><?= $category_count; ?></strong>
-                <span>Categories</span>
+                <span><?= __('about_stats_categories') ?></span>
             </div>
 
             <div class="stat_card">
                 <div class="stat_icon"><i class="fa-solid fa-users"></i></div>
                 <strong><?= $user_count; ?></strong>
-                <span>Registered Users</span>
+                <span><?= __('about_stats_users') ?></span>
             </div>
         </div>
     </section>
 
     <!-- cta -->
     <section class="cta_section">
-        <h2>Explore Tangier Today</h2>
-        <p>Start your journey through the Pearl of the North.</p>
+        <h2><?= __('about_cta_title') ?></h2>
+        <p><?= __('about_cta_desc') ?></p>
         <a href="explore.php" class="cta_btn">
-            Explore Posts <i class="fa-solid fa-arrow-right"></i>
+            <?= __('about_cta_btn') ?> <i class="fa-solid fa-arrow-right"></i>
         </a>
     </section>
 
