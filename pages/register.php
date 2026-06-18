@@ -4,6 +4,7 @@ session_start();
 
 require '../config/connection.php';
 require_once '../includes/security.php';
+require_once '../includes/lang.php';
 
 send_security_headers();
 
@@ -14,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // validate CSRF token
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        $error = "Invalid request. Please try again.";
+        $error = __('register_error_invalid');
     }
 
     // get form values
@@ -26,15 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($error)) {
         if (empty($name) || empty($email) || empty($password)) {
 
-            $error = "All fields are required.";
+            $error = __('register_error_required');
 
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
-            $error = "Invalid email format.";
+            $error = __('register_error_email');
 
         } elseif (strlen($password) < 6) {
 
-            $error = "Password must be at least 6 characters.";
+            $error = __('register_error_password');
 
         } else {
 
@@ -46,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
-                $error = "Email already exists.";
+                $error = __('register_error_exists');
             } else {
                 // hash password
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -80,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= get_lang_code() ?>" dir="<?= get_lang_dir() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -97,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
     <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
 </head>
 <body>
 
@@ -109,9 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img" style="height:50px;width:auto;">
             </a>
 
-            <h1>Register</h1>
+            <h1><?= __('register_title') ?></h1>
 
-            <p>Create your Tangier Vibes account.</p>
+            <p><?= __('register_subtitle') ?></p>
 
                     <!-- error message -->
                     <?php if(!empty($error)): ?>
@@ -122,19 +124,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- register form -->
             <form action="#" method="POST">
                 <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
-                <label for="name">Full name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" value="<?= htmlspecialchars($name ?? '') ?>" required>
+                <label for="name"><?= __('register_name_label') ?></label>
+                <input type="text" id="name" name="name" placeholder="<?= __('register_name_placeholder') ?>" value="<?= htmlspecialchars($name ?? '') ?>" required>
 
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" value="<?= htmlspecialchars($email ?? '') ?>" required>
+                <label for="email"><?= __('register_email_label') ?></label>
+                <input type="email" id="email" name="email" placeholder="<?= __('register_email_placeholder') ?>" value="<?= htmlspecialchars($email ?? '') ?>" required>
 
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Create password" required>
+                <label for="password"><?= __('register_password_label') ?></label>
+                <input type="password" id="password" name="password" placeholder="<?= __('register_password_placeholder') ?>" required>
 
-                <button type="submit" class="btn">Create account</button>
+                <button type="submit" class="btn"><?= __('register_btn') ?></button>
             </form>
 
-            <p class="switch">Already have an account? <a href="login.php">Login</a></p>
+            <p class="switch"><?= __('register_switch') ?> <a href="login.php"><?= __('register_switch_link') ?></a></p>
 
         </section>
     </main>
