@@ -1,5 +1,5 @@
 function autoDismissPopup(selector, delay) {
-    var el = document.querySelector(selector);
+    const el = document.querySelector(selector);
     if (!el) return;
     setTimeout(function() {
         el.classList.add('fade-out');
@@ -45,9 +45,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // close dropdown when clicking outside
+    // user dropdown toggle
+    const userTriggers = document.querySelectorAll('[data-user-dropdown]');
+
+    userTriggers.forEach(function(trigger) {
+        trigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = trigger.closest('.user_dropdown');
+            const isOpen = dropdown.classList.contains('open');
+
+            // close all other user dropdowns
+            document.querySelectorAll('.user_dropdown.open').forEach(function(d) {
+                d.classList.remove('open');
+            });
+
+            if (!isOpen) {
+                dropdown.classList.add('open');
+            }
+        });
+    });
+
+    // close all dropdowns when clicking outside
     document.addEventListener('click', function() {
         document.querySelectorAll('.lang_dropdown.open').forEach(function(d) {
+            d.classList.remove('open');
+        });
+        document.querySelectorAll('.user_dropdown.open').forEach(function(d) {
             d.classList.remove('open');
         });
     });

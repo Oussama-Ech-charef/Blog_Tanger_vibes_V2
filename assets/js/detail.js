@@ -1,1 +1,1 @@
-autoDismissPopup('.comment-success-popup');
+autoDismissPopup('.notification');
