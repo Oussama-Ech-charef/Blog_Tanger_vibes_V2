@@ -8,8 +8,8 @@ check_session_timeout();
 // ensure CSRF token exists for forms
 get_csrf_token();
 
-
 ?>
+<a href="#main_content" class="skip-link">Skip to content</a>
 
 <header class="site_header">
 
@@ -32,27 +32,73 @@ get_csrf_token();
                     <!-- search desktop -->
                     <div class="search_desktop">
                         <form action="../pages/explore.php" method="GET" class="search_desktop_form">
-                            <i class="fa-solid fa-magnifying-glass search_icon"></i>
+                            <i class="fa-solid fa-magnifying-glass search_icon" aria-hidden="true"></i>
                             <input type="text" name="q" placeholder="<?= __('search_placeholder') ?>" value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
                             <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
-                                <a href="../pages/explore.php" class="search_clear_icon"><i class="fa-solid fa-xmark"></i></a>
+                                <a href="../pages/explore.php" class="search_clear_icon" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></a>
                             <?php endif; ?>
                         </form>
 
                     </div>
 
                     
-                    <!-- auth links -->
+                    <!-- auth links desktop -->
                     <div class="auth_actions_desktop">
 
                             <?php if (isset($_SESSION['id_user'])): ?>
 
-                            <div class="dashboard_logout">
-                                <a href="../pages/dashboard.php" class="dashboard"><?= __('auth_dashboard') ?></a>
-                                <form action="../pages/logout.php" method="POST" class="inline_form">
-                                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                                    <button type="submit" class="logout"><?= __('auth_logout') ?></button>
-                                </form>
+                            <div class="user_dropdown">
+                                <button class="user_dropdown_trigger" data-user-dropdown>
+                                    <span class="user_avatar"><?= strtoupper(htmlspecialchars(substr($_SESSION['user_name'], 0, 1))) ?></span>
+                                    <span class="user_name_text"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+                                    <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
+                                </button>
+                                <div class="user_dropdown_menu">
+                                    <div class="user_dropdown_header">
+                                        <span class="user_avatar large"><?= strtoupper(htmlspecialchars(substr($_SESSION['user_name'], 0, 1))) ?></span>
+                                        <div>
+                                            <div class="user_dropdown_name"><?= htmlspecialchars($_SESSION['user_name']) ?></div>
+                                            <div class="user_dropdown_role"><?= $_SESSION['role'] === 'admin' ? __('admin_label') : __('dashboard_label') ?></div>
+                                        </div>
+                                    </div>
+                                    <div class="user_dropdown_divider"></div>
+                                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                                    <a href="../dashboard/index.php" class="user_dropdown_item">
+                                        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <?= __('auth_dashboard') ?>
+                                    </a>
+                                    <a href="../dashboard/posts.php" class="user_dropdown_item">
+                                        <i class="fa-solid fa-file-lines" aria-hidden="true"></i> <?= __('dashboard_posts_title') ?>
+                                    </a>
+                                    <a href="../dashboard/comments.php" class="user_dropdown_item">
+                                        <i class="fa-solid fa-comments" aria-hidden="true"></i> <?= __('dashboard_comments') ?>
+                                    </a>
+                                    <a href="../dashboard/messages.php" class="user_dropdown_item">
+                                        <i class="fa-solid fa-envelope" aria-hidden="true"></i> <?= __('dashboard_messages') ?>
+                                    </a>
+                                    <a href="../dashboard/users.php" class="user_dropdown_item">
+                                        <i class="fa-solid fa-users" aria-hidden="true"></i> <?= __('dashboard_users') ?>
+                                    </a>
+                                    <div class="user_dropdown_divider"></div>
+                                    <?php endif; ?>
+                                    <?php if ($_SESSION['role'] !== 'admin'): ?>
+                                    <a href="../user_dashboard/index.php" class="user_dropdown_item">
+                                        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Dashboard
+                                    </a>
+                                    <a href="../user_dashboard/myposts.php" class="user_dropdown_item">
+                                        <i class="fa-solid fa-file-lines" aria-hidden="true"></i> My Posts
+                                    </a>
+                                    <a href="../user_dashboard/add_post.php" class="user_dropdown_item">
+                                        <i class="fa-solid fa-plus" aria-hidden="true"></i> Submit Post
+                                    </a>
+                                    <div class="user_dropdown_divider"></div>
+                                    <?php endif; ?>
+                                    <form action="../pages/logout.php" method="POST" class="user_dropdown_form">
+                                        <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                                        <button type="submit" class="user_dropdown_item user_dropdown_logout">
+                                            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <?= __('auth_logout') ?>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                             <?php else: ?>
 
@@ -64,9 +110,9 @@ get_csrf_token();
                     <!-- language switcher desktop -->
                     <div class="lang_dropdown desktop_switcher">
                         <button class="lang_trigger" aria-label="Select language" data-lang-dropdown>
-                            <i class="fa-solid fa-globe lang_globe"></i>
+                            <i class="fa-solid fa-globe lang_globe" aria-hidden="true"></i>
                             <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
-                            <i class="fa-solid fa-chevron-down lang_chevron"></i>
+                            <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
                         </button>
                         <div class="lang_menu">
                             <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en">English</a>
@@ -77,8 +123,8 @@ get_csrf_token();
 
                         <!-- menu open  -->
                     <div class="menu">
-                        <button class="menu_btn" id="menu_btn">
-                            <i class="fa-solid fa-bars"></i>
+                        <button class="menu_btn" id="menu_btn" aria-label="Toggle menu">
+                            <i class="fa-solid fa-bars" aria-hidden="true"></i>
                         </button>
                     </div>
                         
@@ -91,7 +137,7 @@ get_csrf_token();
                     <!-- close menu  -->
                     <div class="mobile_menu_header">
                         <button class="close_menu" id="close_menu" aria-label="Fermer le menu">
-                                    <i class="fa-solid fa-xmark"></i>
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                         </button>
                     </div>
 
@@ -101,10 +147,10 @@ get_csrf_token();
                     <!-- search mobile -->
                     <div class="search_mobile">
                         <form action="../pages/explore.php" method="GET" class="search_mobile_form">
-                            <i class="fa-solid fa-magnifying-glass search_icon"></i>
+                            <i class="fa-solid fa-magnifying-glass search_icon" aria-hidden="true"></i>
                             <input type="text" name="q" placeholder="<?= __('search_placeholder') ?>" value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
                             <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
-                                <a href="../pages/explore.php" class="search_clear_icon"><i class="fa-solid fa-xmark"></i></a>
+                                <a href="../pages/explore.php" class="search_clear_icon" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></a>
                             <?php endif; ?>
                         </form>
 
@@ -129,13 +175,28 @@ get_csrf_token();
                     <div class="auth_actions_mobile">
                             <?php if (isset($_SESSION['id_user'])): ?>
 
-                            <div class="dashboard_logout">
-                                <a href="../pages/dashboard.php" class="dashboard"><?= __('auth_dashboard') ?></a>
-                                <form action="../pages/logout.php" method="POST" class="inline_form">
-                                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                                    <button type="submit" class="logout"><?= __('auth_logout') ?></button>
-                                </form>
+                            <div class="mobile_user_header">
+                                <span class="user_avatar large"><?= strtoupper(htmlspecialchars(substr($_SESSION['user_name'], 0, 1))) ?></span>
+                                <span class="mobile_user_name"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
                             </div>
+                            <?php if ($_SESSION['role'] === 'admin'): ?>
+                            <a href="../dashboard/index.php" class="join_btn">
+                                <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <?= __('auth_dashboard') ?>
+                            </a>
+                            <?php else: ?>
+                            <a href="../user_dashboard/index.php" class="join_btn" style="background:#F1F5F9;color:#0F172A;">
+                                <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Dashboard
+                            </a>
+                            <a href="../user_dashboard/add_post.php" class="join_btn">
+                                <i class="fa-solid fa-plus" aria-hidden="true"></i> Submit Post
+                            </a>
+                            <?php endif; ?>
+                            <form action="../pages/logout.php" method="POST" class="inline_form mobile_logout_form">
+                                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                                <button type="submit" class="logout mobile_logout_btn">
+                                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <?= __('auth_logout') ?>
+                                </button>
+                            </form>
                             <?php else: ?>
 
                             <a href="#" class="join_btn" data-auth-toggle><?= __('auth_join') ?></a>
@@ -147,9 +208,9 @@ get_csrf_token();
                     <!-- language switcher mobile -->
                     <div class="lang_dropdown mobile_switcher">
                         <button class="lang_trigger" aria-label="Select language" data-lang-dropdown>
-                            <i class="fa-solid fa-globe lang_globe"></i>
+                            <i class="fa-solid fa-globe lang_globe" aria-hidden="true"></i>
                             <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
-                            <i class="fa-solid fa-chevron-down lang_chevron"></i>
+                            <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
                         </button>
                         <div class="lang_menu">
                             <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en">English</a>

@@ -84,6 +84,12 @@ if ($action === 'login') {
         exit();
     }
 
+    // check if account is active
+    if (isset($user['is_active']) && empty($user['is_active'])) {
+        echo json_encode(['success' => false, 'error' => 'Account deactivated. Contact an administrator.']);
+        exit();
+    }
+
     // clear rate limit on success
     $conn->prepare("delete from login_attempts where email = :email")
          ->execute([':email' => $normalized_email]);
@@ -94,7 +100,7 @@ if ($action === 'login') {
     $_SESSION['role'] = $user['role'];
     $_SESSION['last_activity'] = time();
 
-    echo json_encode(['success' => true, 'redirect' => '../pages/dashboard.php']);
+    echo json_encode(['success' => true, 'redirect' => '../pages/index.php']);
     exit();
 }
 
@@ -146,6 +152,15 @@ if ($action === 'register') {
         ':email' => $email,
         ':password' => $hashed,
     ]);
+
+    // log activity
+    $new_id = $conn->lastInsertId();
+    try {
+        $log = $conn->prepare("insert into activity_log (action_type, description, user_id, entity_type, entity_id) values ('user_registered', :desc, :uid, 'user', :eid)");
+        $log->execute([':desc' => "New user registered: $name", ':uid' => $new_id, ':eid' => $new_id]);
+    } catch (PDOException $e) {
+        error_log("Activity log error: " . $e->getMessage());
+    }
 
     echo json_encode(['success' => true, 'message' => __('login_success')]);
     exit();
