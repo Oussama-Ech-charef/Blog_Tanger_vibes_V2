@@ -12,7 +12,7 @@ session_start();
         from posts
         inner join categories on posts.id_category = categories.id_category
         inner join users on posts.id_user = users.id_user
-        where posts.status = 'published'
+        where posts.status = '" . STATUS_PUBLISHED . "'
         order by posts.created_at desc
         limit 3
  ");
@@ -56,12 +56,14 @@ session_start();
     <link rel="stylesheet" href="../assets/css/home.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
 </head>
 <body>
 
 
 <?php require '../includes/header.php'; ?>
 
+        <main id="main_content">
         <!-- hero -->
         <section class="hero_section">
             <picture>
@@ -110,7 +112,7 @@ session_start();
                                 <div class="card_content">
 
                                     <span class="category">
-                                        <i class="fa-solid fa-layer-group"></i>
+                                        <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
                                         <?= htmlspecialchars($post['cat_name']); ?>
                                     </span>
 
@@ -119,17 +121,17 @@ session_start();
                                     </h3>
 
                                     <p class="location">
-                                        <i class="fa-solid fa-user"></i>
+                                        <i class="fa-solid fa-user" aria-hidden="true"></i>
                                         <?= __('latest_by') ?> <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?>
                                     </p>
 
                                     <p class="location">
-                                        <i class="fa-solid fa-calendar-days"></i>
+                                        <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
                                         <?= date('M d, Y', strtotime($post['created_at'])); ?>
                                     </p>
 
                                     <span class="btn">
-                                        <?= __('latest_read_more') ?> <i class="fa-solid fa-arrow-right"></i>
+                                        <?= __('latest_read_more') ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                                     </span>
 
                                 </div>
@@ -152,7 +154,7 @@ session_start();
 
                     <a href="explore.php" class="view_explor">
 
-                        <?= __('latest_view_all') ?> <i class="fa-solid fa-arrow-right"></i>
+                        <?= __('latest_view_all') ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
 
                     </a>
 
@@ -160,6 +162,7 @@ session_start();
 
         </section>
 
+</main>
 
 <?php require '../includes/footer.php' ?>
     <script src="../assets/js/main.js"></script>

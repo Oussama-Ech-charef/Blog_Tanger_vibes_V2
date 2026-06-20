@@ -7,7 +7,7 @@ require_once '../includes/lang.php';
  send_security_headers();
 
 // stats
-$pub_stmt = $conn->prepare("select count(*) from posts where status = 'published'");
+$pub_stmt = $conn->prepare("select count(*) from posts where status = '" . STATUS_PUBLISHED . "'");
 $pub_stmt->execute();
 $published_count = (int)$pub_stmt->fetchColumn();
 
@@ -40,17 +40,18 @@ $user_count = (int)$user_stmt->fetchColumn();
     <link rel="stylesheet" href="../assets/css/about.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
 </head>
 <body>
 
 <?php require '../includes/header.php'; ?>
 
-<main class="about_page">
+<main class="about_page" id="main_content">
 
     <!-- hero -->
     <section class="about_head">
         <span class="about_label">
-            <i class="fa-solid fa-info-circle"></i>
+            <i class="fa-solid fa-info-circle" aria-hidden="true"></i>
             <?= __('about_label') ?>
         </span>
         <h1><?= __('about_title') ?></h1>
@@ -87,37 +88,37 @@ $user_count = (int)$user_stmt->fetchColumn();
 
         <div class="features_grid">
             <div class="feature_card">
-                <div class="feature_icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                <div class="feature_icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_discover') ?></h3>
                 <p><?= __('about_feature_discover_desc') ?></p>
             </div>
 
             <div class="feature_card">
-                <div class="feature_icon"><i class="fa-solid fa-landmark"></i></div>
+                <div class="feature_icon"><i class="fa-solid fa-landmark" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_culture') ?></h3>
                 <p><?= __('about_feature_culture_desc') ?></p>
             </div>
 
             <div class="feature_card">
-                <div class="feature_icon"><i class="fa-solid fa-utensils"></i></div>
+                <div class="feature_icon"><i class="fa-solid fa-utensils" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_restaurants') ?></h3>
                 <p><?= __('about_feature_restaurants_desc') ?></p>
             </div>
 
             <div class="feature_card">
-                <div class="feature_icon"><i class="fa-solid fa-book-open"></i></div>
+                <div class="feature_icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_history') ?></h3>
                 <p><?= __('about_feature_history_desc') ?></p>
             </div>
 
             <div class="feature_card">
-                <div class="feature_icon"><i class="fa-solid fa-pen-fancy"></i></div>
+                <div class="feature_icon"><i class="fa-solid fa-pen-fancy" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_share') ?></h3>
                 <p><?= __('about_feature_share_desc') ?></p>
             </div>
 
             <div class="feature_card">
-                <div class="feature_icon"><i class="fa-solid fa-users"></i></div>
+                <div class="feature_icon"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_community') ?></h3>
                 <p><?= __('about_feature_community_desc') ?></p>
             </div>
@@ -133,7 +134,7 @@ $user_count = (int)$user_stmt->fetchColumn();
 
         <div class="why_grid">
             <div class="why_item">
-                <div class="why_icon"><i class="fa-solid fa-shield-check"></i></div>
+                <div class="why_icon"><i class="fa-solid fa-shield-check" aria-hidden="true"></i></div>
                 <div>
                     <h3><?= __('about_why_trusted') ?></h3>
                     <p><?= __('about_why_trusted_desc') ?></p>
@@ -141,7 +142,7 @@ $user_count = (int)$user_stmt->fetchColumn();
             </div>
 
             <div class="why_item">
-                <div class="why_icon"><i class="fa-solid fa-compass"></i></div>
+                <div class="why_icon"><i class="fa-solid fa-compass" aria-hidden="true"></i></div>
                 <div>
                     <h3><?= __('about_why_navigation') ?></h3>
                     <p><?= __('about_why_navigation_desc') ?></p>
@@ -149,7 +150,7 @@ $user_count = (int)$user_stmt->fetchColumn();
             </div>
 
             <div class="why_item">
-                <div class="why_icon"><i class="fa-solid fa-star"></i></div>
+                <div class="why_icon"><i class="fa-solid fa-star" aria-hidden="true"></i></div>
                 <div>
                     <h3><?= __('about_why_local') ?></h3>
                     <p><?= __('about_why_local_desc') ?></p>
@@ -157,7 +158,7 @@ $user_count = (int)$user_stmt->fetchColumn();
             </div>
 
             <div class="why_item">
-                <div class="why_icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                <div class="why_icon"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></div>
                 <div>
                     <h3><?= __('about_why_modern') ?></h3>
                     <p><?= __('about_why_modern_desc') ?></p>
@@ -175,19 +176,19 @@ $user_count = (int)$user_stmt->fetchColumn();
 
         <div class="stats_grid">
             <div class="stat_card">
-                <div class="stat_icon"><i class="fa-solid fa-newspaper"></i></div>
+                <div class="stat_icon"><i class="fa-solid fa-newspaper" aria-hidden="true"></i></div>
                 <strong><?= $published_count; ?></strong>
                 <span><?= __('about_stats_posts') ?></span>
             </div>
 
             <div class="stat_card">
-                <div class="stat_icon"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="stat_icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></div>
                 <strong><?= $category_count; ?></strong>
                 <span><?= __('about_stats_categories') ?></span>
             </div>
 
             <div class="stat_card">
-                <div class="stat_icon"><i class="fa-solid fa-users"></i></div>
+                <div class="stat_icon"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
                 <strong><?= $user_count; ?></strong>
                 <span><?= __('about_stats_users') ?></span>
             </div>
@@ -199,7 +200,7 @@ $user_count = (int)$user_stmt->fetchColumn();
         <h2><?= __('about_cta_title') ?></h2>
         <p><?= __('about_cta_desc') ?></p>
         <a href="explore.php" class="cta_btn">
-            <?= __('about_cta_btn') ?> <i class="fa-solid fa-arrow-right"></i>
+            <?= __('about_cta_btn') ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </a>
     </section>
 

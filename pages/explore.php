@@ -36,7 +36,7 @@ if (!empty($keyword)) {
 }
 
 // Build WHERE clauses dynamically
-$where = "posts.status = 'published'";
+$where = "posts.status = '" . STATUS_PUBLISHED . "'";
 $params = [];
 
 if (!empty($category_id)) {
@@ -141,13 +141,13 @@ $has_filter = !empty($category_id);
 
         <?php require '../includes/header.php' ?>
         
-        <main class="explore_page">
+        <main class="explore_page" id="main_content">
 
             <!-- page header -->
             <section class="explore_head">
 
                 <span class="explore_label">
-                    <i class="fa-solid fa-compass"></i>
+                    <i class="fa-solid fa-compass" aria-hidden="true"></i>
                     <?= __('explore_label') ?>
                 </span>
 
@@ -198,7 +198,7 @@ $has_filter = !empty($category_id);
                             <div class="card_content">
 
                                 <span class="category">
-                                    <i class="fa-solid fa-layer-group"></i>
+                                    <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
                                     <?= htmlspecialchars($post['cat_name']); ?>
                                 </span>
 
@@ -207,17 +207,17 @@ $has_filter = !empty($category_id);
                                 </h3>
 
                                 <p class="location">
-                                    <i class="fa-solid fa-user"></i>
+                                    <i class="fa-solid fa-user" aria-hidden="true"></i>
                                     <?= __('latest_by') ?> <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?>
                                 </p>
 
                                 <p class="location">
-                                    <i class="fa-solid fa-calendar-days"></i>
+                                    <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
                                     <?= date('M d, Y', strtotime($post['created_at'])); ?>
                                 </p>
 
                                 <span class="btn">
-                                    <?= __('explore_read_more') ?> <i class="fa-solid fa-arrow-right"></i>
+                                    <?= __('explore_read_more') ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                                 </span>
                             </div>
                         </a>
@@ -226,7 +226,7 @@ $has_filter = !empty($category_id);
                 <?php elseif ($has_search): ?>
 
                     <div class="empty_state">
-                        <i class="fa-solid fa-search"></i>
+                        <i class="fa-solid fa-search" aria-hidden="true"></i>
                         <h3><?= __('explore_no_results_title') ?></h3>
                         <p><?= __('explore_no_results_desc') ?></p>
                     </div>

@@ -5,6 +5,7 @@ session_start();
 require '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/lang.php';
+require_once '../includes/helpers.php';
  
  send_security_headers();
 
@@ -23,7 +24,7 @@ $stmt = $conn->prepare("
     from posts
     inner join categories on posts.id_category = categories.id_category
     inner join users on posts.id_user = users.id_user
-    where posts.id_post = :id_post and posts.status = 'published'
+    where posts.id_post = :id_post and posts.status = '" . STATUS_PUBLISHED . "'
 ");
 
 $stmt->execute([
@@ -66,14 +67,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($comment_error)) {
         try {
             $stmt = $conn->prepare("
-                insert into comments (id_post, author_name, comment_text)
-                values (:id_post, :author_name, :comment_text)
+                insert into comments (id_post, author_name, comment_text, status)
+                values (:id_post, :author_name, :comment_text, 'approved')
             ");
             $stmt->execute([
                 ':id_post' => $post_id,
                 ':author_name' => $author_name,
                 ':comment_text' => $comment_text
             ]);
+
+            // log activity
+            try {
+                $log = $conn->prepare("insert into activity_log (action_type, description, user_id, entity_type, entity_id) values ('comment_added', :desc, null, 'comment', :eid)");
+                $log->execute([':desc' => "$author_name commented on: " . $post['title'], ':eid' => $conn->lastInsertId()]);
+            } catch (PDOException $e) {
+                error_log("Activity log error: " . $e->getMessage());
+            }
+
+            // notify post author
+            if (!empty($post['id_user']) && (!isset($_SESSION['id_user']) || (int)$_SESSION['id_user'] !== (int)$post['id_user'])) {
+                try {
+                    $n = $conn->prepare("INSERT INTO user_notifications (id_user,type,message,link) VALUES (:uid,'new_comment',:msg,:lnk)");
+                    $n->execute([':uid'=>$post['id_user'], ':msg'=>"$author_name commented on your post: " . $post['title'], ':lnk'=>"detail.php?id=$post_id"]);
+                } catch (PDOException $e) {
+                    error_log("Notification error: " . $e->getMessage());
+                }
+            }
+
             $_SESSION['comment_added'] = true;
             header("Location: detail.php?id=" . $post_id . "#comments");
             exit();
@@ -84,11 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// get comments for this post
+// get approved comments for this post
 $comment_stmt = $conn->prepare("
     select id_comment, author_name, comment_text, created_at
     from comments
-    where id_post = :id_post
+    where id_post = :id_post and status = 'approved'
     order by created_at desc
 ");
 $comment_stmt->execute([':id_post' => $post_id]);
@@ -126,19 +146,19 @@ $comment_count = count($comments);
 
 <?php require '../includes/header.php' ?>
 
-    <div class="detail_container">
+    <div class="detail_container" id="main_content">
 
         <!-- category -->
         <div class="detail_category">
-            <i class="fa-solid fa-layer-group"></i> <?= __('detail_tanger_label') ?> <span class="cat_name"><?= htmlspecialchars($post['cat_name']); ?></span>
+            <i class="fa-solid fa-layer-group" aria-hidden="true"></i> <?= __('detail_tanger_label') ?> <span class="cat_name"><?= htmlspecialchars($post['cat_name']); ?></span>
         </div>
 
         <h1><?= htmlspecialchars($post['title']); ?></h1>
 
         <!-- post info -->
         <div class="icons">
-            <span><i class="fa-solid fa-calendar-days"></i><?= date(__('date_format_detail'), strtotime($post['created_at'])); ?></span>
-            <span><i class="fa-solid fa-circle-user"></i><?= __('detail_by') ?> <?= htmlspecialchars($post['user_name'] ?? __('admin_label')); ?></span>
+            <span><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><?= date(__('date_format_detail'), strtotime($post['created_at'])); ?></span>
+            <span><i class="fa-solid fa-circle-user" aria-hidden="true"></i><?= __('detail_by') ?> <?= htmlspecialchars($post['user_name'] ?? __('admin_label')); ?></span>
             
         </div>
 
@@ -153,7 +173,7 @@ $comment_count = count($comments);
 
         <!-- share links -->
         <div class="social">
-            <i class="fas fa-share-alt"></i> <?= __('detail_share') ?>: <a href="#">Facebook</a> /<a href="#">Twitter</a> /<a href="#">WhatsApp</a>
+            <i class="fas fa-share-alt" aria-hidden="true"></i> <?= __('detail_share') ?>: <a href="#">Facebook</a> /<a href="#">Twitter</a> /<a href="#">WhatsApp</a>
         </div>
 
         <!-- map design -->
@@ -173,7 +193,7 @@ $comment_count = count($comments);
         <!-- comments -->
         <div id="comments" class="comments_posts">
             <div class="comment_title">
-                <i class="fa-solid fa-comment-dots"></i> <?= __('detail_comments_title') ?>
+                <i class="fa-solid fa-comment-dots" aria-hidden="true"></i> <?= __('detail_comments_title') ?>
                 <span><?= $comment_count; ?></span>
             </div>
         </div>
@@ -195,7 +215,7 @@ $comment_count = count($comments);
         </div>
 
         <?php if (!empty($comment_error)): ?>
-            <p class="error_message"><?= htmlspecialchars($comment_error); ?></p>
+            <?php render_notification($comment_error, 'error'); ?>
         <?php endif; ?>
 
         <div class="comment_form">
@@ -211,7 +231,7 @@ $comment_count = count($comments);
                     <label><?= __('detail_comment_message_label') ?> :</label>
                     <textarea name="message" placeholder="<?= __('detail_comment_message_placeholder') ?>" required></textarea>
                 </div>
-                <button type="submit"><i class="fa-solid fa-paper-plane"></i> <?= __('detail_comment_btn') ?></button>
+                <button type="submit"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('detail_comment_btn') ?></button>
             </form>
         </div>
 
@@ -222,7 +242,7 @@ $comment_count = count($comments);
 
 
     <?php if (!empty($comment_success)): ?>
-        <div class="comment-success-popup"><?= htmlspecialchars($comment_success); ?></div>
+        <?php render_notification($comment_success, 'success'); ?>
     <?php endif; ?>
 
     <?php require '../includes/footer.php'; ?>

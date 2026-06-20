@@ -3,6 +3,7 @@ session_start();
 require '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/lang.php';
+require_once '../includes/helpers.php';
  
  send_security_headers();
 
@@ -50,6 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':message' => $message
             ]);
 
+            // log activity
+            try {
+                $log = $conn->prepare("insert into activity_log (action_type, description, user_id, entity_type, entity_id) values ('message_received', :desc, null, 'message', :eid)");
+                $log->execute([':desc' => "New message from $name: $subject", ':eid' => $conn->lastInsertId()]);
+            } catch (PDOException $e) {
+                error_log("Activity log error: " . $e->getMessage());
+            }
+
             $_SESSION['contact_submitted'] = __('contact_success');
             header('Location: contact.php');
             exit;
@@ -87,12 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php require '../includes/header.php'; ?>
 
-<main class="contact_page">
+<main class="contact_page" id="main_content">
 
     <!-- hero -->
     <section class="contact_head">
         <span class="contact_label">
-            <i class="fa-solid fa-envelope"></i>
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
             <?= __('contact_label') ?>
         </span>
         <h1><?= __('contact_title') ?></h1>
@@ -105,19 +114,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="contact_section">
         <div class="contact_info_grid">
             <div class="info_card">
-                <div class="info_icon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="info_icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></div>
                 <h3><?= __('contact_email_title') ?></h3>
                 <p><a href="mailto:contact@tangiervibes.com">contact@tangiervibes.com</a></p>
             </div>
 
             <div class="info_card">
-                <div class="info_icon"><i class="fa-solid fa-phone"></i></div>
+                <div class="info_icon"><i class="fa-solid fa-phone" aria-hidden="true"></i></div>
                 <h3><?= __('contact_phone_title') ?></h3>
                 <p>+212 600 000 000</p>
             </div>
 
             <div class="info_card">
-                <div class="info_icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="info_icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></div>
                 <h3><?= __('contact_address_title') ?></h3>
                 <p>Tangier, Morocco</p>
             </div>
@@ -132,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
 
         <?php if (!empty($error)): ?>
-            <p class="error_message"><?= htmlspecialchars($error); ?></p>
+            <?php render_notification($error, 'error'); ?>
         <?php endif; ?>
 
         <div class="contact_layout">
@@ -161,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <button type="submit">
-                        <i class="fa-solid fa-paper-plane"></i>
+                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
                         <?= __('contact_form_btn') ?>
                     </button>
                 </form>
@@ -188,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="faq_item">
                 <button class="faq_question">
                     <?= __('faq_q1') ?>
-                    <i class="fa-solid fa-chevron-down"></i>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div class="faq_answer">
                     <p><?= __('faq_a1') ?></p>
@@ -198,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="faq_item">
                 <button class="faq_question">
                     <?= __('faq_q2') ?>
-                    <i class="fa-solid fa-chevron-down"></i>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div class="faq_answer">
                     <p><?= __('faq_a2') ?></p>
@@ -208,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="faq_item">
                 <button class="faq_question">
                     <?= __('faq_q3') ?>
-                    <i class="fa-solid fa-chevron-down"></i>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div class="faq_answer">
                     <p><?= __('faq_a3') ?></p>
@@ -218,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="faq_item">
                 <button class="faq_question">
                     <?= __('faq_q4') ?>
-                    <i class="fa-solid fa-chevron-down"></i>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div class="faq_answer">
                     <p><?= __('faq_a4') ?></p>
@@ -230,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 
 <?php if (!empty($success)): ?>
-    <div class="comment-success-popup"><?= htmlspecialchars($success); ?></div>
+    <?php render_notification($success, 'success'); ?>
 <?php endif; ?>
 
 <?php require '../includes/footer.php'; ?>
