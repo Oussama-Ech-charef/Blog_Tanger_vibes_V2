@@ -7,6 +7,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // generate or retrieve CSRF token
+/**
+ * @return string
+ */
 function get_csrf_token() {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -16,6 +19,10 @@ function get_csrf_token() {
 
 
 // validate CSRF token
+/**
+ * @param string $token
+ * @return bool
+ */
 function validate_csrf_token($token) {
     if (empty($_SESSION['csrf_token']) || empty($token)) {
         return false;
@@ -25,6 +32,9 @@ function validate_csrf_token($token) {
 
 
 // check session timeout (30 min)
+/**
+ * @return never
+ */
 function check_session_timeout() {
     $timeout = 1800;
 
@@ -44,15 +54,26 @@ function check_session_timeout() {
 
 
 // send security headers (call before any HTML output)
+/**
+ * @return void
+ */
 function send_security_headers() {
     header("X-Frame-Options: DENY");
     header("X-Content-Type-Options: nosniff");
     header("Referrer-Policy: strict-origin-when-cross-origin");
     header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
+    header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'");
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+        header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+    }
 }
 
 
 // convert PHP ini size value (e.g. "2M", "50M") to bytes
+/**
+ * @param string $value
+ * @return int
+ */
 function parse_ini_size($value) {
     $value = trim($value);
     $unit = strtoupper(substr($value, -1));
@@ -66,11 +87,18 @@ function parse_ini_size($value) {
 }
 
 // format bytes to MB with 1 decimal place
+/**
+ * @param int $bytes
+ * @return string
+ */
 function format_file_size($bytes) {
     return number_format($bytes / (1024 * 1024), 1) . ' MB';
 }
 
 // get effective max upload size (min of target 50MB and actual server limits)
+/**
+ * @return int
+ */
 function get_effective_max_upload() {
     $target = 50 * 1024 * 1024;
     $ini_upload = parse_ini_size(ini_get('upload_max_filesize'));
@@ -79,6 +107,10 @@ function get_effective_max_upload() {
 }
 
 // validate uploaded image file
+/**
+ * @param array $file
+ * @return array
+ */
 function validate_uploaded_image($file) {
     $errors = [];
     $max_size = get_effective_max_upload();
@@ -101,15 +133,11 @@ function validate_uploaded_image($file) {
         return $errors;
     }
 
-    // check MIME type using getimagesize (works without fileinfo extension)
-    $image_data = @getimagesize($file['tmp_name']);
+    // check MIME type using finfo (more reliable than getimagesize)
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
 
-    if ($image_data === false) {
-        $errors[] = "Unsupported image format.";
-        return $errors;
-    }
-
-    $mime = $image_data['mime'];
     $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
 
     if (!in_array($mime, $allowed_mimes)) {
@@ -131,6 +159,10 @@ function validate_uploaded_image($file) {
 
 
 // generate secure filename
+/**
+ * @param string $extension
+ * @return string
+ */
 function generate_secure_filename($extension) {
     return "post_" . date('Ymd') . "_" . bin2hex(random_bytes(6)) . "." . $extension;
 }

@@ -1,18 +1,38 @@
 <?php
 
+/**
+ * @param string $param
+ * @return int
+ */
 function get_valid_page($param = 'page') {
     $page = isset($_GET[$param]) ? (int)$_GET[$param] : 1;
     return max(1, $page);
 }
 
+/**
+ * @param int $page
+ * @param int $per_page
+ * @return int
+ */
 function get_offset($page, $per_page) {
     return ($page - 1) * $per_page;
 }
 
+/**
+ * @param int $total_records
+ * @param int $per_page
+ * @return int
+ */
 function get_total_pages($total_records, $per_page) {
     return max(1, (int)ceil($total_records / $per_page));
 }
 
+/**
+ * @param int $current_page
+ * @param int $total_pages
+ * @param array $query_params
+ * @return string
+ */
 function render_pagination($current_page, $total_pages, $query_params = []) {
     if ($total_pages <= 1) {
         return '';
@@ -25,11 +45,11 @@ function render_pagination($current_page, $total_pages, $query_params = []) {
         $params = $query_params;
         $params['page'] = $current_page - 1;
         $html .= '<a href="?' . http_build_query($params) . '" class="page_btn prev">
-            <i class="fa-solid fa-chevron-left"></i> ' . __('pagination_prev') . '
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i> ' . __('pagination_prev') . '
         </a>';
     } else {
         $html .= '<span class="page_btn prev disabled">
-            <i class="fa-solid fa-chevron-left"></i> ' . __('pagination_prev') . '
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i> ' . __('pagination_prev') . '
         </span>';
     }
 
@@ -67,11 +87,11 @@ function render_pagination($current_page, $total_pages, $query_params = []) {
         $params = $query_params;
         $params['page'] = $current_page + 1;
         $html .= '<a href="?' . http_build_query($params) . '" class="page_btn next">
-            ' . __('pagination_next') . ' <i class="fa-solid fa-chevron-right"></i>
+            ' . __('pagination_next') . ' <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
         </a>';
     } else {
         $html .= '<span class="page_btn next disabled">
-            ' . __('pagination_next') . ' <i class="fa-solid fa-chevron-right"></i>
+            ' . __('pagination_next') . ' <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
         </span>';
     }
 
