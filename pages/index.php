@@ -107,7 +107,7 @@ session_start();
                             <!-- post card -->
                             <a href="detail.php?id=<?= $post['id_post']; ?>" class="card_place">
 
-                                <img     src="<?= htmlspecialchars($post['image']); ?>"     alt="<?= htmlspecialchars($post['title']); ?>"     loading="lazy">
+                                <img     src="../<?= htmlspecialchars($post['image']); ?>"     alt="<?= htmlspecialchars($post['title']); ?>"     loading="lazy">
 
                                 <div class="card_content">
 
