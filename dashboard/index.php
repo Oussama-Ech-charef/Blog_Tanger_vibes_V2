@@ -3,11 +3,19 @@ $page_title = 'Overview';
 require_once __DIR__ . '/init.php';
 
 // Total posts by status
-$status_stmt = $conn->query("
-    SELECT COUNT(*) as total, SUM(status = '" . STATUS_PUBLISHED . "') as published,
-           SUM(status = '" . STATUS_PENDING . "') as pending, SUM(status = '" . STATUS_REJECTED . "') as rejected,
-           SUM(status = '" . STATUS_DRAFT . "') as draft FROM posts
+$status_stmt = $conn->prepare("
+    SELECT COUNT(*) as total,
+           SUM(status = :pub) as published,
+           SUM(status = :pend) as pending,
+           SUM(status = :rej) as rejected,
+           SUM(status = :draft) as draft FROM posts
 ");
+$status_stmt->execute([
+    ':pub' => STATUS_PUBLISHED,
+    ':pend' => STATUS_PENDING,
+    ':rej' => STATUS_REJECTED,
+    ':draft' => STATUS_DRAFT
+]);
 $post_stats = $status_stmt->fetch(PDO::FETCH_ASSOC);
 
 $comment_count = (int)$conn->query("SELECT COUNT(*) FROM comments")->fetchColumn();
@@ -15,28 +23,50 @@ $user_count = (int)$conn->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $new_users = (int)$conn->query("SELECT COUNT(*) FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")->fetchColumn();
 $message_count = (int)$conn->query("SELECT COUNT(*) FROM contact_messages")->fetchColumn();
 $unread_messages = (int)$conn->query("SELECT COUNT(*) FROM contact_messages WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetchColumn();
-$pending_count = (int)$conn->query("SELECT COUNT(*) FROM posts WHERE status = '" . STATUS_PENDING . "'")->fetchColumn();
+$pc_stmt = $conn->prepare("SELECT COUNT(*) FROM posts WHERE status = :st");
+$pc_stmt->execute([':st' => STATUS_PENDING]);
+$pending_count = (int)$pc_stmt->fetchColumn();
 
 // Chart data
 $posts_chart = $conn->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM posts WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
 $comments_chart = $conn->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM comments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
 $users_chart = $conn->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-$category_chart = $conn->query("
+$cat_chart_stmt = $conn->prepare("
     SELECT c.cat_name, COUNT(p.id_post) as count FROM categories c
-    LEFT JOIN posts p ON p.id_category = c.id_category AND p.status = '" . STATUS_PUBLISHED . "'
+    LEFT JOIN posts p ON p.id_category = c.id_category AND p.status = :pub
     GROUP BY c.id_category, c.cat_name ORDER BY count DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$cat_chart_stmt->execute([':pub' => STATUS_PUBLISHED]);
+$category_chart = $cat_chart_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Format chart data
+// Format chart data — pad all 12 months with zeros so charts always have 12 bars/points
 $pm_labels = []; $pm_data = [];
-foreach ($posts_chart as $r) { $pm_labels[] = date('M', strtotime($r['month'].'-01')); $pm_data[] = (int)$r['count']; }
+$pm_map = [];
+foreach ($posts_chart as $r) { $pm_map[$r['month']] = (int)$r['count']; }
+for ($i = 11; $i >= 0; $i--) {
+    $m = date('Y-m', strtotime("-$i months"));
+    $pm_labels[] = date('M', strtotime($m . '-01'));
+    $pm_data[] = $pm_map[$m] ?? 0;
+}
 
 $cm_labels = []; $cm_data = [];
-foreach ($comments_chart as $r) { $cm_labels[] = date('M', strtotime($r['month'].'-01')); $cm_data[] = (int)$r['count']; }
+$cm_map = [];
+foreach ($comments_chart as $r) { $cm_map[$r['month']] = (int)$r['count']; }
+for ($i = 11; $i >= 0; $i--) {
+    $m = date('Y-m', strtotime("-$i months"));
+    $cm_labels[] = date('M', strtotime($m . '-01'));
+    $cm_data[] = $cm_map[$m] ?? 0;
+}
 
 $um_labels = []; $um_data = [];
-foreach ($users_chart as $r) { $um_labels[] = date('M', strtotime($r['month'].'-01')); $um_data[] = (int)$r['count']; }
+$um_map = [];
+foreach ($users_chart as $r) { $um_map[$r['month']] = (int)$r['count']; }
+for ($i = 11; $i >= 0; $i--) {
+    $m = date('Y-m', strtotime("-$i months"));
+    $um_labels[] = date('M', strtotime($m . '-01'));
+    $um_data[] = $um_map[$m] ?? 0;
+}
 
 $cat_labels = []; $cat_data = []; $cat_colors = ['#0047AB','#10B981','#F59E0B','#EF4444','#7C3AED','#EC4899'];
 foreach ($category_chart as $i => $r) { $cat_labels[] = $r['cat_name']; $cat_data[] = (int)$r['count']; }
