@@ -127,7 +127,7 @@ $comment_count = count($comments);
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
     <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?> - Tangier Vibes">
     <meta property="og:description" content="<?= htmlspecialchars(substr(strip_tags($post['content']), 0, 150)) ?>">
-    <meta property="og:image" content="<?= htmlspecialchars($post['image'] ?? '../assets/images/logo.png') ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($post['image'] ? '../' . $post['image'] : '../assets/images/logo.png') ?>">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://tanger.lovestoblog.com/detail.php?id=<?= $post['id_post'] ?>">
     <meta name="twitter:card" content="summary_large_image">
@@ -163,7 +163,7 @@ $comment_count = count($comments);
         </div>
 
         <!-- image -->
-        <img src="<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy">
+        <img src="../<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy">
 
         <!-- content -->
         <div class="content">
@@ -179,7 +179,7 @@ $comment_count = count($comments);
         <!-- map design -->
         <div class="map_box">
             <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10754.139064625955!2d-5.8367744!3d35.7594653!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0b8165f4a90f3d%3A0x127b3b98cb1b5b62!2sTangier%2C%20Morocco!5e0!3m2!1sen!2sma!4v1710000000000!5m2!1sen!2sma"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-5.85,35.75,-5.82,35.77&layer=mapnik&marker=35.7595,-5.8368"
                 width="100%"
                 height="400"
                 style="border:0;"
