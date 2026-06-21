@@ -222,7 +222,6 @@ return [
     'add_post_error_category' => 'Selected category does not exist.',
 
     'edit_post_label' => 'Edit Post',
-    'edit_post_title' => 'Edit post',
     'edit_post_desc' => 'Update your post information.',
     'edit_post_back' => 'Back',
     'edit_post_current_image' => 'Current image: %s',

@@ -13,8 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lang']) && in_array($_G
     $uri = $_SERVER['REQUEST_URI'];
     $parsed = parse_url($uri);
     $redirect = $parsed['path'] ?? '/';
-    // Only allow internal relative paths (must start with / or a relative path)
-    if (preg_match('#^[a-zA-Z][a-zA-Z0-9+.-]*://#', $redirect)) {
+    // Only allow safe internal relative paths
+    if ($redirect !== '' && $redirect[0] === '/' && strpos($redirect, '://') === false && strpos($redirect, '..') === false) {
+        // safe — internal path
+    } else {
         $redirect = '/';
     }
     $query = [];

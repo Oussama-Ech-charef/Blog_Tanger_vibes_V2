@@ -22,8 +22,8 @@ function time_ago($datetime) {
  * @return string
  */
 function truncate_text($text, $length = 80) {
-    if (strlen($text) <= $length) return htmlspecialchars($text);
-    return htmlspecialchars(substr($text, 0, $length)) . '...';
+    if (mb_strlen($text) <= $length) return htmlspecialchars($text);
+    return htmlspecialchars(mb_substr($text, 0, $length)) . '...';
 }
 
 /**
