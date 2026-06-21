@@ -444,10 +444,6 @@
 }
 
 /* ── Tables ───────────────────────────────────────────────── */
-.table_wrapper {
-    overflow-x: auto;
-}
-
 .data_table {
     width: 100%;
     border-collapse: collapse;
@@ -492,8 +488,7 @@
 .data_table .cell_actions {
     display: flex;
     align-items: center;
-    gap: 6px;
-    white-space: nowrap;
+    justify-content: flex-end;
 }
 
 .data_table .cell_actions .btn_small {
@@ -1402,7 +1397,7 @@
     position: absolute;
     right: 0;
     top: calc(100% + 6px);
-    min-width: 185px;
+    min-width: 210px;
     background: #FFFFFF;
     border: 1px solid var(--db-card-border);
     border-radius: 10px;
@@ -1448,6 +1443,10 @@
     color: var(--db-text-muted);
     flex-shrink: 0;
 }
+
+.dropdown_item .dd_icon_success { color: var(--db-success); }
+.dropdown_item .dd_icon_danger { color: var(--db-danger); }
+.dropdown_item .dd_icon_warning { color: #D97706; }
 
 .dropdown_item:hover {
     background: #F8FAFC;

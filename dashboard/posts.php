@@ -16,8 +16,8 @@ if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         $pid = (int)$_POST['approve'];
         try {
-            $s = $conn->prepare("UPDATE posts SET status='" . STATUS_PUBLISHED . "', id_approved_by=:admin, approved_at=NOW(), reviewed_at=NOW() WHERE id_post=:id AND status='" . STATUS_PENDING . "'");
-            $s->execute([':admin' => $_SESSION['id_user'], ':id' => $pid]);
+            $s = $conn->prepare("UPDATE posts SET status=:pub_status, id_approved_by=:admin, approved_at=NOW(), reviewed_at=NOW() WHERE id_post=:id AND status=:pend_status");
+            $s->execute([':pub_status' => STATUS_PUBLISHED, ':pend_status' => STATUS_PENDING, ':admin' => $_SESSION['id_user'], ':id' => $pid]);
             if ($s->rowCount()) {
                 $t = $conn->prepare("SELECT title, id_user FROM posts WHERE id_post=:id");
                 $t->execute([':id' => $pid]);
@@ -42,8 +42,8 @@ if (isset($_POST['reject_id'])) {
     $reason = trim($_POST['rejection_reason'] ?? '');
     if (validate_csrf_token($_POST['csrf_token'] ?? '') && !empty($reason)) {
         try {
-            $s = $conn->prepare("UPDATE posts SET status='" . STATUS_REJECTED . "', rejection_reason=:reason, reviewed_at=NOW() WHERE id_post=:id AND status='" . STATUS_PENDING . "'");
-            $s->execute([':reason'=>$reason, ':id'=>$pid]);
+            $s = $conn->prepare("UPDATE posts SET status=:rej_status, rejection_reason=:reason, reviewed_at=NOW() WHERE id_post=:id AND status=:pend_status");
+            $s->execute([':rej_status' => STATUS_REJECTED, ':pend_status' => STATUS_PENDING, ':reason'=>$reason, ':id'=>$pid]);
             if ($s->rowCount()) {
                 $t = $conn->prepare("SELECT title, id_user FROM posts WHERE id_post=:id");
                 $t->execute([':id'=>$pid]);
@@ -96,7 +96,7 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
 }
 
 // ── Build filter query ──────────────────────────────────────
-$per_page = 15;
+$per_page = 8;
 $page = get_valid_page();
 $search = trim($_GET['q'] ?? '');
 $status_filter = $_GET['status'] ?? '';
@@ -107,8 +107,8 @@ $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 $sort_order = $_GET['sort'] ?? 'desc';
 
-$where = "(users.role = 'admin' OR posts.status != '" . STATUS_DRAFT . "')";
-$params = [];
+$where = "(users.role = 'admin' OR posts.status != :draft_status)";
+$params = [':draft_status' => STATUS_DRAFT];
 
 if (!empty($search)) {
     $where .= " AND (posts.title LIKE :s OR posts.content LIKE :s2)";
@@ -234,20 +234,22 @@ require_once __DIR__ . '/inc/header.php';
                             <td style="white-space:nowrap;color:var(--db-text-secondary);font-size:13px;"><?=date('M j, Y',strtotime($p['created_at']))?></td>
                             <td>
                                 <div class="cell_actions">
-                                    <?php if ($p['status'] === STATUS_PENDING): ?>
-                                        <form method="POST" action="posts.php" style="display:inline">
-                                            <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
-                                            <input type="hidden" name="approve" value="<?=$p['id_post']?>">
-                                            <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_success" onclick="return confirm('Approve and publish?')"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve</button>
-                                        </form>
-                                        <button class="btn_small btn_secondary" onclick="showRejectModal(<?=$p['id_post']?>,<?=json_encode($p['title'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)?>)"><i class="fa-solid fa-ban" aria-hidden="true"></i> Reject</button>
-                                    <?php endif; ?>
                                     <div class="action_dropdown">
-                                        <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="Actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                        <button type="button" class="action_dropdown_btn" aria-label="Actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
-                                            <button type="button" class="dropdown_item" data-post-quickview='<?= htmlspecialchars(json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']]), ENT_QUOTES) ?>'><i class="fa-solid fa-eye" aria-hidden="true"></i> View Post</button>
+                                            <button type="button" class="dropdown_item" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-eye" aria-hidden="true"></i> View Post</button>
+                                            <?php if ($p['status'] === STATUS_PENDING): ?>
+                                            <div class="dropdown_divider"></div>
+                                            <form method="POST" action="posts.php" class="dropdown_form">
+                                                <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
+                                                <input type="hidden" name="approve" value="<?=$p['id_post']?>">
+                                                <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
+                                                <button type="submit" class="dropdown_item dropdown_approve"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve</button>
+                                            </form>
+                                            <button type="button" class="dropdown_item dropdown_reject" data-post-id="<?=$p['id_post']?>" data-post-title="<?=htmlspecialchars($p['title'], ENT_QUOTES)?>"><i class="fa-solid fa-ban" aria-hidden="true"></i> Reject</button>
+                                            <?php endif; ?>
                                             <?php if ($p['author_role'] === 'admin'): ?>
+                                            <div class="dropdown_divider"></div>
                                             <a href="edit_post.php?id=<?=$p['id_post']?>" class="dropdown_item"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit Post</a>
                                             <?php endif; ?>
                                             <div class="dropdown_divider"></div>
@@ -255,7 +257,7 @@ require_once __DIR__ . '/inc/header.php';
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
                                                 <input type="hidden" name="delete" value="<?=$p['id_post']?>">
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                                <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm('Delete this post permanently?')"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Post</button>
+                                                <button type="submit" class="dropdown_item dropdown_danger dropdown_delete"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Post</button>
                                             </form>
                                         </div>
                                     </div>
@@ -291,29 +293,10 @@ require_once __DIR__ . '/inc/header.php';
             <input type="hidden" name="reject_id" id="rejectPostId" value="">
             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
             <textarea name="rejection_reason" id="rejection_reason" placeholder="Explain what needs to be changed..." required></textarea>
-            <div class="modal_actions"><button type="button" class="btn btn_secondary" onclick="closeRejectModal()">Cancel</button><button type="submit" class="btn btn_danger">Reject Post</button></div>
+            <div class="modal_actions"><button type="button" class="btn btn_secondary modal_cancel">Cancel</button><button type="submit" class="btn btn_danger">Reject Post</button></div>
         </form>
     </div>
 </div>
-<script>
-function showRejectModal(id,title){document.getElementById('rejectPostId').value=id;document.getElementById('rejectPostTitle').textContent='Reject: "'+title+'"';document.getElementById('rejectModal').classList.add('open');}
-function closeRejectModal(){document.getElementById('rejectModal').classList.remove('open');}
-document.getElementById('rejectModal').addEventListener('click',function(e){if(e.target===this)closeRejectModal();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeRejectModal();closeAllDropdowns();}});
-
-/* ── Action dropdown ──────────────────────────────────── */
-function toggleDropdown(btn){
-    const dropdown=btn.closest('.action_dropdown');
-    const isOpen=dropdown.classList.contains('open');
-    closeAllDropdowns();
-    if(!isOpen)dropdown.classList.add('open');
-}
-function closeAllDropdowns(){
-    document.querySelectorAll('.action_dropdown.open').forEach(function(d){d.classList.remove('open');});
-}
-document.addEventListener('click',function(e){
-    if(!e.target.closest('.action_dropdown'))closeAllDropdowns();
-});
-</script>
+<script src="../assets/js/posts-dropdown.js"></script>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
