@@ -256,6 +256,9 @@ require_once __DIR__ . '/inc/header.php';
                                     <div class="action_dropdown">
                                         <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="Actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
+                                            <?php if (!empty($c['id_post'])): ?>
+                                            <a href="../pages/detail.php?id=<?=$c['id_post']?>" class="dropdown_item" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> View Comment</a>
+                                            <?php endif; ?>
                                             <?php if ($c['status'] !== 'approved'): ?>
                                             <form method="POST" action="comments.php" class="dropdown_form">
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf?>">
@@ -271,9 +274,6 @@ require_once __DIR__ . '/inc/header.php';
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
                                                 <button type="submit" class="dropdown_item" onclick="return confirm('Reject comment?')"><i class="fa-solid fa-ban" aria-hidden="true"></i> Reject Comment</button>
                                             </form>
-                                            <?php endif; ?>
-                                            <?php if (!empty($c['id_post'])): ?>
-                                            <a href="../pages/detail.php?id=<?=$c['id_post']?>" class="dropdown_item" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> View Comment</a>
                                             <?php endif; ?>
                                             <div class="dropdown_divider"></div>
                                             <form method="POST" action="comments.php" class="dropdown_form">
