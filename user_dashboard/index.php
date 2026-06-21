@@ -5,13 +5,19 @@ require_once __DIR__ . '/init.php';
 // Post counts
 $counts = $conn->prepare("
     SELECT COUNT(*) as total,
-           SUM(status='" . STATUS_DRAFT . "') as draft,
-           SUM(status='" . STATUS_PENDING . "') as pending,
-           SUM(status='" . STATUS_PUBLISHED . "') as published,
-           SUM(status='" . STATUS_REJECTED . "') as rejected
+           SUM(status=:draft) as draft,
+           SUM(status=:pending) as pending,
+           SUM(status=:published) as published,
+           SUM(status=:rejected) as rejected
     FROM posts WHERE id_user=:uid
 ");
-$counts->execute([':uid' => $uid]);
+$counts->execute([
+    ':uid' => $uid,
+    ':draft' => STATUS_DRAFT,
+    ':pending' => STATUS_PENDING,
+    ':published' => STATUS_PUBLISHED,
+    ':rejected' => STATUS_REJECTED
+]);
 $stats = $counts->fetch(PDO::FETCH_ASSOC);
 
 // Recent activity from activity_log related to user's posts
