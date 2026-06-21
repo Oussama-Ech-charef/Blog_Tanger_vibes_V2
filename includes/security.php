@@ -62,7 +62,7 @@ function send_security_headers() {
     header("X-Content-Type-Options: nosniff");
     header("Referrer-Policy: strict-origin-when-cross-origin");
     header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
-    header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'");
+    header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; frame-src https://www.openstreetmap.org;");
     if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
         header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
     }
@@ -133,10 +133,18 @@ function validate_uploaded_image($file) {
         return $errors;
     }
 
-    // check MIME type using finfo (more reliable than getimagesize)
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = finfo_file($finfo, $file['tmp_name']);
-    finfo_close($finfo);
+    // check MIME type
+    $mime = '';
+    if (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+    } elseif (function_exists('mime_content_type')) {
+        $mime = mime_content_type($file['tmp_name']);
+    } elseif (function_exists('getimagesize')) {
+        $info = getimagesize($file['tmp_name']);
+        $mime = $info['mime'] ?? '';
+    }
 
     $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
 
