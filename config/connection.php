@@ -35,5 +35,6 @@ try {
 
 } catch (PDOException $e) {
     error_log("Database connection error: " . $e->getMessage());
-    echo "An unexpected error occurred. Please try again later.";
+    http_response_code(500);
+    die("An unexpected error occurred. Please try again later.");
 }
