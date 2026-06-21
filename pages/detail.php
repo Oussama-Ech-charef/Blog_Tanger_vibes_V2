@@ -24,11 +24,12 @@ $stmt = $conn->prepare("
     from posts
     inner join categories on posts.id_category = categories.id_category
     inner join users on posts.id_user = users.id_user
-    where posts.id_post = :id_post and posts.status = '" . STATUS_PUBLISHED . "'
+    where posts.id_post = :id_post and posts.status = :pub_status
 ");
 
 $stmt->execute([
-    ':id_post' => $post_id
+    ':id_post' => $post_id,
+    ':pub_status' => STATUS_PUBLISHED
     ]);
 $post = $stmt->fetch(PDO::FETCH_ASSOC);
 

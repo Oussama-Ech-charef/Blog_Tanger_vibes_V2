@@ -7,8 +7,8 @@ require_once '../includes/lang.php';
  send_security_headers();
 
 // stats
-$pub_stmt = $conn->prepare("select count(*) from posts where status = '" . STATUS_PUBLISHED . "'");
-$pub_stmt->execute();
+$pub_stmt = $conn->prepare("select count(*) from posts where status = :pub_status");
+$pub_stmt->execute([':pub_status' => STATUS_PUBLISHED]);
 $published_count = (int)$pub_stmt->fetchColumn();
 
 $cat_stmt = $conn->prepare("select count(*) from categories");

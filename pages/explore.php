@@ -36,8 +36,8 @@ if (!empty($keyword)) {
 }
 
 // Build WHERE clauses dynamically
-$where = "posts.status = '" . STATUS_PUBLISHED . "'";
-$params = [];
+$where = "posts.status = :pub_status";
+$params = [':pub_status' => STATUS_PUBLISHED];
 
 if (!empty($category_id)) {
     $where .= " AND posts.id_category = :category_id";

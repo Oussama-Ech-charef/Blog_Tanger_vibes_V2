@@ -12,12 +12,12 @@ session_start();
         from posts
         inner join categories on posts.id_category = categories.id_category
         inner join users on posts.id_user = users.id_user
-        where posts.status = '" . STATUS_PUBLISHED . "'
+        where posts.status = :status
         order by posts.created_at desc
         limit 3
  ");
 
- $stmt->execute();
+ $stmt->execute([':status' => STATUS_PUBLISHED]);
 
  $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
