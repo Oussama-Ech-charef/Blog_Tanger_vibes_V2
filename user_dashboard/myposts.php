@@ -82,19 +82,19 @@ require_once __DIR__ . '/inc/header.php';
 <div class="stats_grid" style="margin-bottom:24px;">
     <div class="stat_card" style="padding:16px;">
         <p class="stat_card_value" style="font-size:24px;"><?= count($grouped['draft']) ?></p>
-        <p class="stat_card_label" style="margin:0;">📝 Draft</p>
+        <p class="stat_card_label" style="margin:0;"><i class="fa-solid fa-pen"></i> Draft</p>
     </div>
     <div class="stat_card" style="padding:16px;">
         <p class="stat_card_value" style="font-size:24px;"><?= count($grouped['pending']) ?></p>
-        <p class="stat_card_label" style="margin:0;">🟡 Pending</p>
+        <p class="stat_card_label" style="margin:0;"><i class="fa-solid fa-clock" style="color:#F59E0B;"></i> Pending</p>
     </div>
     <div class="stat_card" style="padding:16px;">
         <p class="stat_card_value" style="font-size:24px;"><?= count($grouped['published']) ?></p>
-        <p class="stat_card_label" style="margin:0;">🟢 Published</p>
+        <p class="stat_card_label" style="margin:0;"><i class="fa-solid fa-check-circle" style="color:#10B981;"></i> Published</p>
     </div>
     <div class="stat_card" style="padding:16px;">
         <p class="stat_card_value" style="font-size:24px;"><?= count($grouped['rejected']) ?></p>
-        <p class="stat_card_label" style="margin:0;">🔴 Rejected</p>
+        <p class="stat_card_label" style="margin:0;"><i class="fa-solid fa-ban" style="color:#EF4444;"></i> Rejected</p>
     </div>
 </div>
 
@@ -139,7 +139,7 @@ foreach ($sections as $status => $sec):
                         <td style="white-space:nowrap;color:var(--db-text-secondary);font-size:13px;"><?= date('M j, Y', strtotime($p['created_at'])) ?></td>
                         <td>
                             <div class="cell_actions">
-                                <button type="button" class="btn_small btn_secondary" data-post-quickview='<?= htmlspecialchars(json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$_SESSION['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']]), ENT_QUOTES) ?>'><i class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
+                                <button type="button" class="btn_small btn_secondary" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$_SESSION['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-eye" aria-hidden="true"></i> View</button>
                                 <a href="edit_post.php?id=<?= $p['id_post'] ?>" class="btn_small btn_secondary"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit</a>
                                 <form method="POST" action="myposts.php" style="display:inline">
                                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">

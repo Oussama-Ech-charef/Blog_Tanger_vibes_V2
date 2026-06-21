@@ -82,7 +82,7 @@ require_once __DIR__ . '/inc/header.php';
                                 <td><span style="font-weight:600;"><?=(int)$c['post_count']?></span></td>
                                 <td style="color:var(--db-text-secondary);font-size:13px;"><?=date('M j, Y',strtotime($c['created_at']))?></td>
                                 <td><div class="cell_actions">
-                                    <button class="btn_small btn_secondary" onclick="editCat(<?=$c['id_category']?>,<?=json_encode($c['cat_name'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)?>)"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit</button>
+                                    <button class="btn_small btn_secondary" onclick='editCat(<?=$c['id_category']?>,<?=json_encode($c['cat_name'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)?>)'><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit</button>
                                     <form method="POST" action="categories.php" style="display:inline" class="delete-cat-form" data-cat-name="<?=htmlspecialchars($c['cat_name'], ENT_QUOTES)?>">
                                         <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
                                         <input type="hidden" name="delete_category" value="1">

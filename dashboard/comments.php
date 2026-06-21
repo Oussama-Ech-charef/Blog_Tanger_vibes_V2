@@ -17,7 +17,7 @@ if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
 if (isset($_POST['reject']) && is_numeric($_POST['reject'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         try {
-            $conn->prepare("UPDATE comments SET status='" . STATUS_REJECTED . "' WHERE id_comment=:id")->execute([':id'=>(int)$_POST['reject']]);
+            $conn->prepare("UPDATE comments SET status=:rej_status WHERE id_comment=:id")->execute([':rej_status' => STATUS_REJECTED, ':id'=>(int)$_POST['reject']]);
             $message = 'Comment rejected.'; $message_type = 'success';
         } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
     } else { $message = 'Invalid security token.'; $message_type = 'error'; }
@@ -72,7 +72,8 @@ if (!empty($search)) {
 }
 
 // Status filter
-if (!empty($status_filter) && in_array($status_filter, ['approved', STATUS_REJECTED, STATUS_PENDING])) {
+if (!empty($status_filter) && in_array($status_filter, ['approved', STATUS_REJECTED, STATUS_PENDING, 'pending'])) {
+    if ($status_filter === 'pending') $status_filter = STATUS_PENDING;
     $where_parts[] = "comments.status = :st";
     $params[':st'] = $status_filter;
 }
