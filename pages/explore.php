@@ -190,38 +190,7 @@ $has_filter = !empty($category_id);
 
                 <?php if (!empty($posts)): ?>
                     <?php foreach ($posts as $post): ?>
-
-                        <!-- post card -->
-                        <a href="detail.php?id=<?= $post['id_post']; ?>" class="card_place">
-                            <img src="../<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy">
-
-                            <div class="card_content">
-
-                                <span class="category">
-                                    <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
-                                    <?= htmlspecialchars($post['cat_name']); ?>
-                                </span>
-
-                                <h3 class="title">
-                                    <?= htmlspecialchars($post['title']); ?>
-                                </h3>
-
-                                <p class="location">
-                                    <i class="fa-solid fa-user" aria-hidden="true"></i>
-                                    <?= __('latest_by') ?> <?= htmlspecialchars($post['user_name'] ?? 'Admin'); ?>
-                                </p>
-
-                                <p class="location">
-                                    <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
-                                    <?= date('M d, Y', strtotime($post['created_at'])); ?>
-                                </p>
-
-                                <span class="btn">
-                                    <?= __('explore_read_more') ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-                                </span>
-                            </div>
-                        </a>
-
+                        <?= render_post_card($post, 'explore_read_more') ?>
                     <?php endforeach; ?>
                 <?php elseif ($has_search): ?>
 
