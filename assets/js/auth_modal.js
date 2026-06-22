@@ -94,7 +94,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(function() {
             btn.classList.remove('loading');
             btn.disabled = false;
-            showNotification(typeof AUTH_ERROR_UNEXPECTED !== 'undefined' ? AUTH_ERROR_UNEXPECTED : 'An unexpected error occurred. Please try again.', 'error');
+            var overlay = document.getElementById('authOverlay');
+            var errMsg = overlay ? overlay.getAttribute('data-unexpected-error') : '';
+            showNotification(errMsg || 'An unexpected error occurred. Please try again.', 'error');
         });
     }
 

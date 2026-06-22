@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="../assets/css/auth_modal.css">
 
-<div class="auth_overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+<div class="auth_overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" data-unexpected-error="<?= __('auth_error_unexpected') ?>">
     <div class="auth_modal">
 
         <button class="auth_close" id="authClose" aria-label="<?= __('auth_modal_close_aria') ?>">&times;</button>
@@ -90,5 +90,4 @@
     </div>
 </div>
 
-<script>var AUTH_ERROR_UNEXPECTED = '<?= __('auth_error_unexpected') ?>';</script>
 <script src="../assets/js/auth_modal.js"></script>
