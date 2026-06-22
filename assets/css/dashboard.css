@@ -1,9 +1,3 @@
-/* ============================================================
-   Tangier Vibes — Admin Dashboard Styles
-   Design: Modern SaaS (Stripe / Linear / Vercel inspired)
-   Font: Inter
-   Primary: #0047AB
-   ============================================================ */
 
 /* ── Google Fonts ──────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1625,4 +1619,44 @@
 .role_badge.user {
     background: #F1F5F9;
     color: #475569;
+}
+
+/* ── Notification Badge (sidebar) ─────────────────────────── */
+.notification_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #EF4444;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    margin-left: auto;
+}
+
+/* ── Avatar Preview / Placeholder ─────────────────────────── */
+.avatar_preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #E2E8F0;
+}
+
+.avatar_placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #0047AB;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    border: 3px solid #E2E8F0;
 }

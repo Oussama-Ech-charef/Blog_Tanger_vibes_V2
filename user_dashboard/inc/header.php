@@ -10,44 +10,6 @@ $unread_count = get_unread_notification_count($conn, $_SESSION['id_user']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link rel="stylesheet" href="../assets/css/components.css">
-    <style>
-        .notification_badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 18px;
-            height: 18px;
-            padding: 0 5px;
-            border-radius: 999px;
-            background: #EF4444;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            line-height: 1;
-            margin-left: auto;
-        }
-        .avatar_preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #E2E8F0;
-        }
-        .avatar_placeholder {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: #0047AB;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 700;
-            border: 3px solid #E2E8F0;
-        }
-        .inline_form { display: inline; }
-    </style>
 </head>
 <body class="dashboard_body">
 
