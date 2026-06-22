@@ -99,3 +99,31 @@ function render_pagination($current_page, $total_pages, $query_params = []) {
 
     return $html;
 }
+
+/**
+ * @param string $base_url
+ * @param int $current_page
+ * @param int $total_pages
+ * @param array $query_params
+ * @return void
+ */
+function render_dashboard_pagination($base_url, $current_page, $total_pages, $query_params = []) {
+    if ($total_pages <= 1) return;
+    $u = http_build_query($query_params);
+    $pre = !empty($u) ? '?' . $u . '&page=' : '?page=';
+    ?>
+    <div style="padding:16px 24px;border-top:1px solid var(--db-card-border);">
+        <div class="dashboard_pagination">
+            <?php if ($current_page > 1): ?>
+            <a href="<?= $base_url . $pre . ($current_page - 1) ?>" class="page_btn" aria-label="Previous page"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a>
+            <?php endif; ?>
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <a href="<?= $base_url . $pre . $i ?>" class="page_btn <?= $i === $current_page ? 'active' : '' ?>"><?= $i ?></a>
+            <?php endfor; ?>
+            <?php if ($current_page < $total_pages): ?>
+            <a href="<?= $base_url . $pre . ($current_page + 1) ?>" class="page_btn" aria-label="Next page"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+}
