@@ -162,15 +162,6 @@ foreach ($sections as $status => $sec):
 </div>
 <?php endforeach; ?>
 
-<?php if ($total_pages > 1): ?>
-<div style="padding:16px 24px;border-top:1px solid var(--db-card-border);">
-    <div class="dashboard_pagination">
-        <?php $pre = '?page='; ?>
-        <?php if ($current_page > 1): ?><a href="myposts.php<?=$pre.($current_page-1)?>" class="page_btn" aria-label="Previous page"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a><?php endif; ?>
-        <?php for ($i=1;$i<=$total_pages;$i++): ?><a href="myposts.php<?=$pre.$i?>" class="page_btn <?=$i===$current_page?'active':''?>"><?=$i?></a><?php endfor; ?>
-        <?php if ($current_page < $total_pages): ?><a href="myposts.php<?=$pre.($current_page+1)?>" class="page_btn" aria-label="Next page"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a><?php endif; ?>
-    </div>
-</div>
-<?php endif; ?>
+<?php render_dashboard_pagination('myposts.php', $current_page, $total_pages, []); ?>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
