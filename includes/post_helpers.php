@@ -136,3 +136,52 @@ function log_post_activity($conn, $type, $description, $user_id, $post_id) {
     $s = $conn->prepare("INSERT INTO activity_log (action_type, description, user_id, entity_type, entity_id) VALUES (:at, :d, :u, 'post', :e)");
     $s->execute([':at' => $type, ':d' => $description, ':u' => (int)$user_id, ':e' => (int)$post_id]);
 }
+
+/**
+ * @param PDO $conn
+ * @param array $criteria
+ * @return array
+ */
+function fetch_posts($conn, $criteria = []) {
+    $defaults = [
+        'where' => ['1=1'],
+        'params' => [],
+        'order' => 'posts.created_at DESC',
+        'limit' => null,
+        'offset' => null,
+        'extra_select' => '',
+        'joins' => ''
+    ];
+    $c = array_merge($defaults, $criteria);
+
+    $select = "posts.*, categories.cat_name, users.user_name" . $c['extra_select'];
+    $joins = $c['joins'] ?: "INNER JOIN categories ON posts.id_category = categories.id_category INNER JOIN users ON posts.id_user = users.id_user";
+    $where = implode(' AND ', $c['where']);
+
+    $sql = "SELECT $select FROM posts $joins WHERE $where ORDER BY {$c['order']}";
+    if ($c['limit'] !== null) {
+        $sql .= " LIMIT " . (int)$c['limit'];
+    }
+    if ($c['offset'] !== null) {
+        $sql .= " OFFSET " . (int)$c['offset'];
+    }
+
+    $s = $conn->prepare($sql);
+    $s->execute($c['params']);
+    return $s->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * @param PDO $conn
+ * @param int|null $selected_id
+ * @return string
+ */
+function render_category_dropdown($conn, $selected_id = null) {
+    $cats = $conn->query("SELECT * FROM categories ORDER BY cat_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $html = '<option value="">Select a category...</option>';
+    foreach ($cats as $c) {
+        $sel = $selected_id !== null && (int)$selected_id === (int)$c['id_category'] ? ' selected' : '';
+        $html .= '<option value="' . (int)$c['id_category'] . '"' . $sel . '>' . htmlspecialchars($c['cat_name']) . '</option>';
+    }
+    return $html;
+}
