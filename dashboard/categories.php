@@ -110,20 +110,9 @@ require_once __DIR__ . '/inc/header.php';
             <input type="hidden" name="edit_category" value="1">
             <input type="hidden" name="cat_id" id="editCatId">
             <div class="form_group"><label for="editCatName">Name</label><input type="text" id="editCatName" name="cat_name" required maxlength="100"></div>
-            <div class="modal_actions"><button type="button" class="btn btn_secondary" onclick="closeEditModal()">Cancel</button><button type="submit" class="btn btn_primary">Save</button></div>
+            <div class="modal_actions"><button type="button" class="btn btn_secondary" onclick="closeModal('editModal')">Cancel</button><button type="submit" class="btn btn_primary">Save</button></div>
         </form>
     </div>
 </div>
-<script>
-function editCat(id,name){document.getElementById('editCatId').value=id;document.getElementById('editCatName').value=name;document.getElementById('editModal').classList.add('open');}
-function closeEditModal(){document.getElementById('editModal').classList.remove('open');}
-document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeEditModal();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeEditModal();});
-document.querySelectorAll('.delete-cat-form').forEach(function(f){
-    f.addEventListener('submit',function(e){
-        if(!confirm('Delete "'+f.getAttribute('data-cat-name')+'"?'))e.preventDefault();
-    });
-});
-</script>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>

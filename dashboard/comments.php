@@ -296,37 +296,8 @@ require_once __DIR__ . '/inc/header.php';
             </table>
         </div>
     </div>
-    <?php if ($total_pages > 1): ?>
-    <div style="padding:16px 24px;border-top:1px solid var(--db-card-border);">
-        <div class="dashboard_pagination">
-            <?php $u = http_build_query($query_params); $pre = !empty($u) ? '?'.$u.'&page=' : '?page='; ?>
-            <?php if($current_page>1):?><a href="comments.php<?=$pre.($current_page-1)?>" class="page_btn" aria-label="Previous page"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a><?php endif;?>
-            <?php for($i=1;$i<=$total_pages;$i++):?><a href="comments.php<?=$pre.$i?>" class="page_btn <?=$i===$current_page?'active':''?>"><?=$i?></a><?php endfor;?>
-            <?php if($current_page<$total_pages):?><a href="comments.php<?=$pre.($current_page+1)?>" class="page_btn" aria-label="Next page"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a><?php endif;?>
-        </div>
-    </div>
-    <?php endif; ?>
+    <?php render_dashboard_pagination('comments.php', $current_page, $total_pages, $query_params); ?>
 </div>
 
-<script>
-function toggleBulk(){const c=document.querySelectorAll('.cb:checked').length;const b=document.getElementById('bulkDeleteBtn');if(b)b.style.display=c>0?'inline-flex':'none';}
-
-/* ── Action dropdown ──────────────────────────────────── */
-function toggleDropdown(btn){
-    const dropdown=btn.closest('.action_dropdown');
-    const isOpen=dropdown.classList.contains('open');
-    closeAllDropdowns();
-    if(!isOpen)dropdown.classList.add('open');
-}
-function closeAllDropdowns(){
-    document.querySelectorAll('.action_dropdown.open').forEach(function(d){d.classList.remove('open');});
-}
-document.addEventListener('click',function(e){
-    if(!e.target.closest('.action_dropdown'))closeAllDropdowns();
-});
-document.addEventListener('keydown',function(e){
-    if(e.key==='Escape')closeAllDropdowns();
-});
-</script>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>

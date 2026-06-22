@@ -23,11 +23,12 @@ document.addEventListener('DOMContentLoaded', function () {
             sidebarOverlay.addEventListener('click', toggleSidebar);
         }
 
-        // Close sidebar on Escape
+        // Consolidated Escape key handler (sidebar, modals, dropdowns)
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && sidebar.classList.contains('open')) {
-                toggleSidebar();
-            }
+            if (e.key !== 'Escape') return;
+            if (sidebar.classList.contains('open')) { toggleSidebar(); return; }
+            closeAllDropdowns();
+            document.querySelectorAll('.modal_overlay.open').forEach(function (m) { m.classList.remove('open'); });
         });
     }
 
@@ -140,10 +141,55 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && qvOverlay && qvOverlay.classList.contains('open')) {
-            closeQuickView();
+    /* ── Generic Modal System ────────────────────────────── */
+    window.openModal = function (id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.add('open');
+    };
+    window.closeModal = function (id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.remove('open');
+    };
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('modal_overlay')) {
+            e.target.classList.remove('open');
         }
+    });
+
+    /* ── Categories: editCat / closeEditModal ───────────── */
+    window.editCat = function (id, name) {
+        document.getElementById('editCatId').value = id;
+        document.getElementById('editCatName').value = name;
+        openModal('editModal');
+    };
+    window.closeEditModal = function () {
+        closeModal('editModal');
+    };
+    document.querySelectorAll('.delete-cat-form').forEach(function (f) {
+        f.addEventListener('submit', function (e) {
+            if (!confirm('Delete "' + f.getAttribute('data-cat-name') + '"?')) e.preventDefault();
+        });
+    });
+
+    /* ── Comments: bulk / dropdown ──────────────────────── */
+    window.toggleBulk = function () {
+        var c = document.querySelectorAll('.cb:checked').length;
+        var b = document.getElementById('bulkDeleteBtn');
+        if (b) b.style.display = c > 0 ? 'inline-flex' : 'none';
+    };
+    window.toggleDropdown = function (btn) {
+        var dropdown = btn.closest('.action_dropdown');
+        var isOpen = dropdown.classList.contains('open');
+        closeAllDropdowns();
+        if (!isOpen) dropdown.classList.add('open');
+    };
+    window.closeAllDropdowns = function () {
+        document.querySelectorAll('.action_dropdown.open').forEach(function (d) {
+            d.classList.remove('open');
+        });
+    };
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.action_dropdown')) closeAllDropdowns();
     });
 
 });
