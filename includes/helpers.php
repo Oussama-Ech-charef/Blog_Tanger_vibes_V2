@@ -126,13 +126,13 @@ function render_empty_state($icon, $title, $description = '') {
  */
 function render_post_card($post, $btn_key = 'latest_read_more') {
     $html = '<a href="detail.php?id=' . (int)$post['id_post'] . '" class="card_place">';
-    $html .= '<img src="../' . htmlspecialchars($post['image']) . '" alt="' . htmlspecialchars($post['title']) . '" loading="lazy">';
+    $html .= '<img src="../' . htmlspecialchars((string)($post['image'] ?? '')) . '" alt="' . htmlspecialchars((string)($post['title'] ?? '')) . '" loading="lazy">';
     $html .= '<div class="card_content">';
-    $html .= '<span class="category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> ' . htmlspecialchars($post['cat_name']) . '</span>';
-    $html .= '<h3 class="title">' . htmlspecialchars($post['title']) . '</h3>';
-    $user_name = htmlspecialchars($post['user_name'] ?? 'Admin');
+    $html .= '<span class="category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> ' . htmlspecialchars((string)($post['cat_name'] ?? '')) . '</span>';
+    $html .= '<h3 class="title">' . htmlspecialchars((string)($post['title'] ?? '')) . '</h3>';
+    $user_name = htmlspecialchars((string)($post['user_name'] ?? 'Admin'));
     $html .= '<p class="location"><i class="fa-solid fa-user" aria-hidden="true"></i> ' . __('latest_by') . ' ' . $user_name . '</p>';
-    $html .= '<p class="location"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> ' . date('M d, Y', strtotime($post['created_at'])) . '</p>';
+    $html .= '<p class="location"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> ' . date('M d, Y', strtotime((string)($post['created_at'] ?? 'now'))) . '</p>';
     $btn_text = __($btn_key);
     $html .= '<span class="btn">' . $btn_text . ' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>';
     $html .= '</div></a>';
