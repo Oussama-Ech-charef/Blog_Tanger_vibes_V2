@@ -95,17 +95,8 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     } else { $message = 'Invalid security token.'; $message_type = 'error'; }
 }
 
-// ── Build filter query ──────────────────────────────────────
-$per_page = 8;
-$page = get_valid_page();
+// ── Build query to fetch all posts ──────────────────────────
 $search = trim($_GET['q'] ?? '');
-$status_filter = $_GET['status'] ?? '';
-$category_filter = $_GET['category'] ?? '';
-$role_filter = $_GET['role'] ?? '';
-$author_filter = $_GET['author'] ?? '';
-$date_from = $_GET['date_from'] ?? '';
-$date_to = $_GET['date_to'] ?? '';
-$sort_order = $_GET['sort'] ?? 'desc';
 
 $where = "(users.role = 'admin' OR posts.status != :draft_status)";
 $params = [':draft_status' => STATUS_DRAFT];
@@ -115,62 +106,14 @@ if (!empty($search)) {
     $params[':s'] = '%'.$search.'%';
     $params[':s2'] = '%'.$search.'%';
 }
-if (!empty($status_filter) && in_array($status_filter, [STATUS_PUBLISHED, STATUS_PENDING, STATUS_DRAFT, STATUS_REJECTED])) {
-    $where .= " AND posts.status=:st";
-    $params[':st'] = $status_filter;
-}
-if (!empty($category_filter) && is_numeric($category_filter)) {
-    $where .= " AND posts.id_category=:cat";
-    $params[':cat'] = (int)$category_filter;
-}
-if (!empty($role_filter) && in_array($role_filter, ['admin', 'user'])) {
-    $where .= " AND users.role=:rl";
-    $params[':rl'] = $role_filter;
-}
-if (!empty($author_filter) && is_numeric($author_filter)) {
-    $where .= " AND posts.id_user=:auth";
-    $params[':auth'] = (int)$author_filter;
-}
-if (!empty($date_from)) {
-    $where .= " AND posts.created_at >= :date_from";
-    $params[':date_from'] = $date_from . ' 00:00:00';
-}
-if (!empty($date_to)) {
-    $where .= " AND posts.created_at <= :date_to";
-    $params[':date_to'] = $date_to . ' 23:59:59';
-}
 
-$order_dir = in_array($sort_order, ['asc', 'desc']) ? strtoupper($sort_order) : 'DESC';
-
-$count_s = $conn->prepare("SELECT COUNT(*) FROM posts INNER JOIN users ON posts.id_user=users.id_user WHERE $where");
-$count_s->execute($params);
-$total_records = (int)$count_s->fetchColumn();
-$total_pages = get_total_pages($total_records, $per_page);
-$current_page = min($page, $total_pages);
-$offset = get_offset($current_page, $per_page);
-
-$data_s = $conn->prepare("SELECT posts.*, categories.cat_name, users.user_name, users.role AS author_role FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE $where ORDER BY posts.created_at $order_dir LIMIT :lim OFFSET :off");
-$int_params = [':cat', ':auth'];
-foreach ($params as $k => $v) {
-    $data_s->bindValue($k, $v, in_array($k, $int_params) ? PDO::PARAM_INT : PDO::PARAM_STR);
-}
-$data_s->bindValue(':lim', $per_page, PDO::PARAM_INT);
-$data_s->bindValue(':off', $offset, PDO::PARAM_INT);
-$data_s->execute();
+$data_s = $conn->prepare("SELECT posts.*, categories.cat_name, users.user_name, users.role AS author_role FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE $where ORDER BY posts.created_at DESC");
+$data_s->execute($params);
 $posts = $data_s->fetchAll(PDO::FETCH_ASSOC);
-$categories = $conn->query("SELECT * FROM categories ORDER BY cat_name ASC")->fetchAll(PDO::FETCH_ASSOC);
-$authors = $conn->query("SELECT DISTINCT u.id_user, u.user_name, u.role FROM users u INNER JOIN posts p ON p.id_user = u.id_user ORDER BY u.user_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+$total_records = count($posts);
 
-// Build query params for pagination links
 $query_params = [];
 if (!empty($search)) $query_params['q'] = $search;
-if (!empty($status_filter)) $query_params['status'] = $status_filter;
-if (!empty($category_filter)) $query_params['category'] = $category_filter;
-if (!empty($role_filter)) $query_params['role'] = $role_filter;
-if (!empty($author_filter)) $query_params['author'] = $author_filter;
-if (!empty($date_from)) $query_params['date_from'] = $date_from;
-if (!empty($date_to)) $query_params['date_to'] = $date_to;
-if (!empty($sort_order) && $sort_order !== 'desc') $query_params['sort'] = $sort_order;
 
 require_once __DIR__ . '/inc/header.php';
 ?>
@@ -182,35 +125,6 @@ require_once __DIR__ . '/inc/header.php';
         <i class="fa-solid fa-search" aria-hidden="true"></i>
         <input type="text" name="q" placeholder="Search title or content..." value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
     </div>
-    <select name="status" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Status</option>
-        <?php foreach ([STATUS_PUBLISHED, STATUS_PENDING, STATUS_DRAFT, STATUS_REJECTED] as $s): ?>
-            <option value="<?=$s?>" <?=$status_filter===$s?'selected':''?>><?=ucfirst($s)?></option>
-        <?php endforeach; ?>
-    </select>
-    <select name="category" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Categories</option>
-        <?php foreach ($categories as $c): ?>
-            <option value="<?=$c['id_category']?>" <?=$category_filter==$c['id_category']?'selected':''?>><?=htmlspecialchars($c['cat_name'])?></option>
-        <?php endforeach; ?>
-    </select>
-    <select name="role" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Roles</option>
-        <option value="admin" <?=$role_filter==='admin'?'selected':''?>>Admin</option>
-        <option value="user" <?=$role_filter==='user'?'selected':''?>>User</option>
-    </select>
-    <select name="author" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Authors</option>
-        <?php foreach ($authors as $a): ?>
-            <option value="<?=$a['id_user']?>" <?=$author_filter==$a['id_user']?'selected':''?>><?=htmlspecialchars($a['user_name'])?> (<?=ucfirst($a['role'])?>)</option>
-        <?php endforeach; ?>
-    </select>
-    <input type="date" name="date_from" class="filter_select" value="<?= htmlspecialchars($date_from) ?>" onchange="this.form.submit()" style="width:155px;flex-shrink:0;" placeholder="From date">
-    <input type="date" name="date_to" class="filter_select" value="<?= htmlspecialchars($date_to) ?>" onchange="this.form.submit()" style="width:155px;flex-shrink:0;" placeholder="To date">
-    <select name="sort" class="filter_select" onchange="this.form.submit()">
-        <option value="desc" <?=$sort_order==='desc'?'selected':''?>>Newest First</option>
-        <option value="asc" <?=$sort_order==='asc'?'selected':''?>>Oldest First</option>
-    </select>
     <a href="add_post.php" class="btn btn_primary btn_sm" style="margin-left:auto;"><i class="fa-solid fa-plus" aria-hidden="true"></i> New Post</a>
 </form>
 
@@ -219,23 +133,21 @@ require_once __DIR__ . '/inc/header.php';
     <div class="card_body_no_padding">
         <div class="table_wrapper">
             <table class="data_table">
-                <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Role</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                 <tbody>
                     <?php if (!empty($posts)): ?>
                         <?php foreach ($posts as $p): ?>
                         <tr>
                             <td><strong><?=htmlspecialchars($p['title'])?></strong><?php if(!empty($p['rejection_reason'])):?><br><small style="color:var(--db-danger-text);font-size:11px;">Reason: <?=htmlspecialchars($p['rejection_reason'])?></small><?php endif;?></td>
                             <td><?=htmlspecialchars($p['cat_name'])?></td>
-                            <td>
-                                <?=htmlspecialchars($p['user_name'])?>
-                                <span class="role_badge role_<?=$p['author_role']?>"><?=ucfirst($p['author_role'])?></span>
-                            </td>
+                            <td><?=htmlspecialchars($p['user_name'])?></td>
+                            <td><span class="role_badge role_<?=$p['author_role']?>"><?=ucfirst($p['author_role'])?></span></td>
                             <td><span class="status_badge <?=$p['status']?>"><?=ucfirst(htmlspecialchars($p['status']))?></span></td>
                             <td style="white-space:nowrap;color:var(--db-text-secondary);font-size:13px;"><?=date('M j, Y',strtotime($p['created_at']))?></td>
                             <td>
                                 <div class="cell_actions">
                                     <div class="action_dropdown">
-                                        <button type="button" class="action_dropdown_btn" aria-label="Actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                        <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="Actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
                                             <button type="button" class="dropdown_item" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-eye" aria-hidden="true"></i> View Post</button>
                                             <?php if ($p['status'] === STATUS_PENDING): ?>
@@ -266,13 +178,26 @@ require_once __DIR__ . '/inc/header.php';
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="6"><div class="empty_state"><i class="fa-solid fa-file-lines"></i><h3>No posts found</h3><p>Try adjusting your filters.</p></div></td></tr>
+                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-file-lines"></i><h3>No posts found</h3><p>Try adjusting your filters.</p></div></td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
-    <?php render_dashboard_pagination('posts.php', $current_page, $total_pages, $query_params); ?>
+</div>
+
+<div class="quickview_overlay" id="quickviewModal">
+    <div class="quickview_box">
+        <div class="quickview_header">
+            <h2 id="qv_title">Post Title</h2>
+            <button type="button" class="quickview_close" id="qv_close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <img id="qv_image" class="quickview_image" src="" alt="" style="display:none;">
+        <div class="quickview_body">
+            <div class="quickview_meta" id="qv_meta"></div>
+            <div class="quickview_content" id="qv_content"></div>
+        </div>
+    </div>
 </div>
 
 <div class="modal_overlay" id="rejectModal">
@@ -289,5 +214,52 @@ require_once __DIR__ . '/inc/header.php';
     </div>
 </div>
 <script src="../assets/js/posts-dropdown.js"></script>
+<script>
+(function() {
+    var qvModal = document.getElementById('quickviewModal');
+    var qvTitle = document.getElementById('qv_title');
+    var qvImage = document.getElementById('qv_image');
+    var qvMeta = document.getElementById('qv_meta');
+    var qvContent = document.getElementById('qv_content');
+    var qvClose = document.getElementById('qv_close');
+
+    document.querySelectorAll('[data-post-quickview]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            try {
+                var data = JSON.parse(btn.getAttribute('data-post-quickview'));
+                qvTitle.textContent = data.title || 'Untitled';
+
+                if (data.image) {
+                    qvImage.src = '../' + data.image;
+                    qvImage.style.display = 'block';
+                } else {
+                    qvImage.style.display = 'none';
+                }
+
+                var metaHtml = '';
+                if (data.cat_name) metaHtml += '<span class="quickview_meta_item"><i class="fa-solid fa-tag"></i>' + data.cat_name + '</span>';
+                if (data.user_name) metaHtml += '<span class="quickview_meta_item"><i class="fa-solid fa-user"></i>' + data.user_name + '</span>';
+                if (data.status) metaHtml += '<span class="status_badge ' + data.status + '">' + data.status.charAt(0).toUpperCase() + data.status.slice(1) + '</span>';
+                if (data.created_at) {
+                    var d = new Date(data.created_at);
+                    metaHtml += '<span class="quickview_meta_item"><i class="fa-solid fa-calendar"></i>' + d.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + '</span>';
+                }
+                qvMeta.innerHTML = metaHtml;
+
+                var content = data.content || 'No content.';
+                var div = document.createElement('div');
+                div.textContent = content;
+                qvContent.innerHTML = div.innerHTML.substring(0, 600) + (content.length > 600 ? '...' : '');
+
+                qvModal.classList.add('open');
+            } catch(e) { console.error(e); }
+        });
+    });
+
+    if (qvClose) qvClose.addEventListener('click', function() { qvModal.classList.remove('open'); });
+    if (qvModal) qvModal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('open'); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') qvModal.classList.remove('open'); });
+})();
+</script>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
