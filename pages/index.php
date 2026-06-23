@@ -1,38 +1,31 @@
 <?php
-session_start();
- require '../config/connection.php';
- require_once '../includes/security.php';
- require_once '../includes/lang.php';
- 
- send_security_headers();
 
- // get latest posts
- $stmt = $conn->prepare("
-        select posts.*, categories.cat_name, users.user_name
-        from posts
-        inner join categories on posts.id_category = categories.id_category
-        inner join users on posts.id_user = users.id_user
-        where posts.status = :status
-        order by posts.created_at desc
-        limit 3
- ");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
- $stmt->execute([':status' => STATUS_PUBLISHED]);
+require_once '../config/connection.php';
+require_once '../includes/security.php';
+require_once '../includes/lang.php';
+require_once '../includes/helpers.php';
 
- $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+send_security_headers();
 
+// get latest posts
+$stmt = $conn->prepare("
+    SELECT posts.*, categories.cat_name, users.user_name
+    FROM posts
+    INNER JOIN categories ON posts.id_category = categories.id_category
+    INNER JOIN users ON posts.id_user = users.id_user
+    WHERE posts.status = :status
+    ORDER BY posts.created_at DESC
+    LIMIT 3
+");
 
+$stmt->execute([':status' => STATUS_PUBLISHED]);
+$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="<?= get_lang_code() ?>" dir="<?= get_lang_dir() ?>">
 <head>
@@ -49,7 +42,6 @@ session_start();
     <meta property="og:url" content="https://tanger.lovestoblog.com/">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/cards.css">
     <link rel="stylesheet" href="../assets/css/header.css">
@@ -60,10 +52,9 @@ session_start();
 </head>
 <body>
 
-
 <?php require '../includes/header.php'; ?>
 
-        <main id="main_content">
+    <main id="main_content">
         <!-- hero -->
         <section class="hero_section">
             <picture>
@@ -72,24 +63,17 @@ session_start();
             </picture>
             <div class="hero_shadow"></div>
 
-
             <div class="hero_content">
-               
                 <p class="hero_label"><?= __('hero_label') ?></p>
                 <h1 class="hero_title"><?= __('hero_title') ?></h1>
-
                 <p class="hero_desc"><?= __('hero_desc') ?></p>
-                
                 <div class="hero_btns">
-
                     <a href="explore.php" class="btn_explor">
                         <?= __('hero_btn') ?>
                     </a>
-
                 </div>
             </div>
         </section>
-
 
         <!-- latest posts -->
         <section class="latest_section">
@@ -98,38 +82,26 @@ session_start();
                 <p class="description"><?= __('latest_desc') ?></p>
             </div>
 
-
-
             <div class="grid_place">
-                    <?php if (!empty($posts)): ?>
-                        <?php foreach ($posts as $post): ?>
-                            <?= render_post_card($post, 'latest_read_more') ?>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+                <?php if (!empty($posts)): ?>
+                    <?php foreach ($posts as $post): ?>
+                        <?= render_post_card($post, 'latest_read_more') ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="description"><?= __('latest_no_posts') ?></p>
+                <?php endif; ?>
+            </div>
 
-                        <p class="description"><?= __('latest_no_posts') ?></p>
-
-                    <?php endif; ?>
-                </div>
-
-            
-
-
-                <div class="footer_section">
-
-                    <a href="explore.php" class="view_explor">
-
-                        <?= __('latest_view_all') ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-
-                    </a>
-
-                </div>
-
+            <div class="footer_section">
+                <a href="explore.php" class="view_explor">
+                    <?= __('latest_view_all') ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
         </section>
 
-</main>
+    </main>
 
-<?php require '../includes/footer.php' ?>
+<?php require '../includes/footer.php'; ?>
     <script src="../assets/js/main.js"></script>
 </body>
 </html>
