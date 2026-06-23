@@ -1,21 +1,25 @@
 <?php
-session_start();
-require '../config/connection.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/lang.php';
- 
- send_security_headers();
+
+send_security_headers();
 
 // stats
-$pub_stmt = $conn->prepare("select count(*) from posts where status = :pub_status");
+$pub_stmt = $conn->prepare("SELECT COUNT(*) FROM posts WHERE status = :pub_status");
 $pub_stmt->execute([':pub_status' => STATUS_PUBLISHED]);
 $published_count = (int)$pub_stmt->fetchColumn();
 
-$cat_stmt = $conn->prepare("select count(*) from categories");
+$cat_stmt = $conn->prepare("SELECT COUNT(*) FROM categories");
 $cat_stmt->execute();
 $category_count = (int)$cat_stmt->fetchColumn();
 
-$user_stmt = $conn->prepare("select count(*) from users");
+$user_stmt = $conn->prepare("SELECT COUNT(*) FROM users");
 $user_stmt->execute();
 $user_count = (int)$user_stmt->fetchColumn();
 ?>
