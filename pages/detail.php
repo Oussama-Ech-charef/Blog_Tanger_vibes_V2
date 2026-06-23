@@ -164,7 +164,9 @@ $comment_count = count($comments);
         </div>
 
         <!-- image -->
-        <img src="../<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy">
+        <?php if (!empty($post['image'])): ?>
+            <img src="../<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy">
+        <?php endif; ?>
 
         <!-- content -->
         <div class="content">
