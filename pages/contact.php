@@ -1,11 +1,15 @@
 <?php
-session_start();
-require '../config/connection.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/lang.php';
 require_once '../includes/helpers.php';
- 
- send_security_headers();
+
+send_security_headers();
 
 $success = "";
 $error = "";
@@ -15,6 +19,12 @@ if (isset($_SESSION['contact_submitted'])) {
     unset($_SESSION['contact_submitted']);
 }
 
+// Preserve form values for repopulation
+$form_name    = '';
+$form_email   = '';
+$form_subject = '';
+$form_message = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // validate CSRF
@@ -23,16 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = __('contact_error_invalid');
     }
 
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $message = trim($_POST['message'] ?? '');
+    $form_name    = trim($_POST['name'] ?? '');
+    $form_email   = trim($_POST['email'] ?? '');
+    $form_subject = trim($_POST['subject'] ?? '');
+    $form_message = trim($_POST['message'] ?? '');
 
     // validation
     if (empty($error)) {
-        if (empty($name) || empty($email) || empty($subject) || empty($message)) {
+        if (empty($form_name) || empty($form_email) || empty($form_subject) || empty($form_message)) {
             $error = __('contact_error_required');
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($form_email, FILTER_VALIDATE_EMAIL)) {
             $error = __('contact_error_email');
         }
     }
@@ -41,20 +51,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             // insert
             $stmt = $conn->prepare("
-                insert into contact_messages (full_name, email, subject, message)
-                values (:full_name, :email, :subject, :message)
+                INSERT INTO contact_messages (full_name, email, subject, message)
+                VALUES (:full_name, :email, :subject, :message)
             ");
             $stmt->execute([
-                ':full_name' => $name,
-                ':email' => $email,
-                ':subject' => $subject,
-                ':message' => $message
+                ':full_name' => $form_name,
+                ':email'     => $form_email,
+                ':subject'   => $form_subject,
+                ':message'   => $form_message
             ]);
 
             // log activity
             try {
-                $log = $conn->prepare("insert into activity_log (action_type, description, user_id, entity_type, entity_id) values ('message_received', :desc, null, 'message', :eid)");
-                $log->execute([':desc' => "New message from $name: $subject", ':eid' => $conn->lastInsertId()]);
+                $new_id = $conn->lastInsertId();
+                $log = $conn->prepare("INSERT INTO activity_log (action_type, description, user_id, entity_type, entity_id) VALUES ('message_received', :desc, null, 'message', :eid)");
+                $log->execute([':desc' => "New message from {$form_name}: {$form_subject}", ':eid' => $new_id]);
             } catch (PDOException $e) {
                 error_log("Activity log error: " . $e->getMessage());
             }
@@ -97,6 +108,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php require '../includes/header.php'; ?>
 
 <main class="contact_page" id="main_content">
+
+    <!-- success notification (inside body, before content) -->
+    <?php if (!empty($success)): ?>
+        <?php render_notification($success, 'success'); ?>
+    <?php endif; ?>
 
     <!-- hero -->
     <section class="contact_head">
@@ -146,27 +162,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="contact_layout">
             <div class="contact_form_box">
-                <form action="#" method="POST" class="contact_form">
+                <form action="contact.php" method="POST" class="contact_form">
                     <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
 
                     <div class="form_group">
-                        <label for="name"><?= __('contact_form_name_label') ?></label>
-                        <input type="text" id="name" name="name" placeholder="<?= __('contact_form_name_placeholder') ?>" value="<?= htmlspecialchars($name ?? '') ?>" required>
+                        <label for="contact_name"><?= __('contact_form_name_label') ?></label>
+                        <input type="text" id="contact_name" name="name" placeholder="<?= __('contact_form_name_placeholder') ?>" value="<?= htmlspecialchars($form_name) ?>" required>
                     </div>
 
                     <div class="form_group">
-                        <label for="email"><?= __('contact_form_email_label') ?></label>
-                        <input type="email" id="email" name="email" placeholder="<?= __('contact_form_email_placeholder') ?>" value="<?= htmlspecialchars($email ?? '') ?>" required>
+                        <label for="contact_email"><?= __('contact_form_email_label') ?></label>
+                        <input type="email" id="contact_email" name="email" placeholder="<?= __('contact_form_email_placeholder') ?>" value="<?= htmlspecialchars($form_email) ?>" required>
                     </div>
 
                     <div class="form_group">
-                        <label for="subject"><?= __('contact_form_subject_label') ?></label>
-                        <input type="text" id="subject" name="subject" placeholder="<?= __('contact_form_subject_placeholder') ?>" value="<?= htmlspecialchars($subject ?? '') ?>" required>
+                        <label for="contact_subject"><?= __('contact_form_subject_label') ?></label>
+                        <input type="text" id="contact_subject" name="subject" placeholder="<?= __('contact_form_subject_placeholder') ?>" value="<?= htmlspecialchars($form_subject) ?>" required>
                     </div>
 
                     <div class="form_group">
-                        <label for="message"><?= __('contact_form_message_label') ?></label>
-                        <textarea id="message" name="message" placeholder="<?= __('contact_form_message_placeholder') ?>" required><?= htmlspecialchars($message ?? ''); ?></textarea>
+                        <label for="contact_message"><?= __('contact_form_message_label') ?></label>
+                        <textarea id="contact_message" name="message" placeholder="<?= __('contact_form_message_placeholder') ?>" required><?= htmlspecialchars($form_message); ?></textarea>
                     </div>
 
                     <button type="submit">
@@ -176,11 +192,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
             </div>
 
+            <!-- Map: using OpenStreetMap to comply with CSP (frame-src allows openstreetmap.org) -->
             <div class="map_box">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10754.139064625955!2d-5.8367744!3d35.7594653!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0b8165f4a90f3d%3A0x127b3b98cb1b5b62!2sTangier%2C%20Morocco!5e0!3m2!1sen!2sma!4v1710000000000!5m2!1sen!2sma"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-5.87,35.74,-5.80,35.78&amp;layer=mapnik&amp;marker=35.7595,-5.8340"
+                    width="100%"
+                    height="400"
+                    style="border:0;"
+                    allowfullscreen=""
                     loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Tangier location map">
                 </iframe>
             </div>
         </div>
@@ -237,10 +259,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </section>
 
 </main>
-
-<?php if (!empty($success)): ?>
-    <?php render_notification($success, 'success'); ?>
-<?php endif; ?>
 
 <?php require '../includes/footer.php'; ?>
 <script src="../assets/js/main.js"></script>
