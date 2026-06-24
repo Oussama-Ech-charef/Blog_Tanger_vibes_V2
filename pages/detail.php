@@ -2,7 +2,7 @@
 
 session_start();
 
-require '../config/connection.php';
+require_once '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/lang.php';
 require_once '../includes/helpers.php';
@@ -250,7 +250,6 @@ $comment_count = count($comments);
 
     <?php require '../includes/footer.php'; ?>
     <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/detail.js"></script>
 </body>
 
 </html>
