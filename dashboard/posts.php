@@ -95,7 +95,11 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     } else { $message = 'Invalid security token.'; $message_type = 'error'; }
 }
 
-// ── Build query to fetch all posts ──────────────────────────
+// ── Build query with pagination ──────────────────────────
+$per_page = 8;
+$p_page = get_valid_page('page');
+$p_offset = get_offset($p_page, $per_page);
+
 $search = trim($_GET['q'] ?? '');
 
 $where = "(users.role = 'admin' OR posts.status != :draft_status)";
@@ -107,10 +111,24 @@ if (!empty($search)) {
     $params[':s2'] = '%'.$search.'%';
 }
 
-$data_s = $conn->prepare("SELECT posts.*, categories.cat_name, users.user_name, users.role AS author_role FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE $where ORDER BY posts.created_at DESC");
-$data_s->execute($params);
+// Count total matching records
+$count_s = $conn->prepare("SELECT COUNT(*) FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE $where");
+$count_s->execute($params);
+$total_records = (int)$count_s->fetchColumn();
+
+$total_pages = get_total_pages($total_records, $per_page);
+$p_page = min($p_page, $total_pages);
+$p_offset = get_offset($p_page, $per_page);
+
+// Fetch only current page with LIMIT / OFFSET
+$data_s = $conn->prepare("SELECT posts.*, categories.cat_name, users.user_name, users.role AS author_role FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE $where ORDER BY posts.created_at DESC LIMIT :lim OFFSET :off");
+foreach ($params as $key => $val) {
+    $data_s->bindValue($key, $val);
+}
+$data_s->bindValue(':lim', $per_page, PDO::PARAM_INT);
+$data_s->bindValue(':off', $p_offset, PDO::PARAM_INT);
+$data_s->execute();
 $posts = $data_s->fetchAll(PDO::FETCH_ASSOC);
-$total_records = count($posts);
 
 $query_params = [];
 if (!empty($search)) $query_params['q'] = $search;
@@ -129,7 +147,7 @@ require_once __DIR__ . '/inc/header.php';
 </form>
 
 <div class="card">
-    <div class="card_header"><h2>All Posts (<?= $total_records ?>)</h2></div>
+    <div class="card_header"><h2>All Posts</h2></div>
     <div class="card_body_no_padding">
         <div class="table_wrapper">
             <table class="data_table">
@@ -184,6 +202,7 @@ require_once __DIR__ . '/inc/header.php';
             </table>
         </div>
     </div>
+    <?php render_dashboard_pagination('posts.php', $p_page, $total_pages, $query_params, $per_page, $total_records); ?>
 </div>
 
 <div class="quickview_overlay" id="quickviewModal">
