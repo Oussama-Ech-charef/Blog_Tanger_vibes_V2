@@ -32,9 +32,6 @@ function validate_csrf_token($token) {
 
 
 // check session timeout (30 min)
-/**
- * @return never
- */
 function check_session_timeout() {
     $timeout = 1800;
 
@@ -42,7 +39,9 @@ function check_session_timeout() {
         if (time() - $_SESSION['last_activity'] > $timeout) {
             session_unset();
             session_destroy();
-            header("Location: index.php");
+            $base = dirname($_SERVER['SCRIPT_NAME']);
+            $redirect = $base ? "$base/index.php" : "index.php";
+            header("Location: $redirect");
             exit();
         }
     }
