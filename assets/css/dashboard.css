@@ -986,84 +986,6 @@
     cursor: pointer;
 }
 
-/* ── Activity Feed ────────────────────────────────────────── */
-.activity_feed {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-.activity_item {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--db-card-border);
-}
-
-.activity_item:last-child {
-    border-bottom: none;
-}
-
-.activity_icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-}
-
-.activity_icon.post {
-    background: var(--db-primary-light);
-    color: var(--db-primary);
-}
-
-.activity_icon.comment {
-    background: var(--db-success-bg);
-    color: var(--db-success);
-}
-
-.activity_icon.user {
-    background: #EDE9FE;
-    color: #7C3AED;
-}
-
-.activity_icon.message {
-    background: var(--db-warning-bg);
-    color: var(--db-warning);
-}
-
-.activity_icon.approve {
-    background: var(--db-success-bg);
-    color: var(--db-success);
-}
-
-.activity_icon.reject {
-    background: var(--db-danger-bg);
-    color: var(--db-danger);
-}
-
-.activity_content {
-    flex: 1;
-    min-width: 0;
-}
-
-.activity_desc {
-    font-size: 14px;
-    color: var(--db-text-primary);
-    margin: 0 0 2px;
-    line-height: 1.4;
-}
-
-.activity_time {
-    font-size: 12px;
-    color: var(--db-text-muted);
-    margin: 0;
-}
-
 /* ── User Avatar Placeholder ──────────────────────────────── */
 .user_avatar {
     width: 36px;
@@ -1092,45 +1014,6 @@
 
 .user_avatar.orange {
     background: #F59E0B;
-}
-
-/* ── Quick Actions Grid ───────────────────────────────────── */
-.quick_actions_grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
-}
-
-.quick_action_card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 20px 16px;
-    border: 1px solid var(--db-card-border);
-    border-radius: var(--db-card-radius);
-    background: var(--db-card-bg);
-    text-decoration: none;
-    color: var(--db-text-primary);
-    transition: all var(--db-transition);
-    cursor: pointer;
-}
-
-.quick_action_card:hover {
-    border-color: var(--db-primary);
-    box-shadow: 0 4px 12px rgba(0, 71, 171, 0.1);
-    transform: translateY(-2px);
-}
-
-.quick_action_card i {
-    font-size: 24px;
-    color: var(--db-primary);
-}
-
-.quick_action_card span {
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
 }
 
 /* ── Notifications Page ───────────────────────────────────── */
@@ -1449,13 +1332,30 @@
     }
 }
 
+/* ── Pagination wrapper ────────────────────────────────────── */
+.pagination_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--db-card-border);
+    flex-wrap: wrap;
+}
+
+.pagination_info {
+    font-size: 13px;
+    color: var(--db-text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
 /* ── Pagination (dashboard style) ─────────────────────────── */
 .dashboard_pagination {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 20px 0 0;
 }
 
 .dashboard_pagination .page_btn {
@@ -1739,10 +1639,6 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .quick_actions_grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .mobile_menu_btn {
         display: flex !important;
     }
@@ -1755,10 +1651,6 @@
 
     .stats_grid {
         grid-template-columns: 1fr;
-    }
-
-    .quick_actions_grid {
-        grid-template-columns: 1fr 1fr;
     }
 
     .filters_bar {
