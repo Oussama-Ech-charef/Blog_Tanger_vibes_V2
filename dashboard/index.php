@@ -71,9 +71,6 @@ for ($i = 11; $i >= 0; $i--) {
 $cat_labels = []; $cat_data = []; $cat_colors = ['#0047AB','#10B981','#F59E0B','#EF4444','#7C3AED','#EC4899'];
 foreach ($category_chart as $i => $r) { $cat_labels[] = $r['cat_name']; $cat_data[] = (int)$r['count']; }
 
-// Activity
-$activities = $conn->query("SELECT * FROM activity_log WHERE action_type != 'draft_saved' ORDER BY created_at DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
-
 require_once __DIR__ . '/inc/header.php';
 ?>
 
@@ -128,49 +125,6 @@ require_once __DIR__ . '/inc/header.php';
     <div class="chart_container"><h3>User Registrations</h3><canvas id="usersChart"></canvas></div>
     <div class="chart_container"><h3>Content by Category</h3><canvas id="categoryChart"></canvas></div>
 </section>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-    <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-bolt" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Quick Actions</h2></div>
-        <div class="card_body">
-            <div class="quick_actions_grid">
-                <a href="add_post.php" class="quick_action_card"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>Add New Post</span></a>
-                <a href="posts.php?status=pending" class="quick_action_card"><i class="fa-solid fa-check" aria-hidden="true"></i><span>Review Pending</span></a>
-                <a href="comments.php" class="quick_action_card"><i class="fa-solid fa-comment" aria-hidden="true"></i><span>Manage Comments</span></a>
-                <a href="messages.php" class="quick_action_card"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span>View Messages</span></a>
-                <a href="users.php" class="quick_action_card"><i class="fa-solid fa-users-gear" aria-hidden="true"></i><span>Manage Users</span></a>
-                <a href="categories.php" class="quick_action_card"><i class="fa-solid fa-tags" aria-hidden="true"></i><span>Categories</span></a>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-clock-rotate-left" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Recent Activity</h2></div>
-        <div class="card_body">
-            <?php if (!empty($activities)): ?>
-            <div class="activity_feed">
-                <?php $icon_map = [
-                    'post_created' => 'fa-solid fa-plus', 'post_approved' => 'fa-solid fa-check',
-                    'post_rejected' => 'fa-solid fa-ban', 'comment_added' => 'fa-solid fa-comment',
-                    'user_registered' => 'fa-solid fa-user-plus', 'message_received' => 'fa-solid fa-envelope',
-                    'post_updated' => 'fa-solid fa-pen', 'post_deleted' => 'fa-solid fa-trash',
-                ]; ?>
-                <?php foreach ($activities as $act): ?>
-                <div class="activity_item">
-                    <div class="activity_icon <?= htmlspecialchars($act['action_type']) ?>"><i class="<?= $icon_map[$act['action_type']] ?? 'fa-solid fa-circle' ?>" aria-hidden="true"></i></div>
-                    <div class="activity_content">
-                        <p class="activity_desc"><?= htmlspecialchars($act['description']) ?></p>
-                        <p class="activity_time"><?= time_ago($act['created_at']) ?></p>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
-            <?php else: ?>
-            <div class="empty_state"><i class="fa-solid fa-clock" aria-hidden="true"></i><h3>No activity yet</h3><p>Activity will appear here as users interact with the site.</p></div>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
