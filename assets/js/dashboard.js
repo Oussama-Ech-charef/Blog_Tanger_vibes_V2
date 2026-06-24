@@ -73,16 +73,15 @@ window.closeAllDropdowns = function () {
             });
         }
 
-        /* ── Notification auto-dismiss ────────────────────────── */
-        function autoDismissPopup(selector, delay) {
-            const el = document.querySelector(selector);
+        /* ── Notification auto-dismiss (3s fade-out) ─────────── */
+        (function () {
+            var el = document.querySelector('.notification');
             if (!el) return;
             setTimeout(function () {
                 el.classList.add('fade-out');
-                setTimeout(function () { el.remove(); }, 500);
-            }, delay || 3000);
-        }
-        autoDismissPopup('.notification');
+                setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 500);
+            }, 3000);
+        })();
 
         /* ── Delete confirmation modals ───────────────────────── */
         document.querySelectorAll('[data-confirm]').forEach(function (el) {
