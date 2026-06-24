@@ -105,24 +105,48 @@ function render_pagination($current_page, $total_pages, $query_params = []) {
  * @param int $current_page
  * @param int $total_pages
  * @param array $query_params
+ * @param int $per_page
+ * @param int $total_records
  * @return void
  */
-function render_dashboard_pagination($base_url, $current_page, $total_pages, $query_params = []) {
+function render_dashboard_pagination($base_url, $current_page, $total_pages, $query_params = [], $per_page = 0, $total_records = 0) {
     if ($total_pages <= 1) return;
+
+    $start_record = ($current_page - 1) * $per_page + 1;
+    $end_record = min($current_page * $per_page, $total_records);
+
     $u = http_build_query($query_params);
-    $pre = !empty($u) ? '?' . $u . '&page=' : '?page=';
+    $sep = !empty($u) ? '?' . $u . '&page=' : '?page=';
+    $prev_disabled = $current_page <= 1 ? ' disabled' : '';
+    $next_disabled = $current_page >= $total_pages ? ' disabled' : '';
     ?>
-    <div style="padding:16px 24px;border-top:1px solid var(--db-card-border);">
+    <div class="pagination_wrapper">
+        <?php if ($total_records > 0 && $per_page > 0): ?>
+        <div class="pagination_info"><?= __('pagination_showing', $start_record, $end_record, $total_records) ?></div>
+        <?php endif; ?>
         <div class="dashboard_pagination">
-            <?php if ($current_page > 1): ?>
-            <a href="<?= $base_url . $pre . ($current_page - 1) ?>" class="page_btn" aria-label="Previous page"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a>
+            <a href="<?= $base_url . $sep . ($current_page - 1) ?>" class="page_btn prev<?= $prev_disabled ?>" aria-label="Previous page"<?= $prev_disabled ? ' tabindex="-1" aria-disabled="true"' : '' ?>><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a>
+
+            <?php
+            $window = 2;
+            $start = max(1, $current_page - $window);
+            $end = min($total_pages, $current_page + $window);
+
+            if ($start > 1): ?>
+                <a href="<?= $base_url . $sep . 1 ?>" class="page_btn<?= $current_page === 1 ? ' active' : '' ?>">1</a>
+                <?php if ($start > 2): ?><span class="page_btn dots">...</span><?php endif; ?>
             <?php endif; ?>
-            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <a href="<?= $base_url . $pre . $i ?>" class="page_btn <?= $i === $current_page ? 'active' : '' ?>"><?= $i ?></a>
+
+            <?php for ($i = $start; $i <= $end; $i++): ?>
+                <a href="<?= $base_url . $sep . $i ?>" class="page_btn<?= $i === $current_page ? ' active' : '' ?>"><?= $i ?></a>
             <?php endfor; ?>
-            <?php if ($current_page < $total_pages): ?>
-            <a href="<?= $base_url . $pre . ($current_page + 1) ?>" class="page_btn" aria-label="Next page"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
+
+            <?php if ($end < $total_pages): ?>
+                <?php if ($end < $total_pages - 1): ?><span class="page_btn dots">...</span><?php endif; ?>
+                <a href="<?= $base_url . $sep . $total_pages ?>" class="page_btn<?= $current_page === $total_pages ? ' active' : '' ?>"><?= $total_pages ?></a>
             <?php endif; ?>
+
+            <a href="<?= $base_url . $sep . ($current_page + 1) ?>" class="page_btn next<?= $next_disabled ?>" aria-label="Next page"<?= $next_disabled ? ' tabindex="-1" aria-disabled="true"' : '' ?>><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
         </div>
     </div>
     <?php
