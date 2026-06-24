@@ -171,17 +171,4 @@ function fetch_posts($conn, $criteria = []) {
     return $s->fetchAll(PDO::FETCH_ASSOC);
 }
 
-/**
- * @param PDO $conn
- * @param int|null $selected_id
- * @return string
- */
-function render_category_dropdown($conn, $selected_id = null) {
-    $cats = $conn->query("SELECT * FROM categories ORDER BY cat_name ASC")->fetchAll(PDO::FETCH_ASSOC);
-    $html = '<option value="">Select a category...</option>';
-    foreach ($cats as $c) {
-        $sel = $selected_id !== null && (int)$selected_id === (int)$c['id_category'] ? ' selected' : '';
-        $html .= '<option value="' . (int)$c['id_category'] . '"' . $sel . '>' . htmlspecialchars($c['cat_name']) . '</option>';
-    }
-    return $html;
-}
+
