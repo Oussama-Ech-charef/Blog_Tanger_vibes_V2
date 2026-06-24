@@ -77,20 +77,6 @@ function render_errors($errors) {
 
 /**
  * @param PDO $conn
- * @param string $type
- * @param string $description
- * @param int|null $user_id
- * @param string $entity_type
- * @param int|null $entity_id
- * @return void
- */
-function insert_activity_log($conn, $type, $description, $user_id = null, $entity_type = 'post', $entity_id = null) {
-    $s = $conn->prepare("INSERT INTO activity_log (action_type, description, user_id, entity_type, entity_id) VALUES (:at, :d, :u, :et, :ei)");
-    $s->execute([':at' => $type, ':d' => $description, ':u' => $user_id, ':et' => $entity_type, ':ei' => $entity_id]);
-}
-
-/**
- * @param PDO $conn
  * @param int $user_id
  * @param string $type
  * @param string $message
