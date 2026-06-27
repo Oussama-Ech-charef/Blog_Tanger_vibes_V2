@@ -23,12 +23,7 @@ if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
                 $t->execute([':id' => $pid]);
                 $prow = $t->fetch(PDO::FETCH_ASSOC);
                 $pt = $prow['title'];
-                $author_id = (int)$prow['id_user'];
                 $conn->prepare("INSERT INTO activity_log (action_type,description,user_id,entity_type,entity_id) VALUES ('post_approved',:d,:u,'post',:e)")->execute([':d'=>"Approved post: $pt",':u'=>$_SESSION['id_user'],':e'=>$pid]);
-                if ($author_id) {
-                    $conn->prepare("INSERT INTO user_notifications (id_user,type,message,link) VALUES (:uid,'post_approved',:msg,:lnk)")
-                         ->execute([':uid'=>$author_id, ':msg'=>"Your post \"$pt\" has been approved and published.", ':lnk'=>"../pages/detail.php?id=$pid"]);
-                }
                 $message = 'Post approved and published.';
                 $message_type = 'success';
             }
@@ -49,12 +44,7 @@ if (isset($_POST['reject_id'])) {
                 $t->execute([':id'=>$pid]);
                 $prow = $t->fetch(PDO::FETCH_ASSOC);
                 $pt = $prow['title'];
-                $author_id = (int)$prow['id_user'];
                 $conn->prepare("INSERT INTO activity_log (action_type,description,user_id,entity_type,entity_id) VALUES ('post_rejected',:d,:u,'post',:e)")->execute([':d'=>"Rejected post: $pt",':u'=>$_SESSION['id_user'],':e'=>$pid]);
-                if ($author_id) {
-                    $conn->prepare("INSERT INTO user_notifications (id_user,type,message,link) VALUES (:uid,'post_rejected',:msg,:lnk)")
-                         ->execute([':uid'=>$author_id, ':msg'=>"Your post \"$pt\" has been rejected.", ':lnk'=>"../user_dashboard/edit_post.php?id=$pid"]);
-                }
                 $message = 'Post rejected.';
                 $message_type = 'success';
             }
@@ -205,16 +195,28 @@ require_once __DIR__ . '/inc/header.php';
     <?php render_dashboard_pagination('posts.php', $p_page, $total_pages, $query_params, $per_page, $total_records); ?>
 </div>
 
-<div class="quickview_overlay" id="quickviewModal">
-    <div class="quickview_box">
-        <div class="quickview_header">
-            <h2 id="qv_title">Post Title</h2>
-            <button type="button" class="quickview_close" id="qv_close"><i class="fa-solid fa-xmark"></i></button>
+<div class="modal_overlay" id="postQuickView">
+    <div class="modal_box" style="width:min(100%,600px);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h2 style="margin:0;font-size:18px;font-weight:700;" id="qvTitle"></h2>
+            <button class="alert_close" id="qvClose" style="font-size:22px;cursor:pointer;background:none;border:none;color:var(--db-text-muted);padding:4px 8px;">&times;</button>
         </div>
-        <img id="qv_image" class="quickview_image" src="" alt="" style="display:none;">
-        <div class="quickview_body">
-            <div class="quickview_meta" id="qv_meta"></div>
-            <div class="quickview_content" id="qv_content"></div>
+        <div id="qvImage" style="margin-bottom:16px;display:none;">
+            <img src="" alt="" style="width:100%;max-height:280px;object-fit:cover;border-radius:8px;border:1px solid var(--db-card-border);">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;font-size:14px;">
+            <div><span class="detail_label" style="display:block;margin-bottom:2px;">Category</span><span id="qvCategory" style="font-weight:600;"></span></div>
+            <div><span class="detail_label" style="display:block;margin-bottom:2px;">Status</span><span id="qvStatus"></span></div>
+            <div><span class="detail_label" style="display:block;margin-bottom:2px;">Author</span><span id="qvAuthor" style="font-weight:600;"></span></div>
+            <div><span class="detail_label" style="display:block;margin-bottom:2px;">Created</span><span id="qvDate" style="font-weight:600;"></span></div>
+        </div>
+        <div id="qvRejection" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#991B1B;">
+            <strong style="display:block;margin-bottom:4px;color:#EF4444;">Rejection Reason</strong>
+            <span id="qvRejectionText"></span>
+        </div>
+        <div>
+            <span class="detail_label" style="display:block;margin-bottom:6px;">Content</span>
+            <div id="qvContent" style="font-size:14px;line-height:1.7;color:var(--db-text-primary);white-space:pre-wrap;max-height:300px;overflow-y:auto;background:#F8FAFC;padding:16px;border-radius:8px;border:1px solid var(--db-card-border);"></div>
         </div>
     </div>
 </div>
@@ -233,52 +235,5 @@ require_once __DIR__ . '/inc/header.php';
     </div>
 </div>
 <script src="../assets/js/posts-dropdown.js"></script>
-<script>
-(function() {
-    var qvModal = document.getElementById('quickviewModal');
-    var qvTitle = document.getElementById('qv_title');
-    var qvImage = document.getElementById('qv_image');
-    var qvMeta = document.getElementById('qv_meta');
-    var qvContent = document.getElementById('qv_content');
-    var qvClose = document.getElementById('qv_close');
-
-    document.querySelectorAll('[data-post-quickview]').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            try {
-                var data = JSON.parse(btn.getAttribute('data-post-quickview'));
-                qvTitle.textContent = data.title || 'Untitled';
-
-                if (data.image) {
-                    qvImage.src = '../' + data.image;
-                    qvImage.style.display = 'block';
-                } else {
-                    qvImage.style.display = 'none';
-                }
-
-                var metaHtml = '';
-                if (data.cat_name) metaHtml += '<span class="quickview_meta_item"><i class="fa-solid fa-tag"></i>' + data.cat_name + '</span>';
-                if (data.user_name) metaHtml += '<span class="quickview_meta_item"><i class="fa-solid fa-user"></i>' + data.user_name + '</span>';
-                if (data.status) metaHtml += '<span class="status_badge ' + data.status + '">' + data.status.charAt(0).toUpperCase() + data.status.slice(1) + '</span>';
-                if (data.created_at) {
-                    var d = new Date(data.created_at);
-                    metaHtml += '<span class="quickview_meta_item"><i class="fa-solid fa-calendar"></i>' + d.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + '</span>';
-                }
-                qvMeta.innerHTML = metaHtml;
-
-                var content = data.content || 'No content.';
-                var div = document.createElement('div');
-                div.textContent = content;
-                qvContent.innerHTML = div.innerHTML.substring(0, 600) + (content.length > 600 ? '...' : '');
-
-                qvModal.classList.add('open');
-            } catch(e) { console.error(e); }
-        });
-    });
-
-    if (qvClose) qvClose.addEventListener('click', function() { qvModal.classList.remove('open'); });
-    if (qvModal) qvModal.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('open'); });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') qvModal.classList.remove('open'); });
-})();
-</script>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
