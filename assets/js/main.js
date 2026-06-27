@@ -74,4 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             d.classList.remove('open');
         });
     });
+
+    // auto-dismiss notification popups
+    autoDismissPopup('.notification');
 });

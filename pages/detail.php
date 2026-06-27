@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 require_once '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/lang.php';
@@ -85,16 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 error_log("Activity log error: " . $e->getMessage());
             }
 
-            // notify post author
-            if (!empty($post['id_user']) && (!isset($_SESSION['id_user']) || (int)$_SESSION['id_user'] !== (int)$post['id_user'])) {
-                try {
-                    $n = $conn->prepare("INSERT INTO user_notifications (id_user,type,message,link) VALUES (:uid,'new_comment',:msg,:lnk)");
-                    $n->execute([':uid'=>$post['id_user'], ':msg'=>"$author_name commented on your post: " . $post['title'], ':lnk'=>"detail.php?id=$post_id"]);
-                } catch (PDOException $e) {
-                    error_log("Notification error: " . $e->getMessage());
-                }
-            }
-
             $_SESSION['comment_added'] = true;
             header("Location: detail.php?id=" . $post_id . "#comments");
             exit();
@@ -132,9 +120,10 @@ $comment_count = count($comments);
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://tanger.lovestoblog.com/detail.php?id=<?= $post['id_post'] ?>">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-   
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/header.css">
     <link rel="stylesheet" href="../assets/css/detail.css">

@@ -1,1 +1,0 @@
-autoDismissPopup('.notification');
