@@ -76,36 +76,6 @@ function render_errors($errors) {
 }
 
 /**
- * @param PDO $conn
- * @param int $user_id
- * @param string $type
- * @param string $message
- * @param string $link
- * @return void
- */
-function insert_notification($conn, $user_id, $type, $message, $link = '') {
-    $s = $conn->prepare("INSERT INTO user_notifications (id_user, type, message, link) VALUES (:uid, :t, :m, :l)");
-    $s->execute([':uid' => $user_id, ':t' => $type, ':m' => $message, ':l' => $link]);
-}
-
-/**
- * @param string $icon
- * @param string $title
- * @param string $description
- * @return string
- */
-function render_empty_state($icon, $title, $description = '') {
-    $html = '<div class="empty_state">';
-    $html .= '<i class="fa-solid fa-' . $icon . '" aria-hidden="true"></i>';
-    $html .= '<h3>' . htmlspecialchars($title) . '</h3>';
-    if (!empty($description)) {
-        $html .= '<p>' . htmlspecialchars($description) . '</p>';
-    }
-    $html .= '</div>';
-    return $html;
-}
-
-/**
  * @param array $post
  * @param string $btn_key
  * @return string
