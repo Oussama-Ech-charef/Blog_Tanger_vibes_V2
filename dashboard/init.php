@@ -1,8 +1,4 @@
 <?php
-// ============================================================
-// Dashboard Initialization
-// Include at the top of every dashboard page
-// ============================================================
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -14,6 +10,7 @@ require_once __DIR__ . '/../includes/lang.php';
 require_once __DIR__ . '/../includes/pagination.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
+check_session_timeout();
 send_security_headers();
 
 // Admin check
