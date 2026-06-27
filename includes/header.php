@@ -80,18 +80,6 @@ get_csrf_token();
                                     </a>
                                     <div class="user_dropdown_divider"></div>
                                     <?php endif; ?>
-                                    <?php if ($_SESSION['role'] !== 'admin'): ?>
-                                    <a href="../user_dashboard/index.php" class="user_dropdown_item">
-                                        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Dashboard
-                                    </a>
-                                    <a href="../user_dashboard/myposts.php" class="user_dropdown_item">
-                                        <i class="fa-solid fa-file-lines" aria-hidden="true"></i> My Posts
-                                    </a>
-                                    <a href="../user_dashboard/add_post.php" class="user_dropdown_item">
-                                        <i class="fa-solid fa-plus" aria-hidden="true"></i> Submit Post
-                                    </a>
-                                    <div class="user_dropdown_divider"></div>
-                                    <?php endif; ?>
                                     <form action="../pages/logout.php" method="POST" class="user_dropdown_form">
                                         <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
                                         <button type="submit" class="user_dropdown_item user_dropdown_logout">
@@ -182,13 +170,6 @@ get_csrf_token();
                             <?php if ($_SESSION['role'] === 'admin'): ?>
                             <a href="../dashboard/index.php" class="join_btn">
                                 <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <?= __('auth_dashboard') ?>
-                            </a>
-                            <?php else: ?>
-                            <a href="../user_dashboard/index.php" class="join_btn" style="background:#F1F5F9;color:#0F172A;">
-                                <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Dashboard
-                            </a>
-                            <a href="../user_dashboard/add_post.php" class="join_btn">
-                                <i class="fa-solid fa-plus" aria-hidden="true"></i> Submit Post
                             </a>
                             <?php endif; ?>
                             <form action="../pages/logout.php" method="POST" class="inline_form mobile_logout_form">
