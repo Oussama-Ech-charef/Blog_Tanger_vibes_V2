@@ -167,7 +167,7 @@ require_once __DIR__ . '/inc/header.php';
 <?php render_notification($message, $message_type); ?>
 
 <form method="GET" id="filterForm" class="filters_bar" style="flex-wrap:wrap;">
-    <div class="search_input" style="flex:1 1 200px;">
+    <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
         <input type="text" name="q" placeholder="Search comments, author, post..." value="<?=htmlspecialchars($search)?>" onchange="this.form.submit()">
     </div>
@@ -206,12 +206,12 @@ require_once __DIR__ . '/inc/header.php';
     </select>
     <div class="notif_date_range" id="commentDateRange" style="display:<?=$date_filter==='custom'?'flex':'none'?>">
         <input type="date" name="date_from" value="<?= htmlspecialchars($date_from) ?>" onchange="this.form.submit()">
-        <span style="color:var(--db-text-muted);font-size:13px;">to</span>
+        <span class="date_cell" style="color:var(--db-text-muted);">to</span>
         <input type="date" name="date_to" value="<?= htmlspecialchars($date_to) ?>" onchange="this.form.submit()">
     </div>
-    <span style="font-size:14px;color:var(--db-text-secondary);font-weight:500;margin-left:auto;"><?=$total_records?> comment(s)</span>
+    <span class="ml_auto" style="font-size:14px;color:var(--db-text-secondary);font-weight:500;"><?=$total_records?> comment(s)</span>
     <?php if (!empty($search) || !empty($status_filter) || !empty($role_filter) || !empty($user_filter) || !empty($post_filter) || !empty($date_filter)): ?>
-    <a href="comments.php" class="btn_small btn_secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
+    <a href="comments.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
     <?php endif; ?>
 </form>
 
@@ -224,7 +224,7 @@ require_once __DIR__ . '/inc/header.php';
             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
             <input type="hidden" name="bulk_delete" value="1">
             <input type="hidden" name="comment_ids" id="bulkIds">
-            <button type="submit" class="btn btn_danger btn_sm" id="bulkDeleteBtn" style="display:none;" onclick="document.getElementById('bulkIds').value=Array.from(document.querySelectorAll('.cb:checked')).map(c=>c.value).join(',')"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Selected</button>
+            <button type="submit" class="btn btn_danger btn_sm" id="bulkDeleteBtn" style="display:none" onclick="document.getElementById('bulkIds').value=Array.from(document.querySelectorAll('.cb:checked')).map(c=>c.value).join(',')"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Selected</button>
         </form>
         <?php endif; ?>
     </div>
@@ -238,7 +238,7 @@ require_once __DIR__ . '/inc/header.php';
                         <tr>
                             <td><input type="checkbox" class="cb" value="<?=$c['id_comment']?>" onchange="toggleBulk()"></td>
                             <td>
-                                <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="flex_center">
                                     <span class="user_avatar <?=avatar_color($c['author_name'])?>"><?=avatar_initials($c['author_name'])?></span>
                                     <div>
                                         <strong><?=htmlspecialchars($c['author_name'])?></strong>
@@ -248,12 +248,12 @@ require_once __DIR__ . '/inc/header.php';
                                     </div>
                                 </div>
                             </td>
-                            <td style="max-width:300px;"><span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"><?=htmlspecialchars($c['comment_text'])?></span></td>
-                            <td><?php if($c['post_title']):?><a href="../pages/detail.php?id=<?=$c['id_post']?>" target="_blank" rel="noopener" style="color:var(--db-primary);font-weight:500;"><?=htmlspecialchars(truncate_text($c['post_title'],40))?></a><?php else:?><span style="color:var(--db-text-muted)">[deleted]</span><?php endif;?></td>
+                            <td style="max-width:300px;"><span class="text_clamp_2"><?=htmlspecialchars($c['comment_text'])?></span></td>
+                            <td><?php if($c['post_title']):?><a href="../pages/detail.php?id=<?=$c['id_post']?>" target="_blank" rel="noopener" class="view_link"><?=htmlspecialchars(truncate_text($c['post_title'],40))?></a><?php else:?><span class="text_muted">[deleted]</span><?php endif;?></td>
                             <td><span class="status_badge status_<?=$c['status']?>"><?=ucfirst(htmlspecialchars($c['status'] ?? STATUS_PENDING))?></span></td>
-                            <td style="white-space:nowrap;color:var(--db-text-secondary);font-size:13px;"><?=time_ago($c['created_at'])?></td>
+                            <td class="date_cell"><?=time_ago($c['created_at'])?></td>
                             <td>
-                                <div class="cell_actions" style="justify-content:flex-end;">
+                                <div class="cell_actions cell_actions_right">
                                     <div class="action_dropdown">
                                         <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="Actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
