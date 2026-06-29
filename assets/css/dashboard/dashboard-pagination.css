@@ -1,0 +1,65 @@
+/* ── Pagination wrapper ────────────────────────────────────── */
+.pagination_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--db-card-border);
+    flex-wrap: wrap;
+}
+
+.pagination_info {
+    font-size: 13px;
+    color: var(--db-text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* ── Pagination (dashboard style) ─────────────────────────── */
+.dashboard_pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.dashboard_pagination .page_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--db-card-border);
+    background: var(--db-card-bg);
+    color: var(--db-text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--db-transition);
+}
+
+.dashboard_pagination .page_btn:hover {
+    border-color: var(--db-primary);
+    color: var(--db-primary);
+}
+
+.dashboard_pagination .page_btn.active {
+    background: var(--db-primary);
+    border-color: var(--db-primary);
+    color: #FFFFFF;
+}
+
+.dashboard_pagination .page_btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.dashboard_pagination .page_btn.dots {
+    border: none;
+    min-width: auto;
+    padding: 0 4px;
+    background: transparent;
+}
