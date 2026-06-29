@@ -85,7 +85,7 @@
 
         <!-- Topbar -->
         <header class="dashboard_topbar">
-            <div style="display:flex;align-items:center;gap:12px;">
+            <div class="flex_row">
                 <button class="mobile_menu_btn" id="mobileMenuBtn" aria-label="Toggle menu">
                     <i class="fa-solid fa-bars" aria-hidden="true"></i>
                 </button>
