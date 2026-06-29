@@ -13,7 +13,68 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <?php
+    // Base CSS files loaded on every dashboard page
+    $db_css = [
+        'dashboard-variables.css',
+        'dashboard-layout.css',
+        'dashboard-sidebar.css',
+        'dashboard-header.css',
+        'dashboard-buttons.css',
+        'dashboard-utilities.css',
+    ];
+
+    // Page-specific CSS files
+    $current_file = basename($_SERVER['PHP_SELF']);
+    switch ($current_file) {
+        case 'index.php':
+            $db_css[] = 'dashboard-overview.css';
+            break;
+        case 'posts.php':
+            $db_css[] = 'dashboard-tables.css';
+            $db_css[] = 'dashboard-forms.css';
+            $db_css[] = 'dashboard-modals.css';
+            $db_css[] = 'dashboard-pagination.css';
+            break;
+        case 'add_post.php':
+        case 'edit_post.php':
+            $db_css[] = 'dashboard-forms.css';
+            $db_css[] = 'dashboard-tables.css';
+            break;
+        case 'comments.php':
+            $db_css[] = 'dashboard-tables.css';
+            $db_css[] = 'dashboard-forms.css';
+            $db_css[] = 'dashboard-pagination.css';
+            break;
+        case 'categories.php':
+            $db_css[] = 'dashboard-tables.css';
+            $db_css[] = 'dashboard-forms.css';
+            $db_css[] = 'dashboard-modals.css';
+            $db_css[] = 'dashboard-pagination.css';
+            break;
+        case 'users.php':
+            $db_css[] = 'dashboard-tables.css';
+            $db_css[] = 'dashboard-forms.css';
+            $db_css[] = 'dashboard-pagination.css';
+            break;
+        case 'messages.php':
+            $db_css[] = 'dashboard-tables.css';
+            $db_css[] = 'dashboard-forms.css';
+            $db_css[] = 'dashboard-pagination.css';
+            break;
+        case 'notifications.php':
+            $db_css[] = 'dashboard-forms.css';
+            $db_css[] = 'dashboard-notifications.css';
+            break;
+        case 'settings.php':
+            $db_css[] = 'dashboard-forms.css';
+            break;
+    }
+
+    foreach ($db_css as $css_file) {
+        echo '    <link rel="stylesheet" href="../assets/css/dashboard/' . $css_file . '">' . "\n";
+    }
+    ?>
     <link rel="stylesheet" href="../assets/css/components.css">
 </head>
 <body class="dashboard_body">

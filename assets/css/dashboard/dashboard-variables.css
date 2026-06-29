@@ -1,0 +1,74 @@
+/* ── CSS Variables ─────────────────────────────────────────── */
+:root {
+    --db-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* Sidebar */
+    --db-sidebar-bg: #0F172A;
+    --db-sidebar-width: 260px;
+    --db-sidebar-text: #94A3B8;
+    --db-sidebar-hover: #1E293B;
+    --db-sidebar-active-bg: #0047AB;
+    --db-sidebar-active-text: #FFFFFF;
+    --db-sidebar-divider: #1E293B;
+
+    /* Topbar */
+    --db-topbar-height: 64px;
+    --db-topbar-bg: #FFFFFF;
+    --db-topbar-border: #E2E8F0;
+
+    /* Main */
+    --db-main-bg: #F8FAFC;
+    --db-content-padding: 32px;
+
+    /* Cards */
+    --db-card-bg: #FFFFFF;
+    --db-card-border: #E2E8F0;
+    --db-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --db-card-radius: 8px;
+
+    /* Text */
+    --db-text-primary: #0F172A;
+    --db-text-secondary: #64748B;
+    --db-text-muted: #94A3B8;
+
+    /* Brand */
+    --db-primary: #0047AB;
+    --db-primary-hover: #003B8B;
+    --db-primary-light: #E8F0FE;
+
+    /* Status */
+    --db-success: #10B981;
+    --db-success-bg: #D1FAE5;
+    --db-success-text: #065F46;
+    --db-warning: #F59E0B;
+    --db-warning-bg: #FEF3C7;
+    --db-warning-text: #92400E;
+    --db-danger: #EF4444;
+    --db-danger-bg: #FEE2E2;
+    --db-danger-text: #991B1B;
+    --db-info: #3B82F6;
+    --db-info-bg: #DBEAFE;
+    --db-info-text: #1E40AF;
+
+    /* Inputs */
+    --db-input-border: #E2E8F0;
+    --db-input-radius: 8px;
+    --db-input-height: 42px;
+
+    /* Transitions */
+    --db-transition: 0.2s ease;
+}
+
+/* ── Responsive variable overrides ─────────────────────────── */
+@media (max-width: 900px) {
+    :root {
+        --db-sidebar-width: 0px;
+        --db-content-padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    :root {
+        --db-content-padding: 16px;
+    }
+}
