@@ -74,13 +74,13 @@ require_once __DIR__ . '/inc/header.php';
     <div class="card_body">
         <div style="display:grid;gap:20px;">
             <div><div class="detail_label">Name</div><div class="detail_value"><?=htmlspecialchars($view_message['full_name'])?></div></div>
-            <div><div class="detail_label">Email</div><div class="detail_value"><a href="mailto:<?=htmlspecialchars($view_message['email'])?>" style="color:var(--db-primary);"><?=htmlspecialchars($view_message['email'])?></a></div></div>
+            <div><div class="detail_label">Email</div><div class="detail_value"><a href="mailto:<?=htmlspecialchars($view_message['email'])?>" class="view_link"><?=htmlspecialchars($view_message['email'])?></a></div></div>
             <div><div class="detail_label">Subject</div><div class="detail_value"><?=htmlspecialchars($view_message['subject'])?></div></div>
             <div><div class="detail_label">Date</div><div class="detail_value"><?=date('F j, Y g:i A',strtotime($view_message['created_at']))?></div></div>
             <div><div class="detail_label">Message</div><div class="detail_value" style="background:#F8FAFC;padding:16px;border-radius:8px;border:1px solid var(--db-card-border);line-height:1.7;white-space:pre-wrap;"><?=htmlspecialchars($view_message['message'])?></div></div>
             <div style="display:flex;gap:12px;padding-top:12px;border-top:1px solid var(--db-card-border);">
                 <a href="mailto:<?=htmlspecialchars($view_message['email'])?>?subject=Re: <?=htmlspecialchars($view_message['subject'])?>" class="btn btn_primary" target="_blank" rel="noopener"><i class="fa-solid fa-reply"></i> Reply</a>
-                <form method="POST" action="messages.php" style="display:inline">
+                <form method="POST" action="messages.php" class="inline_form">
                     <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                     <input type="hidden" name="delete" value="<?=$view_message['id_message']?>">
                     <?php if (!empty($search)): ?><input type="hidden" name="q" value="<?=htmlspecialchars($search)?>"><?php endif; ?>
@@ -110,12 +110,12 @@ require_once __DIR__ . '/inc/header.php';
                     <?php if (!empty($messages)): ?>
                         <?php foreach ($messages as $m): ?>
                         <tr class="<?=empty($m['is_read'])?'unread':''?>">
-                            <td><div style="display:flex;align-items:center;gap:8px;"><span class="user_avatar <?=avatar_color($m['full_name'])?>"><?=avatar_initials($m['full_name'])?></span><strong><?=htmlspecialchars($m['full_name'])?></strong></div></td>
-                            <td><a href="mailto:<?=htmlspecialchars($m['email'])?>" style="color:var(--db-primary);"><?=htmlspecialchars($m['email'])?></a></td>
+                            <td><div class="flex_center"><span class="user_avatar <?=avatar_color($m['full_name'])?>"><?=avatar_initials($m['full_name'])?></span><strong><?=htmlspecialchars($m['full_name'])?></strong></div></td>
+                            <td><a href="mailto:<?=htmlspecialchars($m['email'])?>" class="view_link"><?=htmlspecialchars($m['email'])?></a></td>
                             <td><a href="messages.php?view=<?=$m['id_message']?><?=!empty($search)?'&q='.urlencode($search):''?>" style="color:var(--db-text-primary);font-weight:500;"><?=htmlspecialchars(truncate_text($m['subject'],60))?><?php if(empty($m['is_read'])):?> <span class="unread_dot"></span><?php endif;?></a></td>
                             <td><span class="status_badge status_<?=empty($m['is_read'])?'pending':'approved'?>"><?=empty($m['is_read'])?'Unread':'Read'?></span></td>
-                            <td style="white-space:nowrap;color:var(--db-text-secondary);font-size:13px;"><?=date('M j, Y',strtotime($m['created_at']))?></td>
-                            <td><div class="cell_actions"><a href="messages.php?view=<?=$m['id_message']?><?=!empty($search)?'&q='.urlencode($search):''?>" class="btn_small btn_secondary"><i class="fa-solid fa-eye" aria-hidden="true"></i> Read</a><form method="POST" action="messages.php" style="display:inline">
+                            <td class="date_cell"><?=date('M j, Y',strtotime($m['created_at']))?></td>
+                            <td><div class="cell_actions"><a href="messages.php?view=<?=$m['id_message']?><?=!empty($search)?'&q='.urlencode($search):''?>" class="btn_small btn_secondary"><i class="fa-solid fa-eye" aria-hidden="true"></i> Read</a><form method="POST" action="messages.php" class="inline_form">
     <input type="hidden" name="csrf_token" value="<?=$csrf?>">
     <input type="hidden" name="delete" value="<?=$m['id_message']?>">
     <?php if (!empty($search)): ?><input type="hidden" name="q" value="<?=htmlspecialchars($search)?>"><?php endif; ?>
