@@ -142,7 +142,7 @@ function render_date_range_filter($id, $date_from = '', $date_to = '', $selected
     $display = $selected === 'custom' ? 'flex' : 'none';
     $html = '<div class="notif_date_range" id="' . htmlspecialchars($id) . '" style="display:' . $display . '">';
     $html .= '<input type="date" name="' . htmlspecialchars($param_from) . '" value="' . htmlspecialchars($date_from) . '">';
-    $html .= '<span style="color:var(--db-text-muted);font-size:13px;">to</span>';
+    $html .= '<span class="text_muted date_cell">to</span>';
     $html .= '<input type="date" name="' . htmlspecialchars($param_to) . '" value="' . htmlspecialchars($date_to) . '">';
     $html .= '</div>';
     return $html;
