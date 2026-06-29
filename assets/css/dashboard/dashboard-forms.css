@@ -1,0 +1,165 @@
+/* ── Forms ────────────────────────────────────────────────── */
+.form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.form_group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--db-text-primary);
+}
+
+.form_group input,
+.form_group select,
+.form_group textarea {
+    height: var(--db-input-height);
+    padding: 0 14px;
+    border: 1px solid var(--db-input-border);
+    border-radius: var(--db-input-radius);
+    font-size: 14px;
+    font-family: var(--db-font);
+    color: var(--db-text-primary);
+    background: #FFFFFF;
+    outline: none;
+    transition: border-color var(--db-transition), box-shadow var(--db-transition);
+}
+
+.form_group textarea {
+    height: auto;
+    padding: 12px 14px;
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form_group input:focus,
+.form_group select:focus,
+.form_group textarea:focus {
+    border-color: var(--db-primary);
+    box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.12);
+}
+
+.form_group .form_hint {
+    font-size: 12px;
+    color: var(--db-text-muted);
+}
+
+.form_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form_actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+}
+
+/* ── Search & Filters ─────────────────────────────────────── */
+.filters_bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.search_input {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 360px;
+}
+
+.search_input i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--db-text-muted);
+    font-size: 14px;
+}
+
+.search_input input {
+    width: 100%;
+    height: var(--db-input-height);
+    padding: 0 14px 0 40px;
+    border: 1px solid var(--db-input-border);
+    border-radius: var(--db-input-radius);
+    font-size: 14px;
+    font-family: var(--db-font);
+    color: var(--db-text-primary);
+    background: #FFFFFF;
+    outline: none;
+    transition: border-color var(--db-transition), box-shadow var(--db-transition);
+}
+
+.search_input input:focus {
+    border-color: var(--db-primary);
+    box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.12);
+}
+
+.filter_select {
+    height: var(--db-input-height);
+    padding: 0 14px;
+    border: 1px solid var(--db-input-border);
+    border-radius: var(--db-input-radius);
+    font-size: 14px;
+    font-family: var(--db-font);
+    color: var(--db-text-primary);
+    background: #FFFFFF;
+    outline: none;
+    cursor: pointer;
+}
+
+.filter_tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: #F1F5F9;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.filter_tab {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--db-text-secondary);
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.filter_tab:hover {
+    color: var(--db-text-primary);
+}
+
+.filter_tab.active {
+    background: #FFFFFF;
+    color: var(--db-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 600px) {
+    .filters_bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search_input {
+        max-width: none;
+    }
+}
+
+@media (max-width: 1200px) {
+    .form_row {
+        grid-template-columns: 1fr;
+    }
+}
