@@ -1,0 +1,246 @@
+/* ── Tables ───────────────────────────────────────────────── */
+.data_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data_table thead {
+    background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+}
+
+.data_table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--db-text-secondary);
+    border-bottom: 2px solid var(--db-card-border);
+    white-space: nowrap;
+}
+
+.data_table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--db-card-border);
+    color: var(--db-text-primary);
+    vertical-align: middle;
+}
+
+.data_table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.data_table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.data_table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.data_table .cell_actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.data_table .cell_actions .btn_small {
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: var(--db-font);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ── Table wrapper scrollbar ──────────────────────────────── */
+.table_wrapper {
+    overflow-x: auto;
+}
+
+.table_wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table_wrapper::-webkit-scrollbar-thumb {
+    background: var(--db-card-border);
+    border-radius: 3px;
+}
+
+.table_wrapper::-webkit-scrollbar-track {
+    background: #F8FAFC;
+}
+
+/* ── Status Badges ────────────────────────────────────────── */
+.status_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+}
+
+.status_badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status_badge.published {
+    background: var(--db-success-bg);
+    color: var(--db-success-text);
+}
+
+.status_badge.published::before {
+    background: var(--db-success);
+}
+
+.status_badge.pending {
+    background: var(--db-warning-bg);
+    color: var(--db-warning-text);
+}
+
+.status_badge.pending::before {
+    background: var(--db-warning);
+    animation: pulse_dot 2s infinite;
+}
+
+@keyframes pulse_dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.status_badge.draft {
+    background: #F1F5F9;
+    color: #475569;
+}
+
+.status_badge.draft::before {
+    background: #94A3B8;
+}
+
+.status_badge.rejected {
+    background: var(--db-danger-bg);
+    color: var(--db-danger-text);
+}
+
+.status_badge.rejected::before {
+    background: var(--db-danger);
+}
+
+.status_badge.admin {
+    background: var(--db-primary-light);
+    color: var(--db-primary);
+}
+
+.status_badge.admin::before {
+    background: var(--db-primary);
+}
+
+.status_badge.user {
+    background: #F1F5F9;
+    color: #475569;
+}
+
+.status_badge.user::before {
+    background: #94A3B8;
+}
+
+.status_badge.status_approved {
+    background: var(--db-success-bg);
+    color: var(--db-success-text);
+}
+
+.status_badge.status_approved::before {
+    background: var(--db-success);
+}
+
+.status_badge.status_pending {
+    background: var(--db-warning-bg);
+    color: var(--db-warning-text);
+}
+
+.status_badge.status_pending::before {
+    background: var(--db-warning);
+    animation: pulse_dot 2s infinite;
+}
+
+.status_badge.status_rejected {
+    background: var(--db-danger-bg);
+    color: var(--db-danger-text);
+}
+
+.status_badge.status_rejected::before {
+    background: var(--db-danger);
+}
+
+/* ── Role Badges ──────────────────────────────────────────── */
+.role_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-left: 4px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+}
+
+.role_badge.role_admin {
+    background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+    color: #1E40AF;
+}
+
+.role_badge.role_user {
+    background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+    color: #6B21A8;
+}
+
+.role_badge.admin {
+    background: linear-gradient(135deg, var(--db-primary-light) 0%, #BFDBFE 100%);
+    color: var(--db-primary);
+}
+
+.role_badge.user {
+    background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+    color: #475569;
+}
+
+/* ── Unread row (messages) ────────────────────────────────── */
+.data_table tr.unread td {
+    background: var(--db-primary-light);
+}
+
+.data_table tr.unread td:first-child {
+    border-radius: 0;
+}
+
+.unread_dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--db-primary);
+    vertical-align: middle;
+    margin-left: 4px;
+    flex-shrink: 0;
+}
