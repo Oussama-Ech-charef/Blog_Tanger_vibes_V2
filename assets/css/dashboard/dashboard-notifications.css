@@ -1,0 +1,193 @@
+/* ── Notifications Page ───────────────────────────────────── */
+.notif_page_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.notif_page_title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.notif_page_subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--db-text-secondary);
+}
+
+.notif_filters_bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.notif_filters_bar .search_input {
+    flex: 1 1 220px;
+    min-width: 160px;
+    max-width: 300px;
+}
+
+.notif_group_header {
+    padding: 10px 24px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--db-text-muted);
+    background: #F8FAFC;
+    border-bottom: 1px solid var(--db-card-border);
+    border-top: 1px solid var(--db-card-border);
+    margin: 0;
+}
+
+.notif_group_header:first-child {
+    border-top: none;
+    border-radius: var(--db-card-radius) var(--db-card-radius) 0 0;
+}
+
+.notif_item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--db-card-border);
+    transition: background var(--db-transition);
+}
+
+.notif_item:last-child {
+    border-bottom: none;
+}
+
+.notif_item.unread {
+    background: #F8FAFC;
+}
+
+.notif_item:hover {
+    background: #F1F5F9;
+}
+
+.notif_icon_wrap {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.notif_body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notif_body p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--db-text-primary);
+    line-height: 1.4;
+}
+
+.notif_body .notif_desc {
+    display: inline;
+}
+
+.notif_body .notif_meta {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--db-text-secondary);
+}
+
+.notif_actions {
+    flex-shrink: 0;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.notif_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1.4;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+/* ── Notifications Date Range ─────────────────────────────── */
+.notif_date_range {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.notif_date_range input[type="date"] {
+    height: var(--db-input-height);
+    padding: 0 10px;
+    border: 1px solid var(--db-input-border);
+    border-radius: var(--db-input-radius);
+    font-size: 13px;
+    font-family: var(--db-font);
+    color: var(--db-text-primary);
+    background: #FFFFFF;
+    outline: none;
+    width: 140px;
+}
+
+/* ── Notification Page Empty State ────────────────────────── */
+.notif_empty_state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--db-text-secondary);
+}
+
+.notif_empty_icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 16px;
+    color: var(--db-text-muted);
+}
+
+.notif_empty_title {
+    font-size: 16px;
+    margin: 0 0 4px;
+}
+
+.notif_empty_desc {
+    font-size: 13px;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .notif_date_range {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .notif_date_range input[type="date"] {
+        width: 100%;
+    }
+
+    .notif_item {
+        flex-wrap: wrap;
+    }
+
+    .notif_actions {
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 8px;
+    }
+}
