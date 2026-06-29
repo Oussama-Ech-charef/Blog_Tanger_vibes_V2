@@ -1,0 +1,92 @@
+/* ── Topbar ───────────────────────────────────────────────── */
+.dashboard_topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--db-topbar-height);
+    background: var(--db-topbar-bg);
+    border-bottom: 1px solid var(--db-topbar-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--db-content-padding);
+    flex-shrink: 0;
+}
+
+.dashboard_topbar h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--db-text-primary);
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+.topbar_right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar_user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--db-text-secondary);
+}
+
+.topbar_user i {
+    font-size: 28px;
+    color: var(--db-primary);
+}
+
+.topbar_back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--db-primary);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background var(--db-transition);
+}
+
+.topbar_back:hover {
+    background: var(--db-primary-light);
+}
+
+/* ── Mobile Menu Button ───────────────────────────────────── */
+.mobile_menu_btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 8px;
+    background: #F1F5F9;
+    color: var(--db-text-primary);
+    font-size: 18px;
+    cursor: pointer;
+    transition: background var(--db-transition);
+}
+
+.mobile_menu_btn:hover {
+    background: #E2E8F0;
+}
+
+/* ── Flex Row (topbar group) ──────────────────────────────── */
+.flex_row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+@media (max-width: 900px) {
+    .mobile_menu_btn {
+        display: flex !important;
+    }
+}
