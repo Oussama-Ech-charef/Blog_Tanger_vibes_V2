@@ -174,7 +174,7 @@ $comment_count = count($comments);
                 src="https://www.openstreetmap.org/export/embed.html?bbox=-5.85,35.75,-5.82,35.77&layer=mapnik&marker=35.7595,-5.8368"
                 width="100%"
                 height="400"
-                style="border:0;"
+                class="border_0"
                 allowfullscreen=""
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade">

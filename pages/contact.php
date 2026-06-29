@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     src="https://www.openstreetmap.org/export/embed.html?bbox=-5.87,35.74,-5.80,35.78&amp;layer=mapnik&amp;marker=35.7595,-5.8340"
                     width="100%"
                     height="400"
-                    style="border:0;"
+                    class="border_0"
                     allowfullscreen=""
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
