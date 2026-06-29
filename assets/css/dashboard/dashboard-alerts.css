@@ -1,0 +1,64 @@
+/* ── Notification Toast ───────────────────────────────────── */
+.toast_container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: #FFFFFF;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    font-size: 14px;
+    font-weight: 500;
+    animation: toast_in 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    min-width: 300px;
+    border: 1px solid var(--db-card-border);
+}
+
+.toast.success {
+    border-left: 4px solid var(--db-success);
+}
+
+.toast.error {
+    border-left: 4px solid var(--db-danger);
+}
+
+.toast.info {
+    border-left: 4px solid var(--db-info);
+}
+
+.toast i {
+    font-size: 18px;
+}
+
+.toast.success i {
+    color: var(--db-success);
+}
+
+.toast.error i {
+    color: var(--db-danger);
+}
+
+.toast.info i {
+    color: var(--db-info);
+}
+
+@keyframes toast_in {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
