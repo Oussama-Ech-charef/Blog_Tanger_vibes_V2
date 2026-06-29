@@ -127,9 +127,9 @@ require_once __DIR__ . '/inc/header.php';
         <option value="active" <?=$status_filter==='active'?'selected':''?>>Active</option>
         <option value="inactive" <?=$status_filter==='inactive'?'selected':''?>>Inactive</option>
     </select>
-    <span style="font-size:14px;color:var(--db-text-secondary);font-weight:500;margin-left:auto;"><?=$total_records?> user(s)</span>
+    <span class="ml_auto" style="font-size:14px;color:var(--db-text-secondary);font-weight:500;"><?=$total_records?> user(s)</span>
     <?php if (!empty($search) || !empty($role_filter) || !empty($status_filter)): ?>
-    <a href="users.php" class="btn_small btn_secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
+    <a href="users.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
     <?php endif; ?>
 </form>
 
@@ -143,16 +143,16 @@ require_once __DIR__ . '/inc/header.php';
                     <?php if (!empty($users)): ?>
                         <?php foreach ($users as $u): ?>
                         <tr>
-                            <td><div style="display:flex;align-items:center;gap:10px;"><span class="user_avatar <?=avatar_color($u['user_name'])?>"><?=avatar_initials($u['user_name'])?></span><div><strong><?=htmlspecialchars($u['user_name'])?></strong><?php if((int)$u['id_user']===(int)$_SESSION['id_user']):?><br><span style="font-size:11px;color:var(--db-primary);font-weight:600;">(You)</span><?php endif;?></div></div></td>
-                            <td><span style="color:var(--db-text-secondary);"><?=htmlspecialchars($u['email'])?></span></td>
+                            <td><div class="flex_center" style="gap:10px;"><span class="user_avatar <?=avatar_color($u['user_name'])?>"><?=avatar_initials($u['user_name'])?></span><div><strong><?=htmlspecialchars($u['user_name'])?></strong><?php if((int)$u['id_user']===(int)$_SESSION['id_user']):?><br><span style="font-size:11px;color:var(--db-primary);font-weight:600;">(You)</span><?php endif;?></div></div></td>
+                            <td><span class="date_cell" style="color:var(--db-text-secondary);"><?=htmlspecialchars($u['email'])?></span></td>
                             <td><span class="role_badge <?=$u['role']?>"><?=ucfirst(htmlspecialchars($u['role']))?></span></td>
                             <td><span class="status_badge status_<?=!empty($u['is_active'])?'approved':'rejected'?>"><?=!empty($u['is_active'])?'Active':'Inactive'?></span></td>
-                            <td><span style="font-weight:600;"><?=(int)$u['post_count']?></span></td>
-                            <td style="white-space:nowrap;color:var(--db-text-secondary);font-size:13px;"><?=date('M j, Y',strtotime($u['created_at']))?></td>
+                            <td><span class="fw_600"><?=(int)$u['post_count']?></span></td>
+                            <td class="date_cell"><?=date('M j, Y',strtotime($u['created_at']))?></td>
                             <td><div class="cell_actions">
                                 <?php if ((int)$u['id_user'] !== (int)$_SESSION['id_user']): ?>
                                     <?php if ($u['role']==='admin'): ?>
-                                        <form method="POST" action="users.php" style="display:inline">
+                                        <form method="POST" action="users.php" class="inline_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="role" value="user">
                                             <input type="hidden" name="uid" value="<?=$u['id_user']?>">
@@ -160,7 +160,7 @@ require_once __DIR__ . '/inc/header.php';
                                             <button type="submit" class="btn_small btn_secondary" onclick="return confirm('Demote to user?')"><i class="fa-solid fa-user" aria-hidden="true"></i> Demote</button>
                                         </form>
                                     <?php else: ?>
-                                        <form method="POST" action="users.php" style="display:inline">
+                                        <form method="POST" action="users.php" class="inline_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="role" value="admin">
                                             <input type="hidden" name="uid" value="<?=$u['id_user']?>">
@@ -169,28 +169,28 @@ require_once __DIR__ . '/inc/header.php';
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!empty($u['is_active'])): ?>
-                                        <form method="POST" action="users.php" style="display:inline">
+                                        <form method="POST" action="users.php" class="inline_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="deactivate" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
                                             <button type="submit" class="btn_small btn_warning" onclick="return confirm('Deactivate user?')" aria-label="Deactivate user"><i class="fa-solid fa-pause"></i></button>
                                         </form>
                                     <?php else: ?>
-                                        <form method="POST" action="users.php" style="display:inline">
+                                        <form method="POST" action="users.php" class="inline_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="activate" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
                                             <button type="submit" class="btn_small btn_success" onclick="return confirm('Activate user?')" aria-label="Activate user"><i class="fa-solid fa-play"></i></button>
                                         </form>
                                     <?php endif; ?>
-                                    <form method="POST" action="users.php" style="display:inline">
+                                    <form method="POST" action="users.php" class="inline_form">
                                         <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                         <input type="hidden" name="delete" value="<?=$u['id_user']?>">
                                         <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
                                         <button type="submit" class="btn_small btn_danger" onclick="return confirm('Delete user and all posts?')" aria-label="Delete user"><i class="fa-solid fa-trash"></i></button>
                                     </form>
                                 <?php else: ?>
-                                    <span style="font-size:12px;color:var(--db-text-muted);">Current user</span>
+                                    <span class="text_muted" style="font-size:12px;">Current user</span>
                                 <?php endif; ?>
                             </div></td>
                         </tr>
