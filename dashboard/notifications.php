@@ -194,17 +194,17 @@ if (!empty($user_filter)) $query_params['user'] = $user_filter;
 require_once __DIR__ . '/inc/header.php';
 ?>
 
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+<div class="notif_page_header">
     <div>
-        <h1 style="margin:0;font-size:20px;font-weight:700;">
-            <i class="fa-solid fa-bell" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i> Notifications
+        <h1 class="notif_page_title">
+            <i class="fa-solid fa-bell icon_primary" aria-hidden="true"></i> Notifications
         </h1>
-        <p style="margin:4px 0 0;font-size:13px;color:var(--db-text-secondary);">
+        <p class="notif_page_subtitle">
             <?= $unread_count ?> unread notification<?= $unread_count !== 1 ? 's' : '' ?>
         </p>
     </div>
     <?php if ($unread_count > 0): ?>
-    <form method="POST" action="notifications.php" style="display:inline;">
+    <form method="POST" action="notifications.php" class="inline_form">
         <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
         <button type="submit" name="mark_all_read" class="btn btn_secondary btn_sm" style="display:inline-flex;align-items:center;gap:6px;">
@@ -239,7 +239,7 @@ require_once __DIR__ . '/inc/header.php';
     </select>
     <div class="notif_date_range" id="notifDateRange" style="display:<?=$date_filter==='custom'?'flex':'none'?>">
         <input type="date" name="date_from" value="<?= htmlspecialchars($date_from) ?>" onchange="this.form.submit()">
-        <span style="color:var(--db-text-muted);font-size:13px;">to</span>
+        <span class="text_muted date_cell">to</span>
         <input type="date" name="date_to" value="<?= htmlspecialchars($date_to) ?>" onchange="this.form.submit()">
     </div>
     <select name="user" class="filter_select" onchange="this.form.submit()">
@@ -249,12 +249,12 @@ require_once __DIR__ . '/inc/header.php';
         <?php endforeach; ?>
     </select>
     <?php if (!empty($search) || !empty($category_filter) || !empty($status_filter) || !empty($date_filter) || !empty($user_filter)): ?>
-    <a href="notifications.php" class="btn_small btn_secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
+    <a href="notifications.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
     <?php endif; ?>
 </form>
 
 <div class="card">
-    <div class="card_body" style="padding:0;">
+    <div class="card_body_no_padding">
         <?php if (!empty($notifications)): ?>
             <?php
             $current_group = null;
@@ -290,16 +290,16 @@ require_once __DIR__ . '/inc/header.php';
                 </div>
                 <div class="notif_actions">
                     <?php if ($link): ?>
-                    <a href="<?= $link ?>" class="btn_small btn_secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
+                    <a href="<?= $link ?>" class="btn_small btn_secondary clear_filter_btn">
                         <i class="fa-solid fa-eye" aria-hidden="true"></i> View
                     </a>
                     <?php endif; ?>
                     <?php if (!$n['is_read']): ?>
-                    <form method="POST" action="notifications.php" style="display:inline;">
+                    <form method="POST" action="notifications.php" class="inline_form">
                         <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                         <input type="hidden" name="read" value="<?= $n['id_activity'] ?>">
-                        <button type="submit" class="btn_small btn_secondary" style="border:none;cursor:pointer;" aria-label="Mark as read">
+                        <button type="submit" class="btn_small btn_secondary" style="border:none;cursor:pointer" aria-label="Mark as read">
                             <i class="fa-solid fa-check"></i>
                         </button>
                     </form>
@@ -311,10 +311,10 @@ require_once __DIR__ . '/inc/header.php';
             </div>
             <?php endif; ?>
         <?php else: ?>
-            <div style="text-align:center;padding:60px 20px;color:var(--db-text-secondary);">
-                <i class="fa-solid fa-bell" style="font-size:40px;display:block;margin-bottom:16px;color:var(--db-text-muted);" aria-hidden="true"></i>
-                <h3 style="font-size:16px;margin:0 0 4px;">No notifications</h3>
-                <p style="font-size:13px;margin:0;">Try adjusting your filters.</p>
+            <div class="notif_empty_state">
+                <i class="fa-solid fa-bell notif_empty_icon" aria-hidden="true"></i>
+                <h3 class="notif_empty_title">No notifications</h3>
+                <p class="notif_empty_desc">Try adjusting your filters.</p>
             </div>
         <?php endif; ?>
     </div>
