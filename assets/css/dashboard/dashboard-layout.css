@@ -1,0 +1,135 @@
+/* ── Reset ────────────────────────────────────────────────── */
+.dashboard_body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--db-font);
+    background: var(--db-main-bg);
+    color: var(--db-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.dashboard_body * {
+    box-sizing: border-box;
+}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.dashboard_layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dashboard_main {
+    margin-left: var(--db-sidebar-width);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard_content {
+    padding: var(--db-content-padding);
+    flex: 1;
+}
+
+/* ── Cards ────────────────────────────────────────────────── */
+.card {
+    background: var(--db-card-bg);
+    border: 1px solid var(--db-card-border);
+    border-radius: 12px;
+    box-shadow: var(--db-card-shadow);
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.card_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--db-card-border);
+    background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+}
+
+.card_header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--db-text-primary);
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.card_header .card_action {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--db-primary);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.card_header .card_action:hover {
+    background: var(--db-primary-light);
+    transform: translateY(-1px);
+}
+
+.card_body {
+    padding: 24px;
+}
+
+.card_body_no_padding {
+    padding: 0;
+}
+
+/* ── Empty State ──────────────────────────────────────────── */
+.empty_state {
+    text-align: center;
+    padding: 48px 20px;
+}
+
+.empty_state i {
+    font-size: 48px;
+    color: var(--db-text-muted);
+    margin-bottom: 16px;
+    opacity: 0.4;
+}
+
+.empty_state h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--db-text-primary);
+    margin: 0 0 8px;
+}
+
+.empty_state p {
+    font-size: 14px;
+    color: var(--db-text-secondary);
+    margin: 0 0 20px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ── Sidebar overlay (responsive) ─────────────────────────── */
+.sidebar_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebar_overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .dashboard_main {
+        margin-left: 0;
+    }
+}
