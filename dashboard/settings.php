@@ -73,9 +73,9 @@ require_once __DIR__ . '/inc/header.php';
 
 <?php render_notification($message, $message_type); ?>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+<div class="grid_2col">
     <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-globe" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Site Settings</h2></div>
+        <div class="card_header"><h2><i class="fa-solid fa-globe icon_primary" aria-hidden="true"></i>Site Settings</h2></div>
         <div class="card_body">
             <form method="POST" action="settings.php">
                 <input type="hidden" name="csrf_token" value="<?=$csrf_token?>"><input type="hidden" name="update_settings" value="1">
@@ -89,7 +89,7 @@ require_once __DIR__ . '/inc/header.php';
     </div>
 
     <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-image" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Site Logo</h2></div>
+        <div class="card_header"><h2><i class="fa-solid fa-image icon_primary" aria-hidden="true"></i>Site Logo</h2></div>
         <div class="card_body">
             <div style="margin-bottom:20px;"><p style="font-size:14px;color:var(--db-text-secondary);margin:0 0 12px;">Current:</p><img src="../<?=htmlspecialchars($logo_path)?>" alt="Logo" style="max-height:60px;border-radius:8px;border:1px solid var(--db-card-border);padding:8px;"></div>
             <form method="POST" action="settings.php" enctype="multipart/form-data">
@@ -101,7 +101,7 @@ require_once __DIR__ . '/inc/header.php';
     </div>
 
     <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-user" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Admin Profile</h2></div>
+        <div class="card_header"><h2><i class="fa-solid fa-user icon_primary" aria-hidden="true"></i>Admin Profile</h2></div>
         <div class="card_body">
             <?php if ($admin_info): ?>
             <div style="display:grid;gap:16px;">
@@ -114,7 +114,7 @@ require_once __DIR__ . '/inc/header.php';
     </div>
 
     <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-lock" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Change Password</h2></div>
+        <div class="card_header"><h2><i class="fa-solid fa-lock icon_primary" aria-hidden="true"></i>Change Password</h2></div>
         <div class="card_body">
             <form method="POST" action="settings.php">
                 <input type="hidden" name="csrf_token" value="<?=$csrf_token?>"><input type="hidden" name="change_password" value="1">

@@ -55,9 +55,9 @@ require_once __DIR__ . '/inc/header.php';
 
 <?php render_notification($message, $message_type); ?>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+<div class="grid_2col">
     <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-plus" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Add Category</h2></div>
+        <div class="card_header"><h2><i class="fa-solid fa-plus icon_primary" aria-hidden="true"></i>Add Category</h2></div>
         <div class="card_body">
             <form method="POST" action="categories.php">
                 <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
@@ -69,7 +69,7 @@ require_once __DIR__ . '/inc/header.php';
     </div>
 
     <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-list" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Categories (<?=count($categories)?>)</h2></div>
+        <div class="card_header"><h2><i class="fa-solid fa-list icon_primary" aria-hidden="true"></i>Categories (<?=count($categories)?>)</h2></div>
         <div class="card_body_no_padding">
             <div class="table_wrapper">
                 <table class="data_table">
@@ -79,11 +79,11 @@ require_once __DIR__ . '/inc/header.php';
                             <?php foreach ($categories as $c): ?>
                             <tr>
                                 <td><strong><?=htmlspecialchars($c['cat_name'])?></strong></td>
-                                <td><span style="font-weight:600;"><?=(int)$c['post_count']?></span></td>
-                                <td style="color:var(--db-text-secondary);font-size:13px;"><?=date('M j, Y',strtotime($c['created_at']))?></td>
+                                <td><span class="fw_600"><?=(int)$c['post_count']?></span></td>
+                                <td class="date_cell"><?=date('M j, Y',strtotime($c['created_at']))?></td>
                                 <td><div class="cell_actions">
                                     <button class="btn_small btn_secondary" onclick='editCat(<?=$c['id_category']?>,<?=json_encode($c['cat_name'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)?>)'><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit</button>
-                                    <form method="POST" action="categories.php" style="display:inline" class="delete-cat-form" data-cat-name="<?=htmlspecialchars($c['cat_name'], ENT_QUOTES)?>">
+                                    <form method="POST" action="categories.php" class="inline_form delete-cat-form" data-cat-name="<?=htmlspecialchars($c['cat_name'], ENT_QUOTES)?>">
                                         <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
                                         <input type="hidden" name="delete_category" value="1">
                                         <input type="hidden" name="cat_id" value="<?=$c['id_category']?>">
