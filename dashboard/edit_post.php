@@ -56,8 +56,8 @@ require_once __DIR__ . '/inc/header.php';
 
 <div class="card">
     <div class="card_header">
-        <h2><i class="fa-solid fa-pen" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Edit Post</h2>
-        <div style="display:flex;gap:8px;align-items:center;">
+        <h2><i class="fa-solid fa-pen icon_primary" aria-hidden="true"></i>Edit Post</h2>
+        <div class="flex_row">
             <span class="status_badge <?= $post['status'] ?>"><?= ucfirst(htmlspecialchars($post['status'])) ?></span>
             <a href="../pages/detail.php?id=<?= $post_id ?>" class="btn btn_secondary btn_sm" target="_blank" rel="noopener"><i class="fa-solid fa-eye"></i> Preview</a>
             <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</a>
@@ -65,7 +65,7 @@ require_once __DIR__ . '/inc/header.php';
     </div>
     <div class="card_body">
 
-        <form method="POST" action="edit_post.php?id=<?= $post_id ?>" enctype="multipart/form-data" style="max-width:800px;">
+        <form method="POST" action="edit_post.php?id=<?= $post_id ?>" enctype="multipart/form-data" class="form_max_width">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
             <input type="hidden" name="edit_post" value="1">
 
@@ -93,17 +93,17 @@ require_once __DIR__ . '/inc/header.php';
             <div class="form_group">
                 <label>Featured Image</label>
                 <?php if (!empty($post['image'])): ?>
-                <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;padding:12px;background:#F8FAFC;border-radius:8px;border:1px solid var(--db-card-border);">
+                <div class="flex_center" style="gap:16px;margin-bottom:12px;padding:12px;background:#F8FAFC;border-radius:8px;border:1px solid var(--db-card-border);">
                     <img src="../<?= htmlspecialchars($post['image']) ?>" alt="" style="height:60px;border-radius:4px;object-fit:cover;">
-                    <span style="font-size:13px;color:var(--db-text-secondary);"><?= htmlspecialchars(basename($post['image'])) ?></span>
-                    <label style="margin-left:auto;font-size:13px;cursor:pointer;"><input type="checkbox" name="remove_image" value="1"> Remove</label>
+                    <span class="date_cell"><?= htmlspecialchars(basename($post['image'])) ?></span>
+                    <label class="ml_auto" style="font-size:13px;cursor:pointer;"><input type="checkbox" name="remove_image" value="1"> Remove</label>
                 </div>
                 <?php endif; ?>
                 <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp">
                 <span class="form_hint">Leave empty to keep current.</span>
             </div>
 
-            <div class="form_group"><label for="content">Content</label><textarea id="content" name="content" required style="min-height:350px;"><?= htmlspecialchars($post['content']) ?></textarea></div>
+            <div class="form_group"><label for="content">Content</label><textarea id="content" name="content" required class="textarea_large"><?= htmlspecialchars($post['content']) ?></textarea></div>
 
             <div class="form_actions">
                 <button type="submit" class="btn btn_primary"><i class="fa-solid fa-save" aria-hidden="true"></i> Save Changes</button>

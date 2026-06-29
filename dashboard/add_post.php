@@ -38,11 +38,11 @@ require_once __DIR__ . '/inc/header.php';
 
 <div class="card">
     <div class="card_header">
-        <h2><i class="fa-solid fa-pen-to-square" style="color:var(--db-primary);margin-right:8px;" aria-hidden="true"></i>Create New Post</h2>
+        <h2><i class="fa-solid fa-pen-to-square icon_primary" aria-hidden="true"></i>Create New Post</h2>
         <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</a>
     </div>
     <div class="card_body">
-        <form method="POST" action="add_post.php" enctype="multipart/form-data" style="max-width:800px;">
+        <form method="POST" action="add_post.php" enctype="multipart/form-data" class="form_max_width">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
             <input type="hidden" name="add_post" value="1">
 
@@ -78,7 +78,7 @@ require_once __DIR__ . '/inc/header.php';
 
             <div class="form_group">
                 <label for="content">Content</label>
-                <textarea id="content" name="content" required placeholder="Write your post..." style="min-height:350px;"><?= htmlspecialchars($content ?? '') ?></textarea>
+                <textarea id="content" name="content" required placeholder="Write your post..." class="textarea_large"><?= htmlspecialchars($content ?? '') ?></textarea>
             </div>
 
             <div class="form_actions">
