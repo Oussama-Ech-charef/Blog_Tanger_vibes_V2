@@ -1,0 +1,159 @@
+/* ── Stat Cards Grid ──────────────────────────────────────── */
+.stats_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.stat_card {
+    background: var(--db-card-bg);
+    border: 1px solid var(--db-card-border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--db-card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat_card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--db-primary), #3B82F6);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat_card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.stat_card:hover::before {
+    opacity: 1;
+}
+
+.stat_card_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.stat_card_icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.stat_card_icon.blue {
+    background: var(--db-primary-light);
+    color: var(--db-primary);
+}
+
+.stat_card_icon.green {
+    background: var(--db-success-bg);
+    color: var(--db-success);
+}
+
+.stat_card_icon.yellow {
+    background: var(--db-warning-bg);
+    color: var(--db-warning);
+}
+
+.stat_card_icon.red {
+    background: var(--db-danger-bg);
+    color: var(--db-danger);
+}
+
+.stat_card_icon.purple {
+    background: #EDE9FE;
+    color: #7C3AED;
+}
+
+.stat_card_label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--db-text-secondary);
+    margin: 0 0 4px;
+}
+
+.stat_card_value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--db-text-primary);
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.stat_card_change {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.stat_card_change.positive {
+    color: var(--db-success);
+}
+
+.stat_card_change.negative {
+    color: var(--db-danger);
+}
+
+/* ── Chart Containers ─────────────────────────────────────── */
+.chart_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.chart_container {
+    background: var(--db-card-bg);
+    border: 1px solid var(--db-card-border);
+    border-radius: var(--db-card-radius);
+    box-shadow: var(--db-card-shadow);
+    padding: 24px;
+}
+
+.chart_container h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--db-text-secondary);
+    margin: 0 0 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chart_container canvas {
+    width: 100% !important;
+    max-height: 280px;
+}
+
+@media (max-width: 1200px) {
+    .chart_grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .stats_grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .stats_grid {
+        grid-template-columns: 1fr;
+    }
+}
