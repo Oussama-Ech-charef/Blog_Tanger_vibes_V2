@@ -17,7 +17,7 @@ get_csrf_token();
         <div class="header_nav_desktop">
                     <!-- logo  -->
                     <a href="../pages/index.php" class="logo">
-                        <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img" style="height:40px;width:auto;">
+                        <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img logo_header">
                     </a>
 
                      <!-- links  desktop-->

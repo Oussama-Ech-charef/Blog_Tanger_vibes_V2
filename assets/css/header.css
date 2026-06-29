@@ -36,6 +36,12 @@
     flex-shrink: 0;
 }
 
+.logo .logo_img,
+.logo_img {
+    height: 40px;
+    width: auto;
+}
+
 
 /* desktop links */
 

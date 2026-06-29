@@ -28,6 +28,11 @@
     white-space: nowrap;
 }
 
+.footer_brand .logo .logo_img {
+    height: 40px;
+    width: auto;
+}
+
 .footer_desc {
     color: var(--color_gray);
     line-height: 1.6;
