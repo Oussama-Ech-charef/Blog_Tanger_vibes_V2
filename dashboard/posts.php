@@ -133,7 +133,7 @@ require_once __DIR__ . '/inc/header.php';
         <i class="fa-solid fa-search" aria-hidden="true"></i>
         <input type="text" name="q" placeholder="Search title or content..." value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
     </div>
-    <a href="add_post.php" class="btn btn_primary btn_sm" style="margin-left:auto;"><i class="fa-solid fa-plus" aria-hidden="true"></i> New Post</a>
+    <a href="add_post.php" class="btn btn_primary btn_sm ml_auto"><i class="fa-solid fa-plus" aria-hidden="true"></i> New Post</a>
 </form>
 
 <div class="card">
@@ -146,12 +146,12 @@ require_once __DIR__ . '/inc/header.php';
                     <?php if (!empty($posts)): ?>
                         <?php foreach ($posts as $p): ?>
                         <tr>
-                            <td><strong><?=htmlspecialchars($p['title'])?></strong><?php if(!empty($p['rejection_reason'])):?><br><small style="color:var(--db-danger-text);font-size:11px;">Reason: <?=htmlspecialchars($p['rejection_reason'])?></small><?php endif;?></td>
+                            <td><strong><?=htmlspecialchars($p['title'])?></strong><?php if(!empty($p['rejection_reason'])):?><br><small class="rejection_reason">Reason: <?=htmlspecialchars($p['rejection_reason'])?></small><?php endif;?></td>
                             <td><?=htmlspecialchars($p['cat_name'])?></td>
                             <td><?=htmlspecialchars($p['user_name'])?></td>
                             <td><span class="role_badge role_<?=$p['author_role']?>"><?=ucfirst($p['author_role'])?></span></td>
                             <td><span class="status_badge <?=$p['status']?>"><?=ucfirst(htmlspecialchars($p['status']))?></span></td>
-                            <td style="white-space:nowrap;color:var(--db-text-secondary);font-size:13px;"><?=date('M j, Y',strtotime($p['created_at']))?></td>
+                            <td class="date_cell"><?=date('M j, Y',strtotime($p['created_at']))?></td>
                             <td>
                                 <div class="cell_actions">
                                     <div class="action_dropdown">
@@ -195,28 +195,27 @@ require_once __DIR__ . '/inc/header.php';
     <?php render_dashboard_pagination('posts.php', $p_page, $total_pages, $query_params, $per_page, $total_records); ?>
 </div>
 
-<div class="modal_overlay" id="postQuickView">
-    <div class="modal_box" style="width:min(100%,600px);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-            <h2 style="margin:0;font-size:18px;font-weight:700;" id="qvTitle"></h2>
-            <button class="alert_close" id="qvClose" style="font-size:22px;cursor:pointer;background:none;border:none;color:var(--db-text-muted);padding:4px 8px;">&times;</button>
+<div class="quickview_overlay" id="postQuickView">
+    <div class="quickview_box">
+        <div class="quickview_header">
+            <h2 id="qvTitle"></h2>
+            <button class="quickview_close" id="qvClose">&times;</button>
         </div>
-        <div id="qvImage" style="margin-bottom:16px;display:none;">
-            <img src="" alt="" style="width:100%;max-height:280px;object-fit:cover;border-radius:8px;border:1px solid var(--db-card-border);">
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;font-size:14px;">
-            <div><span class="detail_label" style="display:block;margin-bottom:2px;">Category</span><span id="qvCategory" style="font-weight:600;"></span></div>
-            <div><span class="detail_label" style="display:block;margin-bottom:2px;">Status</span><span id="qvStatus"></span></div>
-            <div><span class="detail_label" style="display:block;margin-bottom:2px;">Author</span><span id="qvAuthor" style="font-weight:600;"></span></div>
-            <div><span class="detail_label" style="display:block;margin-bottom:2px;">Created</span><span id="qvDate" style="font-weight:600;"></span></div>
-        </div>
-        <div id="qvRejection" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#991B1B;">
-            <strong style="display:block;margin-bottom:4px;color:#EF4444;">Rejection Reason</strong>
-            <span id="qvRejectionText"></span>
-        </div>
-        <div>
-            <span class="detail_label" style="display:block;margin-bottom:6px;">Content</span>
-            <div id="qvContent" style="font-size:14px;line-height:1.7;color:var(--db-text-primary);white-space:pre-wrap;max-height:300px;overflow-y:auto;background:#F8FAFC;padding:16px;border-radius:8px;border:1px solid var(--db-card-border);"></div>
+        <div class="quickview_body">
+            <div id="qvImage" style="display:none;">
+                <img src="" alt="" class="quickview_image">
+            </div>
+            <div class="quickview_meta">
+                <span class="quickview_meta_item"><i class="fa-solid fa-tag"></i> <span id="qvCategory"></span></span>
+                <span class="quickview_meta_item"><i class="fa-solid fa-circle"></i> <span id="qvStatus"></span></span>
+                <span class="quickview_meta_item"><i class="fa-solid fa-user"></i> <span id="qvAuthor"></span></span>
+                <span class="quickview_meta_item"><i class="fa-solid fa-calendar"></i> <span id="qvDate"></span></span>
+            </div>
+            <div id="qvRejection" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;font-size:13px;color:#991B1B;">
+                <strong style="display:block;margin-bottom:4px;color:#EF4444;">Rejection Reason</strong>
+                <span id="qvRejectionText"></span>
+            </div>
+            <div class="quickview_content" id="qvContent"></div>
         </div>
     </div>
 </div>
