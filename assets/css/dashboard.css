@@ -1871,10 +1871,25 @@
     font-size: 14px;
     line-height: 1.7;
     color: var(--db-text-primary);
-    max-height: 200px;
+    white-space: pre-wrap;
+    max-height: 300px;
     overflow-y: auto;
-    padding-right: 8px;
+    padding: 16px;
+    background: #F8FAFC;
+    border-radius: 8px;
+    border: 1px solid var(--db-card-border);
 }
+
+.quickview_content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.quickview_content::-webkit-scrollbar-thumb {
+    background: var(--db-card-border);
+    border-radius: 2px;
+}
+
+/* ── Table wrapper scrollbar ──────────────────────────────── */
 
 .quickview_content::-webkit-scrollbar {
     width: 4px;
@@ -1902,3 +1917,33 @@
 .table_wrapper::-webkit-scrollbar-track {
     background: #F8FAFC;
 }
+
+/* ── Utility Classes ───────────────────────────────────────── */
+.ml_auto { margin-left: auto; }
+.date_cell { white-space: nowrap; color: var(--db-text-secondary); font-size: 13px; }
+.rejection_reason { color: var(--db-danger-text); font-size: 11px; }
+.flex_center { display: flex; align-items: center; gap: 8px; }
+.flex_row { display: flex; align-items: center; gap: 12px; }
+.inline_form { display: inline; }
+.fw_600 { font-weight: 600; }
+.clear_filter_btn { text-decoration: none; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.grid_2col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.textarea_large { min-height: 350px; }
+.form_max_width { max-width: 800px; }
+.cell_actions_right { justify-content: flex-end; }
+.text_clamp_2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.icon_primary { color: var(--db-primary); margin-right: 8px; }
+.border_0 { border: 0; }
+
+.text_muted { color: var(--db-text-muted); }
+.view_link { color: var(--db-primary); font-weight: 500; text-decoration: none; }
+.view_link:hover { text-decoration: underline; }
+
+/* ── Notification Page ─────────────────────────────────────── */
+.notif_page_header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.notif_page_title { margin: 0; font-size: 20px; font-weight: 700; }
+.notif_page_subtitle { margin: 4px 0 0; font-size: 13px; color: var(--db-text-secondary); }
+.notif_empty_state { text-align: center; padding: 60px 20px; color: var(--db-text-secondary); }
+.notif_empty_icon { font-size: 40px; display: block; margin-bottom: 16px; color: var(--db-text-muted); }
+.notif_empty_title { font-size: 16px; margin: 0 0 4px; }
+.notif_empty_desc { font-size: 13px; margin: 0; }
