@@ -22,7 +22,7 @@ if (isset($_POST['mark_all_read']) && validate_csrf_token($_POST['csrf_token'] ?
     exit();
 }
 
-// ── Category mapping ────────────────────────────────────────
+//  Category mapping
 $category_options = [
     ''                => 'All Notifications',
     'posts'           => 'Posts',
@@ -48,7 +48,7 @@ $category_action_map = [
     'security'        => [],
 ];
 
-// ── Action type info for display ────────────────────────────
+//  Action type info for display 
 $type_info = [
     'post_created'     => ['icon' => 'fa-solid fa-plus',          'color' => '#10B981', 'bg' => '#D1FAE5', 'label' => 'Post Created'],
     'post_submitted'   => ['icon' => 'fa-solid fa-paper-plane',   'color' => '#3B82F6', 'bg' => '#DBEAFE', 'label' => 'Submitted'],
@@ -61,7 +61,7 @@ $type_info = [
     'message_received' => ['icon' => 'fa-solid fa-envelope',      'color' => '#D97706', 'bg' => '#FEF3C7', 'label' => 'Message'],
 ];
 
-// ── Link builder ────────────────────────────────────────────
+//  Link builder 
 function notification_link($action_type, $entity_type, $entity_id) {
     if ($action_type === 'message_received') return 'messages.php';
     if ($entity_type === 'post' && $entity_id) return "posts.php?view=$entity_id";
@@ -70,7 +70,7 @@ function notification_link($action_type, $entity_type, $entity_id) {
     return null;
 }
 
-// ── Date grouping ───────────────────────────────────────────
+//  Date grouping 
 function get_date_group($date_str) {
     $ts = strtotime($date_str);
     $today = strtotime('today');
@@ -84,7 +84,7 @@ function get_date_group($date_str) {
     return date('F Y', $ts);
 }
 
-// ── Read filters ────────────────────────────────────────────
+//  Read filters
 $category_filter = $_GET['category'] ?? '';
 $status_filter = $_GET['status'] ?? '';
 $date_filter = $_GET['date'] ?? '';
@@ -95,10 +95,10 @@ $user_filter = $_GET['user'] ?? '';
 $per_page = 25;
 $page = get_valid_page();
 
-// ── Load users for filter ────────────────────────────────────
+// Load users for filte
 $all_users = $conn->query("SELECT id_user, user_name, role FROM users WHERE is_active=1 ORDER BY user_name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── Build WHERE clause ──────────────────────────────────────
+// Build WHERE clause 
 $where_parts = ["al.action_type != ?"];
 $params = ['draft_saved'];
 
@@ -158,7 +158,7 @@ if (!empty($search)) {
 
 $where = implode(' AND ', $where_parts);
 
-// ── Count ───────────────────────────────────────────────────
+// Count 
 $cs = $conn->prepare("SELECT COUNT(*) FROM activity_log al LEFT JOIN users u ON al.user_id = u.id_user WHERE $where");
 $cs->execute($params);
 $total_records = (int)$cs->fetchColumn();
@@ -166,7 +166,7 @@ $total_pages = get_total_pages($total_records, $per_page);
 $current_page = min($page, $total_pages);
 $offset = get_offset($current_page, $per_page);
 
-// ── Fetch ───────────────────────────────────────────────────
+//  Fetch 
 $ds = $conn->prepare("SELECT al.*, u.user_name FROM activity_log al LEFT JOIN users u ON al.user_id = u.id_user WHERE $where ORDER BY al.created_at DESC LIMIT ? OFFSET ?");
 
 // Bind all WHERE params
@@ -178,10 +178,10 @@ $ds->bindValue(count($params) + 2, $offset, PDO::PARAM_INT);
 $ds->execute();
 $notifications = $ds->fetchAll(PDO::FETCH_ASSOC);
 
-// ── Count unread for header ─────────────────────────────────
+//  Count unread for header 
 $unread_count = (int)$conn->query("SELECT COUNT(*) FROM activity_log WHERE is_read=0 AND action_type NOT IN ('draft_saved')")->fetchColumn();
 
-// ── Build query params for pagination ───────────────────────
+//  Build query params for pagination
 $query_params = [];
 if (!empty($category_filter)) $query_params['category'] = $category_filter;
 if (!empty($status_filter)) $query_params['status'] = $status_filter;

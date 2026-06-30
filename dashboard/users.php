@@ -60,7 +60,7 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     } else { $message = 'Invalid security token.'; $message_type = 'error'; }
 }
 
-// ── Filter vars ─────────────────────────────────────────────
+// Filter vars 
 $per_page = 20;
 $page = get_valid_page();
 $search = trim($_GET['q'] ?? '');
@@ -85,7 +85,7 @@ if ($status_filter === 'active') {
     $where .= " AND is_active=0";
 }
 
-// ── Count & Fetch ───────────────────────────────────────────
+//  Count & Fetch 
 $cs = $conn->prepare("SELECT COUNT(*) FROM users WHERE $where");
 $cs->execute($params);
 $total_records = (int)$cs->fetchColumn();
@@ -101,7 +101,7 @@ $ds->bindValue(':off', $offset, PDO::PARAM_INT);
 $ds->execute();
 $users = $ds->fetchAll(PDO::FETCH_ASSOC);
 
-// ── Query params for pagination ─────────────────────────────
+// Query params for pagination
 $query_params = [];
 if (!empty($search)) $query_params['q'] = $search;
 if (!empty($role_filter)) $query_params['role'] = $role_filter;

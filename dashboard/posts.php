@@ -85,7 +85,7 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     } else { $message = 'Invalid security token.'; $message_type = 'error'; }
 }
 
-// ── Build query with pagination ──────────────────────────
+//  Build query with pagination 
 $per_page = 8;
 $p_page = get_valid_page('page');
 $p_offset = get_offset($p_page, $per_page);
