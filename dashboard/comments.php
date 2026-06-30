@@ -47,7 +47,7 @@ if (isset($_POST['bulk_delete']) && !empty($_POST['comment_ids'])) {
 
 $csrf = get_csrf_token();
 
-// ── Filter vars ─────────────────────────────────────────────
+//  Filter vars
 $per_page = 20;
 $page = get_valid_page();
 $search = trim($_GET['q'] ?? '');
@@ -59,7 +59,7 @@ $date_filter = $_GET['date'] ?? '';
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
-// ── Build WHERE clause ──────────────────────────────────────
+// Build WHERE clause 
 $where_parts = ["1=1"];
 $params = [];
 
@@ -127,11 +127,11 @@ if ($date_filter === 'today') {
 
 $where = implode(' AND ', $where_parts);
 
-// ── Load dropdown data ──────────────────────────────────────
+//  Load dropdown data 
 $users_for_filter = $conn->query("SELECT id_user, user_name, role FROM users WHERE is_active=1 ORDER BY user_name ASC")->fetchAll(PDO::FETCH_ASSOC);
 $posts_for_filter = $conn->query("SELECT DISTINCT p.id_post, p.title FROM posts p INNER JOIN comments c ON c.id_post = p.id_post ORDER BY p.title ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── Count ───────────────────────────────────────────────────
+//  Count 
 $cs = $conn->prepare("SELECT COUNT(*) FROM comments LEFT JOIN posts ON comments.id_post=posts.id_post LEFT JOIN users ON comments.author_name = users.user_name WHERE $where");
 $cs->execute($params);
 $total_records = (int)$cs->fetchColumn();
@@ -139,7 +139,7 @@ $total_pages = get_total_pages($total_records, $per_page);
 $current_page = min($page, $total_pages);
 $offset = get_offset($current_page, $per_page);
 
-// ── Fetch ───────────────────────────────────────────────────
+//  Fetch 
 $ds = $conn->prepare("SELECT comments.*, posts.title as post_title, posts.id_post, users.role as author_role FROM comments LEFT JOIN posts ON comments.id_post=posts.id_post LEFT JOIN users ON comments.author_name = users.user_name WHERE $where ORDER BY comments.created_at DESC LIMIT :lim OFFSET :off");
 $int_params = [':pid'];
 foreach ($params as $k => $v) {
@@ -150,7 +150,7 @@ $ds->bindValue(':off', $offset, PDO::PARAM_INT);
 $ds->execute();
 $comments = $ds->fetchAll(PDO::FETCH_ASSOC);
 
-// ── Query params for pagination ─────────────────────────────
+//  Query params for pagination 
 $query_params = [];
 if (!empty($search)) $query_params['q'] = $search;
 if (!empty($status_filter)) $query_params['status'] = $status_filter;
