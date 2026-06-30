@@ -1,7 +1,4 @@
-<?php
-// header.php — Admin Dashboard HTML layout
-// Expects: $page_title, $csrf_token to be set by init.php
-?>
+
 <!DOCTYPE html>
 <html lang="<?= get_lang_code() ?>" dir="<?= get_lang_dir() ?>">
 <head>

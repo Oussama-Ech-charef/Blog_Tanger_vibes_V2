@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $action = $_POST['action'] ?? '';
 
-// --- login ---
+//  login 
 if ($action === 'login') {
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
@@ -104,7 +104,7 @@ if ($action === 'login') {
     exit();
 }
 
-// --- register ---
+//  register 
 if ($action === 'register') {
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
