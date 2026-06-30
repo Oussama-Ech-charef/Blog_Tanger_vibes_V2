@@ -1,5 +1,5 @@
-git commit -m "Add dashboard modal styles"
-/* ── Forms ────────────────────────────────────────────────── */
+
+/* ── Forms */
 .form_group {
     display: flex;
     flex-direction: column;
