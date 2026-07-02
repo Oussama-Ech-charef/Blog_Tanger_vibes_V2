@@ -34,6 +34,8 @@
             $db_css[] = 'dashboard-pagination.css';
             break;
         case 'add_post.php':
+            $db_css[] = 'dashboard-add-post.css';
+            break;
         case 'edit_post.php':
             $db_css[] = 'dashboard-forms.css';
             $db_css[] = 'dashboard-tables.css';
