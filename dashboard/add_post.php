@@ -43,7 +43,7 @@ require_once __DIR__ . '/inc/header.php';
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
             <input type="hidden" name="add_post" value="1">
 
-            <!-- Left Column — Main Content -->
+            <!-- Left Column — Writing Area -->
             <div class="add_post_main">
 
                 <div class="add_post_header">
@@ -54,32 +54,39 @@ require_once __DIR__ . '/inc/header.php';
                     <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</a>
                 </div>
 
-                <!-- Cover Image Upload -->
-                <div class="upload_zone" id="uploadZone">
-                    <div class="upload_placeholder" id="uploadPlaceholder">
-                        <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-                        <span class="upload_text">Add a cover image</span>
-                        <span class="upload_hint">Click to browse or drag &amp; drop — JPEG, PNG, WebP</span>
-                    </div>
-                    <div class="upload_preview" id="uploadPreview" style="display:none;">
-                        <img id="previewImage" src="" alt="Cover image preview">
-                        <div class="upload_info">
-                            <span id="imageInfo"></span>
-                            <button type="button" class="upload_remove" id="uploadRemove">
-                                <i class="fa-solid fa-xmark"></i> Remove
-                            </button>
+                <!-- Card 1 — Cover Image Upload -->
+                <div class="add_post_card">
+                    <div class="add_post_card_body">
+                        <div class="upload_zone" id="uploadZone">
+                            <div class="upload_placeholder" id="uploadPlaceholder">
+                                <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+                                <span class="upload_text">Add a cover image</span>
+                                <span class="upload_hint">Click to browse or drag &amp; drop — JPEG, PNG, WebP</span>
+                            </div>
+                            <div class="upload_preview" id="uploadPreview" style="display:none;">
+                                <img id="previewImage" src="" alt="Cover image preview">
+                                <div class="upload_info">
+                                    <span id="imageInfo"></span>
+                                    <button type="button" class="upload_remove" id="uploadRemove">
+                                        <i class="fa-solid fa-xmark"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp" class="upload_input">
                         </div>
                     </div>
-                    <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp" class="upload_input">
                 </div>
 
-                <!-- Post Title -->
-                <div class="title_wrapper">
-                    <input type="text" id="title" name="title" value="<?= htmlspecialchars($title ?? '') ?>" required maxlength="255" placeholder="Post title..." class="title_input" autocomplete="off">
+                <!-- Card 2 — Post Title -->
+                <div class="add_post_card">
+                    <div class="add_post_card_body">
+                        <label class="add_post_input_label" for="title">Post Title</label>
+                        <input type="text" id="title" name="title" value="<?= htmlspecialchars($title ?? '') ?>" required maxlength="255" placeholder="Enter your post title..." class="title_input" autocomplete="off">
+                    </div>
                 </div>
 
-                <!-- Content Editor -->
-                <div class="editor_wrapper">
+                <!-- Card 3 — Content Editor -->
+                <div class="add_post_card add_post_card_editor">
                     <div class="editor_toolbar" id="editorToolbar">
                         <button type="button" class="editor_toolbar_btn" data-cmd="bold" title="Bold (Ctrl+B)" aria-label="Bold"><i class="fa-solid fa-bold"></i></button>
                         <button type="button" class="editor_toolbar_btn" data-cmd="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i class="fa-solid fa-italic"></i></button>
@@ -94,7 +101,9 @@ require_once __DIR__ . '/inc/header.php';
                         <button type="button" class="editor_toolbar_btn" data-cmd="createLink" title="Insert link" aria-label="Insert link"><i class="fa-solid fa-link"></i></button>
                         <button type="button" class="editor_toolbar_btn" data-cmd="insertImage" title="Insert image" aria-label="Insert image"><i class="fa-solid fa-image"></i></button>
                     </div>
-                    <textarea id="content" name="content" required placeholder="Write your story..." class="editor_textarea"><?= htmlspecialchars($content ?? '') ?></textarea>
+                    <div class="add_post_card_body">
+                        <textarea id="content" name="content" required placeholder="Write your story..." class="editor_textarea"><?= htmlspecialchars($content ?? '') ?></textarea>
+                    </div>
                 </div>
 
             </div>
@@ -102,27 +111,28 @@ require_once __DIR__ . '/inc/header.php';
             <!-- Right Column — Settings Panel -->
             <aside class="add_post_sidebar">
 
-                <!-- Publish Card -->
-                <div class="sidebar_card">
-                    <div class="sidebar_card_header">
+                <!-- Card 1 — Publish -->
+                <div class="add_post_card">
+                    <div class="add_post_card_header">
                         <i class="fa-solid fa-rocket" aria-hidden="true"></i>
                         <span>Publish</span>
                     </div>
-                    <div class="sidebar_card_body">
-                        <div class="sidebar_field">
-                            <label class="sidebar_label" for="status">Status</label>
-                            <select id="status" name="status" class="sidebar_select">
+                    <div class="add_post_card_body">
+                        <div class="add_post_form_group">
+                            <label class="add_post_label" for="status">Status</label>
+                            <select id="status" name="status" class="add_post_select">
                                 <option value="published">Published</option>
                                 <option value="draft" selected>Draft</option>
                             </select>
                         </div>
-                        <div class="sidebar_field">
-                            <label class="sidebar_label">Visibility</label>
-                            <div class="visibility_display">
-                                <i class="fa-solid fa-globe" aria-hidden="true"></i> Public
+                        <div class="add_post_form_group">
+                            <label class="add_post_label">Visibility</label>
+                            <div class="add_post_visibility">
+                                <i class="fa-solid fa-globe" aria-hidden="true"></i>
+                                <span>Public</span>
                             </div>
                         </div>
-                        <div class="sidebar_actions">
+                        <div class="add_post_sidebar_actions">
                             <button type="submit" class="btn btn_primary btn_full" data-set-status="published">
                                 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Publish
                             </button>
@@ -133,16 +143,16 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                 </div>
 
-                <!-- Category Card -->
-                <div class="sidebar_card">
-                    <div class="sidebar_card_header">
+                <!-- Card 2 — Category -->
+                <div class="add_post_card">
+                    <div class="add_post_card_header">
                         <i class="fa-solid fa-tag" aria-hidden="true"></i>
                         <span>Category</span>
                     </div>
-                    <div class="sidebar_card_body">
-                        <div class="sidebar_field">
-                            <label class="sidebar_label" for="category">Choose category</label>
-                            <select id="category" name="category" required class="sidebar_select">
+                    <div class="add_post_card_body">
+                        <div class="add_post_form_group">
+                            <label class="add_post_label" for="category">Choose category</label>
+                            <select id="category" name="category" required class="add_post_select">
                                 <option value="">Select a category...</option>
                                 <?php foreach ($categories as $c): ?>
                                 <option value="<?= $c['id_category'] ?>" <?= ($cat_id ?? 0) == (int)$c['id_category'] ? 'selected' : '' ?>><?= htmlspecialchars($c['cat_name']) ?></option>
@@ -152,43 +162,45 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                 </div>
 
-                <!-- Featured Image Card -->
-                <div class="sidebar_card">
-                    <div class="sidebar_card_header">
+                <!-- Card 3 — Featured Image Preview -->
+                <div class="add_post_card">
+                    <div class="add_post_card_header">
                         <i class="fa-solid fa-image" aria-hidden="true"></i>
                         <span>Featured Image</span>
                     </div>
-                    <div class="sidebar_card_body sidebar_image_area">
-                        <img class="sidebar_image_preview" id="sidebarPreview" src="" alt="Featured image preview">
-                        <div class="sidebar_image_placeholder" id="sidebarPlaceholder">
-                            <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-                            <span>Upload image</span>
+                    <div class="add_post_card_body">
+                        <div class="add_post_image_area">
+                            <img class="add_post_image_preview" id="sidebarPreview" src="" alt="Featured image preview">
+                            <div class="add_post_image_placeholder" id="sidebarPlaceholder">
+                                <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+                                <span>Upload image</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Post Information Card -->
-                <div class="sidebar_card">
-                    <div class="sidebar_card_header">
+                <!-- Card 4 — Post Information -->
+                <div class="add_post_card">
+                    <div class="add_post_card_header">
                         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
                         <span>Post Information</span>
                     </div>
-                    <div class="sidebar_card_body">
-                        <div class="info_row">
-                            <span class="info_label">Author</span>
-                            <span class="info_value"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+                    <div class="add_post_card_body">
+                        <div class="add_post_info_row">
+                            <span class="add_post_info_label">Author</span>
+                            <span class="add_post_info_value"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
                         </div>
-                        <div class="info_row">
-                            <span class="info_label">Date</span>
-                            <span class="info_value"><?= date('M j, Y') ?></span>
+                        <div class="add_post_info_row">
+                            <span class="add_post_info_label">Date</span>
+                            <span class="add_post_info_value"><?= date('M j, Y') ?></span>
                         </div>
-                        <div class="info_row">
-                            <span class="info_label">Words</span>
-                            <span class="info_value" id="wordCount">0</span>
+                        <div class="add_post_info_row">
+                            <span class="add_post_info_label">Words</span>
+                            <span class="add_post_info_value" id="wordCount">0</span>
                         </div>
-                        <div class="info_row">
-                            <span class="info_label">Characters</span>
-                            <span class="info_value" id="charCount">0</span>
+                        <div class="add_post_info_row">
+                            <span class="add_post_info_label">Characters</span>
+                            <span class="add_post_info_value" id="charCount">0</span>
                         </div>
                     </div>
                 </div>
