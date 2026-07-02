@@ -54,63 +54,210 @@ require_once __DIR__ . '/inc/header.php';
 
 <?php if (!empty($errors)): render_notification(implode(' | ', array_map('htmlspecialchars', $errors)), 'error'); endif; ?>
 
-<div class="card">
-    <div class="card_header">
-        <h2><i class="fa-solid fa-pen icon_primary" aria-hidden="true"></i>Edit Post</h2>
-        <div class="flex_row">
-            <span class="status_badge <?= $post['status'] ?>"><?= ucfirst(htmlspecialchars($post['status'])) ?></span>
-            <a href="../pages/detail.php?id=<?= $post_id ?>" class="btn btn_secondary btn_sm" target="_blank" rel="noopener"><i class="fa-solid fa-eye"></i> Preview</a>
-            <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</a>
-        </div>
-    </div>
-    <div class="card_body">
+<?php $has_image = !empty($post['image']); ?>
 
-        <form method="POST" action="edit_post.php?id=<?= $post_id ?>" enctype="multipart/form-data" class="form_max_width">
+<div class="add_post_page">
+    <div class="add_post_layout">
+
+        <form method="POST" action="edit_post.php?id=<?= $post_id ?>" enctype="multipart/form-data" id="editPostForm">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
             <input type="hidden" name="edit_post" value="1">
+            <input type="hidden" name="remove_image" id="removeImageFlag" value="0">
 
-            <div class="form_group"><label for="title">Title</label><input type="text" id="title" name="title" value="<?= htmlspecialchars($post['title']) ?>" required maxlength="255"></div>
+            <!-- Left Column — Writing Area -->
+            <div class="add_post_main">
 
-            <div class="form_row">
-                <div class="form_group">
-                    <label for="category">Category</label>
-                    <select id="category" name="category" required>
-                        <option value="">Select...</option>
-                        <?php foreach ($categories as $c): ?>
-                        <option value="<?= $c['id_category'] ?>" <?= (int)$post['id_category'] === (int)$c['id_category'] ? 'selected' : '' ?>><?= htmlspecialchars($c['cat_name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                <div class="add_post_header">
+                    <div>
+                        <h1>Edit Post</h1>
+                        <p>Update your content and settings</p>
+                    </div>
+                    <div class="flex_row" style="gap:8px;">
+                        <span class="status_badge <?= $post['status'] ?>"><?= ucfirst(htmlspecialchars($post['status'])) ?></span>
+                        <a href="../pages/detail.php?id=<?= $post_id ?>" class="btn btn_secondary btn_sm" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> Preview</a>
+                        <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</a>
+                    </div>
                 </div>
-                <div class="form_group">
-                    <label for="status">Status</label>
-                    <select id="status" name="status">
-                        <option value="draft" <?= $post['status'] === STATUS_DRAFT ? 'selected' : '' ?>>Draft</option>
-                        <option value="published" <?= $post['status'] === STATUS_PUBLISHED ? 'selected' : '' ?>>Published</option>
-                    </select>
+
+                <!-- Card 1 — Cover Image Upload -->
+                <div class="add_post_card">
+                    <div class="add_post_card_body">
+                        <div class="upload_zone<?= $has_image ? ' has_image' : '' ?>" id="uploadZone">
+                            <div class="upload_placeholder" id="uploadPlaceholder"<?= $has_image ? ' style="display:none;"' : '' ?>>
+                                <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+                                <span class="upload_text">Add a cover image</span>
+                                <span class="upload_hint">Click to browse or drag &amp; drop — JPEG, PNG, WebP</span>
+                            </div>
+                            <div class="upload_preview" id="uploadPreview"<?= $has_image ? '' : ' style="display:none;"' ?>>
+                                <img id="previewImage" src="<?= $has_image ? '../' . htmlspecialchars($post['image']) : '' ?>" alt="Cover image preview">
+                                <div class="upload_info">
+                                    <span id="imageInfo"><?= $has_image ? htmlspecialchars(basename($post['image'])) : '' ?></span>
+                                    <button type="button" class="upload_remove" id="uploadRemove">
+                                        <i class="fa-solid fa-xmark"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp" class="upload_input">
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Card 2 — Post Title -->
+                <div class="add_post_card">
+                    <div class="add_post_card_body">
+                        <label class="add_post_input_label" for="title">Post Title</label>
+                        <input type="text" id="title" name="title" value="<?= htmlspecialchars($post['title']) ?>" required maxlength="255" placeholder="Enter your post title..." class="title_input" autocomplete="off">
+                    </div>
+                </div>
+
+                <!-- Card 3 — Content Editor -->
+                <div class="add_post_card add_post_card_editor">
+                    <div class="editor_toolbar" id="editorToolbar">
+                        <button type="button" class="editor_toolbar_btn" data-cmd="bold" title="Bold (Ctrl+B)" aria-label="Bold"><i class="fa-solid fa-bold"></i></button>
+                        <button type="button" class="editor_toolbar_btn" data-cmd="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i class="fa-solid fa-italic"></i></button>
+                        <button type="button" class="editor_toolbar_btn" data-cmd="underline" title="Underline (Ctrl+U)" aria-label="Underline"><i class="fa-solid fa-underline"></i></button>
+                        <span class="editor_divider" aria-hidden="true"></span>
+                        <button type="button" class="editor_toolbar_btn" data-cmd="insertUnorderedList" title="Bullet list" aria-label="Bullet list"><i class="fa-solid fa-list-ul"></i></button>
+                        <button type="button" class="editor_toolbar_btn" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list"><i class="fa-solid fa-list-ol"></i></button>
+                        <span class="editor_divider" aria-hidden="true"></span>
+                        <button type="button" class="editor_toolbar_btn" data-cmd="formatBlock" data-val="h2" title="Heading" aria-label="Heading"><i class="fa-solid fa-heading"></i></button>
+                        <button type="button" class="editor_toolbar_btn" data-cmd="formatBlock" data-val="p" title="Paragraph" aria-label="Paragraph"><i class="fa-solid fa-paragraph"></i></button>
+                        <span class="editor_divider" aria-hidden="true"></span>
+                        <button type="button" class="editor_toolbar_btn" data-cmd="createLink" title="Insert link" aria-label="Insert link"><i class="fa-solid fa-link"></i></button>
+                        <button type="button" class="editor_toolbar_btn" data-cmd="insertImage" title="Insert image" aria-label="Insert image"><i class="fa-solid fa-image"></i></button>
+                    </div>
+                    <div class="add_post_card_body">
+                        <textarea id="content" name="content" required placeholder="Write your story..." class="editor_textarea"><?= htmlspecialchars($post['content']) ?></textarea>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="form_group">
-                <label>Featured Image</label>
-                <?php if (!empty($post['image'])): ?>
-                <div class="flex_center" style="gap:16px;margin-bottom:12px;padding:12px;background:#F8FAFC;border-radius:8px;border:1px solid var(--db-card-border);">
-                    <img src="../<?= htmlspecialchars($post['image']) ?>" alt="" style="height:60px;border-radius:4px;object-fit:cover;">
-                    <span class="date_cell"><?= htmlspecialchars(basename($post['image'])) ?></span>
-                    <label class="ml_auto" style="font-size:13px;cursor:pointer;"><input type="checkbox" name="remove_image" value="1"> Remove</label>
+            <!-- Right Column — Settings Panel -->
+            <aside class="add_post_sidebar">
+
+                <!-- Card 1 — Publish -->
+                <div class="add_post_card">
+                    <div class="add_post_card_header">
+                        <i class="fa-solid fa-rocket" aria-hidden="true"></i>
+                        <span>Publish</span>
+                    </div>
+                    <div class="add_post_card_body">
+                        <div class="add_post_form_group">
+                            <label class="add_post_label" for="status">Status</label>
+                            <select id="status" name="status" class="add_post_select">
+                                <option value="published" <?= $post['status'] === STATUS_PUBLISHED ? 'selected' : '' ?>>Published</option>
+                                <option value="draft" <?= $post['status'] === STATUS_DRAFT ? 'selected' : '' ?>>Draft</option>
+                            </select>
+                        </div>
+                        <div class="add_post_form_group">
+                            <label class="add_post_label">Visibility</label>
+                            <div class="add_post_visibility">
+                                <i class="fa-solid fa-globe" aria-hidden="true"></i>
+                                <span>Public</span>
+                            </div>
+                        </div>
+                        <div class="add_post_sidebar_actions">
+                            <button type="submit" class="btn btn_primary btn_full" data-set-status="published">
+                                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Update &amp; Publish
+                            </button>
+                            <button type="submit" class="btn btn_secondary btn_full" data-set-status="draft">
+                                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save as Draft
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <?php endif; ?>
-                <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp">
-                <span class="form_hint">Leave empty to keep current.</span>
-            </div>
 
-            <div class="form_group"><label for="content">Content</label><textarea id="content" name="content" required class="textarea_large"><?= htmlspecialchars($post['content']) ?></textarea></div>
+                <!-- Card 2 — Category -->
+                <div class="add_post_card">
+                    <div class="add_post_card_header">
+                        <i class="fa-solid fa-tag" aria-hidden="true"></i>
+                        <span>Category</span>
+                    </div>
+                    <div class="add_post_card_body">
+                        <div class="add_post_form_group">
+                            <label class="add_post_label" for="category">Choose category</label>
+                            <select id="category" name="category" required class="add_post_select">
+                                <option value="">Select a category...</option>
+                                <?php foreach ($categories as $c): ?>
+                                <option value="<?= $c['id_category'] ?>" <?= (int)$post['id_category'] === (int)$c['id_category'] ? 'selected' : '' ?>><?= htmlspecialchars($c['cat_name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="form_actions">
-                <button type="submit" class="btn btn_primary"><i class="fa-solid fa-save" aria-hidden="true"></i> Save Changes</button>
-                <a href="posts.php" class="btn btn_secondary">Cancel</a>
-            </div>
+                <!-- Card 3 — Featured Image Preview -->
+                <div class="add_post_card">
+                    <div class="add_post_card_header">
+                        <i class="fa-solid fa-image" aria-hidden="true"></i>
+                        <span>Featured Image</span>
+                    </div>
+                    <div class="add_post_card_body">
+                        <div class="add_post_image_area">
+                            <img class="add_post_image_preview<?= $has_image ? ' show' : '' ?>" id="sidebarPreview" src="<?= $has_image ? '../' . htmlspecialchars($post['image']) : '' ?>" alt="Featured image preview">
+                            <div class="add_post_image_placeholder" id="sidebarPlaceholder"<?= $has_image ? ' style="display:none;"' : '' ?>>
+                                <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+                                <span>Upload image</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 — Post Information -->
+                <div class="add_post_card">
+                    <div class="add_post_card_header">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <span>Post Information</span>
+                    </div>
+                    <div class="add_post_card_body">
+                        <div class="add_post_info_row">
+                            <span class="add_post_info_label">Author</span>
+                            <span class="add_post_info_value"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+                        </div>
+                        <div class="add_post_info_row">
+                            <span class="add_post_info_label">Created</span>
+                            <span class="add_post_info_value"><?= date('M j, Y', strtotime($post['created_at'] ?? $post['updated_at'] ?? 'now')) ?></span>
+                        </div>
+                        <div class="add_post_info_row">
+                            <span class="add_post_info_label">Words</span>
+                            <span class="add_post_info_value" id="wordCount">0</span>
+                        </div>
+                        <div class="add_post_info_row">
+                            <span class="add_post_info_label">Characters</span>
+                            <span class="add_post_info_value" id="charCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
         </form>
+
     </div>
 </div>
+
+<script src="../assets/js/dashboard-add-post.js"></script>
+<script>
+(function () {
+    /* Toggle remove_image flag when Remove button is clicked */
+    var removeBtn = document.getElementById('uploadRemove');
+    var removeFlag = document.getElementById('removeImageFlag');
+    if (removeBtn && removeFlag) {
+        removeBtn.addEventListener('click', function () {
+            removeFlag.value = '1';
+        });
+    }
+
+    /* Ensure existing image src survives JS init */
+    var previewImg = document.getElementById('previewImage');
+    var sidebarPreview = document.getElementById('sidebarPreview');
+    if (previewImg && previewImg.getAttribute('src') && !previewImg.src) {
+        previewImg.src = previewImg.getAttribute('src');
+    }
+    if (sidebarPreview && sidebarPreview.getAttribute('src') && !sidebarPreview.src) {
+        sidebarPreview.src = sidebarPreview.getAttribute('src');
+    }
+})();
+</script>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
