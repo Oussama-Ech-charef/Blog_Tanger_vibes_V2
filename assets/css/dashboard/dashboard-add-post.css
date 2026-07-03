@@ -85,16 +85,6 @@
     padding: 24px;
 }
 
-/* Editor card: toolbar acts as header, no card_body padding needed */
-.add_post_card_editor .editor_toolbar {
-    border-bottom: 1px solid var(--db-card-border);
-    border-radius: 14px 14px 0 0;
-}
-
-.add_post_card_editor .add_post_card_body {
-    padding: 0;
-}
-
 /* ── Upload Zone ────────────────────────────────────── */
 
 .upload_zone {
@@ -241,68 +231,6 @@
 }
 
 .title_input::placeholder {
-    color: var(--db-text-muted);
-    opacity: 0.5;
-}
-
-/* ── Editor ─────────────────────────────────────────── */
-
-.editor_toolbar {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 10px 20px;
-    background: #FAFBFC;
-    flex-wrap: wrap;
-}
-
-.editor_toolbar_btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--db-text-secondary);
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.editor_toolbar_btn:hover {
-    background: #E2E8F0;
-    color: var(--db-text-primary);
-}
-
-.editor_toolbar_btn:active {
-    transform: scale(0.92);
-}
-
-.editor_divider {
-    width: 1px;
-    height: 22px;
-    background: var(--db-card-border);
-    margin: 0 8px;
-    flex-shrink: 0;
-}
-
-.editor_textarea {
-    width: 100%;
-    min-height: 600px;
-    padding: 28px 24px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    font-family: var(--db-font);
-    line-height: 1.8;
-    color: var(--db-text-primary);
-    resize: vertical;
-    background: transparent;
-}
-
-.editor_textarea::placeholder {
     color: var(--db-text-muted);
     opacity: 0.5;
 }
