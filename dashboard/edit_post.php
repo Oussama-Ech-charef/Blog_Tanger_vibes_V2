@@ -111,25 +111,10 @@ require_once __DIR__ . '/inc/header.php';
                 </div>
 
                 <!-- Card 3 — Content Editor -->
-                <div class="add_post_card add_post_card_editor">
-                    <div class="editor_toolbar" id="editorToolbar">
-                        <button type="button" class="editor_toolbar_btn" data-cmd="bold" title="Bold (Ctrl+B)" aria-label="Bold"><i class="fa-solid fa-bold"></i></button>
-                        <button type="button" class="editor_toolbar_btn" data-cmd="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i class="fa-solid fa-italic"></i></button>
-                        <button type="button" class="editor_toolbar_btn" data-cmd="underline" title="Underline (Ctrl+U)" aria-label="Underline"><i class="fa-solid fa-underline"></i></button>
-                        <span class="editor_divider" aria-hidden="true"></span>
-                        <button type="button" class="editor_toolbar_btn" data-cmd="insertUnorderedList" title="Bullet list" aria-label="Bullet list"><i class="fa-solid fa-list-ul"></i></button>
-                        <button type="button" class="editor_toolbar_btn" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list"><i class="fa-solid fa-list-ol"></i></button>
-                        <span class="editor_divider" aria-hidden="true"></span>
-                        <button type="button" class="editor_toolbar_btn" data-cmd="formatBlock" data-val="h2" title="Heading" aria-label="Heading"><i class="fa-solid fa-heading"></i></button>
-                        <button type="button" class="editor_toolbar_btn" data-cmd="formatBlock" data-val="p" title="Paragraph" aria-label="Paragraph"><i class="fa-solid fa-paragraph"></i></button>
-                        <span class="editor_divider" aria-hidden="true"></span>
-                        <button type="button" class="editor_toolbar_btn" data-cmd="createLink" title="Insert link" aria-label="Insert link"><i class="fa-solid fa-link"></i></button>
-                        <button type="button" class="editor_toolbar_btn" data-cmd="insertImage" title="Insert image" aria-label="Insert image"><i class="fa-solid fa-image"></i></button>
-                    </div>
-                    <div class="add_post_card_body">
-                        <textarea id="content" name="content" required placeholder="Write your story..." class="editor_textarea"><?= htmlspecialchars($post['content']) ?></textarea>
-                    </div>
-                </div>
+                <?php 
+                $editor_content = $post['content'];
+                require __DIR__ . '/inc/editor.php'; 
+                ?>
 
             </div>
 
@@ -236,7 +221,8 @@ require_once __DIR__ . '/inc/header.php';
     </div>
 </div>
 
-<script src="../assets/js/dashboard-add-post.js"></script>
+<script src="../assets/js/dashboard-post-form.js"></script>
+<script src="../assets/js/dashboard-editor.js"></script>
 <script>
 (function () {
     /* Toggle remove_image flag when Remove button is clicked */
