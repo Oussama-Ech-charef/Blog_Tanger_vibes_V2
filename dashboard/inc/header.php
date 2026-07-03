@@ -35,9 +35,11 @@
             break;
         case 'add_post.php':
             $db_css[] = 'dashboard-add-post.css';
+            $db_css[] = 'dashboard-editor.css';
             break;
         case 'edit_post.php':
             $db_css[] = 'dashboard-add-post.css';
+            $db_css[] = 'dashboard-editor.css';
             $db_css[] = 'dashboard-forms.css';
             $db_css[] = 'dashboard-tables.css';
             break;
