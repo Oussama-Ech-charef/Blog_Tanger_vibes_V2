@@ -27,6 +27,100 @@ function truncate_text($text, $length = 80) {
 }
 
 /**
+ * @param string $html
+ * @return string
+ */
+function render_post_content($html) {
+    $html = trim((string)$html);
+    if ($html === '') return '';
+
+    if ($html === strip_tags($html)) {
+        return nl2br(htmlspecialchars($html, ENT_QUOTES, 'UTF-8'));
+    }
+
+    if (!class_exists('DOMDocument')) {
+        return nl2br(htmlspecialchars(strip_tags($html), ENT_QUOTES, 'UTF-8'));
+    }
+
+    $allowed_tags = ['a', 'b', 'br', 'div', 'em', 'h2', 'i', 'img', 'li', 'ol', 'p', 'strong', 'u', 'ul'];
+    $allowed_attrs = [
+        'a' => ['href', 'title', 'target', 'rel'],
+        'img' => ['src', 'alt', 'title'],
+    ];
+
+    $dom = new DOMDocument();
+    libxml_use_internal_errors(true);
+    $dom->loadHTML('<?xml encoding="UTF-8"><div id="content-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    libxml_clear_errors();
+
+    $clean_node = function ($node) use (&$clean_node, $allowed_tags, $allowed_attrs) {
+        if ($node->nodeType === XML_ELEMENT_NODE) {
+            $tag = strtolower($node->nodeName);
+
+            if (!in_array($tag, $allowed_tags, true)) {
+                $parent = $node->parentNode;
+                if ($parent) {
+                    while ($node->firstChild) {
+                        $parent->insertBefore($node->firstChild, $node);
+                    }
+                    $parent->removeChild($node);
+                }
+                return;
+            }
+
+            if ($node->hasAttributes()) {
+                $remove_attrs = [];
+                foreach ($node->attributes as $attr) {
+                    $name = strtolower($attr->name);
+                    $allowed = in_array($name, $allowed_attrs[$tag] ?? [], true);
+                    if (!$allowed || str_starts_with($name, 'on')) {
+                        $remove_attrs[] = $attr->name;
+                    }
+                }
+                foreach ($remove_attrs as $attr_name) {
+                    $node->removeAttribute($attr_name);
+                }
+            }
+
+            if ($tag === 'a') {
+                $href = trim($node->getAttribute('href'));
+                if ($href === '' || preg_match('/^\s*javascript:/i', $href)) {
+                    $node->removeAttribute('href');
+                } else {
+                    $node->setAttribute('rel', 'noopener noreferrer');
+                    if (!$node->hasAttribute('target')) {
+                        $node->setAttribute('target', '_blank');
+                    }
+                }
+            }
+
+            if ($tag === 'img') {
+                $src = trim($node->getAttribute('src'));
+                if ($src === '' || preg_match('/^\s*(javascript|data):/i', $src)) {
+                    $node->parentNode?->removeChild($node);
+                    return;
+                }
+            }
+        }
+
+        for ($i = $node->childNodes->length - 1; $i >= 0; $i--) {
+            $clean_node($node->childNodes->item($i));
+        }
+    };
+
+    $root = $dom->getElementById('content-root');
+    if (!$root) return '';
+    $clean_node($root);
+
+    $output = '';
+    foreach ($root->childNodes as $child) {
+        $output .= $dom->saveHTML($child);
+    }
+
+    return trim($output);
+}
+
+/**
  * @param string $name
  * @return string
  */
