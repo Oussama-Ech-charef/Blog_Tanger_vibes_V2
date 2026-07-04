@@ -2,6 +2,7 @@
 // Reusable Rich Text Editor Component for Add and Edit Post forms
 // Expected variable: $editor_content (string)
 $editor_content = $editor_content ?? '';
+$editor_html = render_post_content($editor_content);
 ?>
 <div class="add_post_card add_post_card_editor">
     <div class="editor_toolbar" id="editorToolbar">
@@ -19,6 +20,7 @@ $editor_content = $editor_content ?? '';
         <button type="button" class="editor_toolbar_btn" data-cmd="insertImage" title="Insert image" aria-label="Insert image"><i class="fa-solid fa-image"></i></button>
     </div>
     <div class="add_post_card_body">
-        <textarea id="content" name="content" required placeholder="Write your story..." class="editor_textarea"><?= htmlspecialchars($editor_content) ?></textarea>
+        <div id="editorSurface" class="editor_surface" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Write your story..."><?= $editor_html ?></div>
+        <textarea id="content" name="content" class="editor_input"><?= htmlspecialchars($editor_content) ?></textarea>
     </div>
 </div>
