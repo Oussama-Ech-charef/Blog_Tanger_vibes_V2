@@ -51,7 +51,7 @@
     flex-shrink: 0;
 }
 
-.editor_textarea {
+.editor_surface {
     width: 100%;
     min-height: 600px;
     padding: 28px 24px;
@@ -61,11 +61,44 @@
     font-family: var(--db-font);
     line-height: 1.8;
     color: var(--db-text-primary);
-    resize: vertical;
     background: transparent;
+    overflow-y: auto;
 }
 
-.editor_textarea::placeholder {
+.editor_surface:empty::before {
+    content: attr(data-placeholder);
     color: var(--db-text-muted);
     opacity: 0.5;
+    pointer-events: none;
+}
+
+.editor_surface h2 {
+    margin: 0 0 14px;
+    font-size: 24px;
+    line-height: 1.35;
+}
+
+.editor_surface p {
+    margin: 0 0 14px;
+}
+
+.editor_surface ul,
+.editor_surface ol {
+    margin: 0 0 14px 22px;
+    padding: 0;
+}
+
+.editor_surface a {
+    color: var(--db-primary);
+    text-decoration: underline;
+}
+
+.editor_surface img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.editor_input {
+    display: none;
 }
