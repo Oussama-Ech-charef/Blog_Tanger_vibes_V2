@@ -159,7 +159,7 @@ $comment_count = count($comments);
 
         <!-- content -->
         <div class="content">
-            <?= nl2br(htmlspecialchars($post['content'])); ?>
+            <?= render_post_content($post['content']); ?>
         </div>
 
 
