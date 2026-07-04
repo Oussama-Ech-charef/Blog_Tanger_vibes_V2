@@ -13,7 +13,7 @@ function validate_post_input($title, $cat_id, $content) {
     $errors = [];
     if (empty($title)) $errors[] = 'Title is required.';
     if ((int)$cat_id <= 0) $errors[] = 'Category is required.';
-    if (empty($content)) $errors[] = 'Content is required.';
+    if (trim(strip_tags((string)$content)) === '') $errors[] = 'Content is required.';
     return $errors;
 }
 
@@ -170,5 +170,4 @@ function fetch_posts($conn, $criteria = []) {
     $s->execute($c['params']);
     return $s->fetchAll(PDO::FETCH_ASSOC);
 }
-
 
