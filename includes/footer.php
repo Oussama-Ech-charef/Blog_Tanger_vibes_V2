@@ -4,6 +4,7 @@ if (!isset($conn) && file_exists(__DIR__ . '/../config/connection.php')) {
     require_once __DIR__ . '/../config/connection.php';
 }
 require_once __DIR__ . '/lang.php';
+require_once __DIR__ . '/helpers.php';
 
 $footer_categories = [];
 if (isset($conn)) {
@@ -24,7 +25,7 @@ if (isset($conn)) {
         <!-- brand -->
         <div class="footer_brand">
             <a href="../pages/index.php" class="logo">
-                <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img logo_header">
+                <img src="../<?= get_logo_path() ?>" alt="Tangier Vibes Logo" class="logo_img logo_header">
             </a>
             <p class="footer_desc">
                 <?= __('footer_desc') ?>
