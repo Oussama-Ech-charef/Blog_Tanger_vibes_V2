@@ -63,10 +63,18 @@ $type_info = [
 
 //  Link builder 
 function notification_link($action_type, $entity_type, $entity_id) {
-    if ($action_type === 'message_received') return 'messages.php';
-    if ($entity_type === 'post' && $entity_id) return "posts.php?view=$entity_id";
+    if ($action_type === 'message_received') {
+        return $entity_id ? "messages.php?view=$entity_id" : 'messages.php';
+    }
+    if ($entity_type === 'post' && $entity_id) {
+        $action_base = '';
+        if (in_array($action_type, ['post_approved', 'post_rejected', 'post_created', 'post_submitted', 'post_updated', 'post_deleted'], true)) {
+            $action_base = "posts.php?view=$entity_id";
+        }
+        return $action_base ?: "posts.php?id=$entity_id";
+    }
     if ($entity_type === 'comment' && $entity_id) return 'comments.php';
-    if ($entity_type === 'user' && $entity_id) return "users.php?view=$entity_id";
+    if ($entity_type === 'user' && $entity_id) return 'users.php';
     return null;
 }
 
