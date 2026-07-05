@@ -18,7 +18,7 @@ function validate_post_input($title, $cat_id, $content) {
 }
 
 /**
- * @param string|null $existing_path
+ * @param string|null $existing_path (unused — kept for backward compatibility)
  * @return array
  */
 function process_post_image($existing_path = null) {
@@ -32,11 +32,6 @@ function process_post_image($existing_path = null) {
     if (!empty($ups)) {
         $result['errors'] = $ups;
         return $result;
-    }
-
-    if ($existing_path) {
-        $old_file = __DIR__ . '/../' . ltrim($existing_path, '/');
-        if (file_exists($old_file)) @unlink($old_file);
     }
 
     $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
@@ -58,9 +53,7 @@ function process_post_image($existing_path = null) {
  * @return string|null
  */
 function handle_image_removal($current_path, $remove_requested) {
-    if ($remove_requested && $current_path) {
-        $file = __DIR__ . '/../' . ltrim($current_path, '/');
-        if (file_exists($file)) @unlink($file);
+    if ($remove_requested) {
         return null;
     }
     return $current_path;
