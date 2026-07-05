@@ -1,39 +1,6 @@
 <?php
 
 /**
- * @return string
- */
-function get_logo_path() {
-    global $conn;
-    if (!isset($conn)) {
-        $conn_file = __DIR__ . '/../config/connection.php';
-        if (file_exists($conn_file)) {
-            require_once $conn_file;
-        }
-    }
-
-    static $cache = null;
-    if ($cache !== null) return $cache;
-
-    $default = 'assets/images/logo.png';
-
-    if (isset($conn)) {
-        try {
-            $s = $conn->prepare("SELECT setting_value FROM settings WHERE setting_key = 'logo_path'");
-            $s->execute();
-            $v = $s->fetchColumn();
-            $cache = $v !== false ? $v : $default;
-            return $cache;
-        } catch (PDOException $e) {
-            error_log($e->getMessage());
-        }
-    }
-
-    $cache = $default;
-    return $cache;
-}
-
-/**
  * @param string $datetime
  * @return string
  */
@@ -234,6 +201,24 @@ function render_search_input($name, $value, $placeholder = 'Search...') {
     $html .= '<input type="text" name="' . htmlspecialchars($name) . '" placeholder="' . htmlspecialchars($placeholder) . '" value="' . htmlspecialchars($value) . '">';
     $html .= '</div>';
     return $html;
+}
+
+/**
+ * @param string|null $path
+ * @return bool
+ */
+function safe_delete_uploaded_image($path) {
+    if (empty($path)) return false;
+    $uploads_dir = realpath(__DIR__ . '/../assets/uploads');
+    if ($uploads_dir === false) return false;
+    $target = realpath(__DIR__ . '/../' . ltrim($path, '/'));
+    if ($target === false) return false;
+    $ds = DIRECTORY_SEPARATOR;
+    if (strncmp($target . $ds, $uploads_dir . $ds, strlen($uploads_dir) + 1) !== 0) return false;
+    $ext = strtolower(pathinfo($target, PATHINFO_EXTENSION));
+    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) return false;
+    if (!is_file($target)) return false;
+    return @unlink($target);
 }
 
 /**
