@@ -2,7 +2,11 @@ function showNotification(message, type) {
     const icons = {success:'fa-check-circle', error:'fa-exclamation-circle', warning:'fa-triangle-exclamation', info:'fa-info-circle'};
     const el = document.createElement('div');
     el.className = 'notification ' + type;
-    el.innerHTML = '<i class="fa-solid ' + (icons[type] || icons.info) + '"></i> ' + message;
+    const icon = document.createElement('i');
+    icon.className = 'fa-solid ' + (icons[type] || icons.info);
+    icon.setAttribute('aria-hidden', 'true');
+    el.appendChild(icon);
+    el.appendChild(document.createTextNode(' ' + message));
     document.body.appendChild(el);
     autoDismissPopup('.notification');
 }
