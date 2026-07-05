@@ -130,7 +130,7 @@ Built with vanilla PHP and MySQL, the platform provides role-based access contro
 
 ## Database Overview
 
-The database `tangier_blog` contains six tables:
+The database `tangier_blog` contains nine tables:
 
 ### `users` — Registered accounts
 
@@ -139,8 +139,10 @@ The database `tangier_blog` contains six tables:
 | `id_user` | INT (PK) | Auto-increment |
 | `user_name` | VARCHAR(100) | Full name |
 | `email` | VARCHAR(150) | Unique |
+| `avatar` | VARCHAR(255) | Nullable |
 | `password` | VARCHAR(255) | Hashed |
 | `role` | ENUM('user','admin') | Default `user` |
+| `is_active` | TINYINT(1) | Default 1 |
 | `created_at` | TIMESTAMP | Auto-generated |
 
 ### `categories` — Post classification
@@ -159,7 +161,7 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 |---|---|---|
 | `id_post` | INT (PK) | Auto-increment |
 | `id_category` | INT (FK) | → `categories` (`ON DELETE CASCADE`) |
-| `id_user` | INT (FK) | → `users` (`ON DELETE CASCADE`) |
+| `id_user` | INT (FK) | → `users` (`ON DELETE SET NULL`) |
 | `id_approved_by` | INT (FK) | → `users`, nullable (`ON DELETE SET NULL`) |
 | `title` | VARCHAR(255) | Post title |
 | `image` | VARCHAR(255) | File path, nullable |
@@ -167,6 +169,7 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 | `status` | ENUM('draft','pending','published','rejected') | Publication state |
 | `rejection_reason` | TEXT | Admin feedback, nullable |
 | `approved_at` | TIMESTAMP | Nullable |
+| `reviewed_at` | DATETIME | Nullable |
 | `created_at` | TIMESTAMP | Auto-generated |
 | `updated_at` | TIMESTAMP | Auto-updated |
 
@@ -178,6 +181,7 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 | `id_post` | INT (FK) | → `posts` (`ON DELETE CASCADE`) |
 | `author_name` | VARCHAR(100) | Display name |
 | `comment_text` | TEXT | Comment body |
+| `status` | ENUM('approved','rejected','pending') | Default `pending` |
 | `created_at` | TIMESTAMP | Auto-generated |
 
 ### `contact_messages` — Contact form submissions
@@ -189,6 +193,7 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 | `email` | VARCHAR(150) | Sender email |
 | `subject` | VARCHAR(255) | Message subject |
 | `message` | TEXT | Message body |
+| `is_read` | TINYINT(1) | Default 0 |
 | `created_at` | TIMESTAMP | Auto-generated |
 
 ### `login_attempts` — Rate limiting
@@ -201,6 +206,43 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 | `locked_until` | DATETIME | Nullable; set after 5 failures |
 | `last_attempt` | TIMESTAMP | Auto-updated |
 
+### `settings` — Site-wide key-value configuration
+
+| Column | Type | Notes |
+|---|---|---|
+| `id_setting` | INT (PK) | Auto-increment |
+| `setting_key` | VARCHAR(100) | Unique |
+| `setting_value` | TEXT | Stored value |
+| `created_at` | TIMESTAMP | Auto-generated |
+| `updated_at` | TIMESTAMP | Auto-updated |
+
+Default rows: site_name, site_description, admin_email, posts_per_page, theme_color, logo_path.
+
+### `activity_log` — System activity feed
+
+| Column | Type | Notes |
+|---|---|---|
+| `id_activity` | INT (PK) | Auto-increment |
+| `action_type` | VARCHAR(50) | e.g. post_created, post_approved |
+| `description` | VARCHAR(500) | Human-readable activity text |
+| `user_id` | INT (FK) | → `users` (`ON DELETE SET NULL`), nullable |
+| `entity_type` | VARCHAR(50) | e.g. post, comment |
+| `entity_id` | INT | Nullable |
+| `is_read` | TINYINT(1) | Default 0 |
+| `created_at` | TIMESTAMP | Auto-generated |
+
+### `user_notifications` — Per-user notification system
+
+| Column | Type | Notes |
+|---|---|---|
+| `id_notification` | INT (PK) | Auto-increment |
+| `id_user` | INT (FK) | → `users` (`ON DELETE CASCADE`) |
+| `type` | VARCHAR(50) | Notification type |
+| `message` | VARCHAR(500) | Notification body |
+| `link` | VARCHAR(255) | Nullable |
+| `is_read` | TINYINT(1) | Default 0 |
+| `created_at` | TIMESTAMP | Auto-generated |
+
 ---
 
 ## Project Structure
@@ -208,21 +250,23 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 ```
 Blog_Tanger_vibes_V2/
 ├── config/
-│   └── connection.php              PDO database connection
+│   ├── connection.php              PDO database connection
+│   └── constants.php               Status constants (draft, pending, published, rejected)
 ├── sql/
 │   └── script.sql                  Database schema + seed data
 ├── lang/
-│   ├── en.php                      English translations (58+ keys)
-│   ├── fr.php                      French translations (58+ keys)
-│   └── ar.php                      Arabic translations (58+ keys)
+│   ├── en.php                      English translations (230+ keys)
+│   ├── fr.php                      French translations (230+ keys)
+│   └── ar.php                      Arabic translations (230+ keys, RTL)
 ├── includes/
 │   ├── security.php                CSRF, session timeout, upload validation, security headers
 │   ├── lang.php                    Translation loader, language switcher
+│   ├── helpers.php                 Shared UI helpers (post cards, notifications, logo)
+│   ├── post_helpers.php            Post CRUD helpers (validation, image, insert, update)
 │   ├── header.php                  Responsive nav, search, auth links, language dropdown
 │   ├── footer.php                  Footer with dynamic categories
 │   ├── auth_modal.php              Login/register modal with AJAX + inline JS
 │   ├── pagination.php              Page-number pagination component
-│   ├── actions.php                 Admin approve handler (POST only)
 │   └── ajax_auth.php               AJAX login/register endpoint + rate limiting
 ├── pages/
 │   ├── index.php                   Homepage with hero + 3 latest posts
@@ -230,12 +274,23 @@ Blog_Tanger_vibes_V2/
 │   ├── detail.php                  Post detail, comments, map, share links
 │   ├── about.php                   About page with live stats
 │   ├── contact.php                 Contact form, info cards, FAQ, map
-│   ├── dashboard.php               User/admin dashboard with stats + post management
-│   ├── add_post.php                Create post form with image upload
-│   ├── edit.php                    Edit post form with pre-filled data
-│   ├── delete.php                  Post delete handler (POST only)
-│   ├── reject.php                  Admin rejection form
 │   └── logout.php                  Session destroy + cookie cleanup
+├── dashboard/
+│   ├── init.php                    Session check, admin auth, DB + helpers
+│   ├── index.php                   Overview with stats cards + Chart.js charts
+│   ├── posts.php                   Posts management with approve/reject/delete
+│   ├── add_post.php                Create post form with image upload + editor
+│   ├── edit_post.php               Edit post form with pre-filled data
+│   ├── comments.php                Comment moderation (approve, reject, delete, bulk)
+│   ├── categories.php              CRUD for post categories
+│   ├── users.php                   User management with role/status changes
+│   ├── messages.php                Contact messages inbox
+│   ├── notifications.php           Activity log with filters
+│   ├── settings.php                Site settings, logo upload, password change
+│   └── inc/
+│       ├── header.php              Dashboard HTML head, sidebar, topbar
+│       ├── footer.php              Dashboard closing tags + dashboard.js
+│       └── editor.php              Rich text editor toolbar component
 ├── assets/
 │   ├── css/
 │   │   ├── main.css                Global styles + CSS custom properties
@@ -243,27 +298,47 @@ Blog_Tanger_vibes_V2/
 │   │   ├── footer.css              Footer layout
 │   │   ├── home.css                Hero + latest posts
 │   │   ├── cards.css               Post card component
-│   │   ├── explor.css              Explore page filters + grid
+│   │   ├── explore.css             Explore page filters + grid
 │   │   ├── detail.css              Post detail + comments
-│   │   ├── dashboard.css           Dashboard stats, table, modals
-│   │   ├── add_post.css            Post editor form
-│   │   ├── reject.css              Rejection form
 │   │   ├── about.css               About page layout
 │   │   ├── contact.css             Contact form + FAQ
+│   │   ├── auth_modal.css          Auth modal styles
 │   │   ├── components.css          Shared alerts, pagination, form focus
 │   │   └── rtl.css                 Right-to-left overrides
+│   │   └── dashboard/
+│   │       ├── dashboard-variables.css
+│   │       ├── dashboard-layout.css
+│   │       ├── dashboard-sidebar.css
+│   │       ├── dashboard-header.css
+│   │       ├── dashboard-buttons.css
+│   │       ├── dashboard-utilities.css
+│   │       ├── dashboard-overview.css
+│   │       ├── dashboard-tables.css
+│   │       ├── dashboard-forms.css
+│   │       ├── dashboard-modals.css
+│   │       ├── dashboard-pagination.css
+│   │       ├── dashboard-add-post.css
+│   │       ├── dashboard-editor.css
+│   │       └── dashboard-notifications.css
 │   ├── js/
 │   │   ├── main.js                 Mobile nav toggle, language dropdown
-│   │   ├── add_post.js             Image preview
-│   │   └── contact.js              FAQ accordion
+│   │   ├── auth_modal.js           Auth modal logic, AJAX login/register
+│   │   ├── contact.js              FAQ accordion
+│   │   ├── dashboard.js            Dashboard sidebar toggle
+│   │   ├── dashboard-editor.js     Rich text editor logic
+│   │   ├── dashboard-post-form.js  Image preview + remove
+│   │   └── posts-dropdown.js       Post card dropdown menus
 │   ├── images/
-│   │   ├── logo.png                Site logo
+│   │   ├── logo.png                Site logo (fallback)
 │   │   ├── home.jpg                Hero background (fallback)
 │   │   ├── home_480.jpg            Responsive hero (480w)
 │   │   ├── home_768.jpg            Responsive hero (768w)
 │   │   ├── home_1200.jpg           Responsive hero (1200w)
 │   │   └── home_1920.jpg           Responsive hero (1920w)
 │   └── uploads/                    User-uploaded post images
+├── .env                            Database credentials (not committed)
+├── .htaccess                       URL rewrites
+├── .gitignore
 └── README.md
 ```
 
