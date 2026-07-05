@@ -88,7 +88,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar_logo">
-            <img src="../assets/images/logo.png" alt="Tangier Vibes">
+            <img src="../<?= get_logo_path() ?>" alt="Tangier Vibes">
             <span>Tangier Vibes</span>
         </div>
 
