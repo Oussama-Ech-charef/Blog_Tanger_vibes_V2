@@ -44,19 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_post'])) {
             update_post($conn, $post_id, $cat_id, $title, $image_path, $content, $new_status, false, $uid, true);
             log_post_activity($conn, 'post_updated', "Updated post: $title", $uid, $post_id);
 
-            // DB update succeeded — clean up old image if replaced or removed
+                // DB update succeeded — clean up old image if replaced or removed
             if ($old_image && ($new_upload_path !== null || $remove_requested)) {
-                $old_file = __DIR__ . '/../' . ltrim($old_image, '/');
-                if (file_exists($old_file)) @unlink($old_file);
+                safe_delete_uploaded_image($old_image);
             }
 
             header('Location: posts.php?msg=updated');
             exit;
         } catch (PDOException $e) {
-            // DB update failed — remove newly uploaded image if any
             if ($new_upload_path !== null) {
-                $new_file = __DIR__ . '/../' . ltrim($new_upload_path, '/');
-                if (file_exists($new_file)) @unlink($new_file);
+                safe_delete_uploaded_image($new_upload_path);
             }
             error_log($e->getMessage());
             $errors[] = 'Database error.';
