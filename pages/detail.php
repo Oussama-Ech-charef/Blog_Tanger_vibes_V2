@@ -65,12 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($comment_error)) {
         try {
+            $comment_user_id = isset($_SESSION['id_user']) ? (int)$_SESSION['id_user'] : null;
             $stmt = $conn->prepare("
-                insert into comments (id_post, author_name, comment_text, status)
-                values (:id_post, :author_name, :comment_text, 'pending')
+                insert into comments (id_post, id_user, author_name, comment_text, status)
+                values (:id_post, :id_user, :author_name, :comment_text, 'pending')
             ");
             $stmt->execute([
                 ':id_post' => $post_id,
+                ':id_user' => $comment_user_id,
                 ':author_name' => $author_name,
                 ':comment_text' => $comment_text
             ]);
@@ -164,8 +166,15 @@ $comment_count = count($comments);
 
 
         <!-- share links -->
+        <?php
+        $share_url = urlencode('https://tanger.lovestoblog.com/detail.php?id=' . $post['id_post']);
+        $share_title = urlencode(htmlspecialchars_decode($post['title']) . ' - Tangier Vibes');
+        ?>
         <div class="social">
-            <i class="fas fa-share-alt" aria-hidden="true"></i> <?= __('detail_share') ?>: <a href="#">Facebook</a> /<a href="#">Twitter</a> /<a href="#">WhatsApp</a>
+            <i class="fas fa-share-alt" aria-hidden="true"></i> <?= __('detail_share') ?>:
+            <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $share_url ?>" target="_blank" rel="noopener noreferrer">Facebook</a> /
+            <a href="https://twitter.com/intent/tweet?text=<?= $share_title ?>&url=<?= $share_url ?>" target="_blank" rel="noopener noreferrer">X (Twitter)</a> /
+            <a href="https://wa.me/?text=<?= $share_title ?>%20<?= $share_url ?>" target="_blank" rel="noopener noreferrer">WhatsApp</a>
         </div>
 
         <!-- map design -->
