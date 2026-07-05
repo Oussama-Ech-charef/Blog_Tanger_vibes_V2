@@ -78,21 +78,16 @@ if (!empty($status_filter) && in_array($status_filter, ['approved', STATUS_REJEC
     $params[':st'] = $status_filter;
 }
 
-// Role filter (via author_name match to users.user_name)
+// Role filter (via id_user join to users)
 if (!empty($role_filter) && in_array($role_filter, ['admin', 'user'])) {
-    $where_parts[] = "users.role = :rl";
+    $where_parts[] = "u.role = :rl";
     $params[':rl'] = $role_filter;
 }
 
-// User filter (match author_name to selected user's name)
+// User filter (match via id_user)
 if (!empty($user_filter) && is_numeric($user_filter)) {
-    $u_stmt = $conn->prepare("SELECT user_name FROM users WHERE id_user = :id");
-    $u_stmt->execute([':id' => (int)$user_filter]);
-    $uname = $u_stmt->fetchColumn();
-    if ($uname) {
-        $where_parts[] = "comments.author_name = :un";
-        $params[':un'] = $uname;
-    }
+    $where_parts[] = "comments.id_user = :uid";
+    $params[':uid'] = (int)$user_filter;
 }
 
 // Post filter
@@ -132,7 +127,7 @@ $users_for_filter = $conn->query("SELECT id_user, user_name, role FROM users WHE
 $posts_for_filter = $conn->query("SELECT DISTINCT p.id_post, p.title FROM posts p INNER JOIN comments c ON c.id_post = p.id_post ORDER BY p.title ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 //  Count 
-$cs = $conn->prepare("SELECT COUNT(*) FROM comments LEFT JOIN posts ON comments.id_post=posts.id_post LEFT JOIN users ON comments.author_name = users.user_name WHERE $where");
+$cs = $conn->prepare("SELECT COUNT(*) FROM comments LEFT JOIN posts ON comments.id_post=posts.id_post LEFT JOIN users u ON comments.id_user = u.id_user WHERE $where");
 $cs->execute($params);
 $total_records = (int)$cs->fetchColumn();
 $total_pages = get_total_pages($total_records, $per_page);
@@ -140,7 +135,7 @@ $current_page = min($page, $total_pages);
 $offset = get_offset($current_page, $per_page);
 
 //  Fetch 
-$ds = $conn->prepare("SELECT comments.*, posts.title as post_title, posts.id_post, users.role as author_role FROM comments LEFT JOIN posts ON comments.id_post=posts.id_post LEFT JOIN users ON comments.author_name = users.user_name WHERE $where ORDER BY comments.created_at DESC LIMIT :lim OFFSET :off");
+$ds = $conn->prepare("SELECT comments.*, posts.title as post_title, posts.id_post, u.role as author_role, u.user_name as author_user_name FROM comments LEFT JOIN posts ON comments.id_post=posts.id_post LEFT JOIN users u ON comments.id_user = u.id_user WHERE $where ORDER BY comments.created_at DESC LIMIT :lim OFFSET :off");
 $int_params = [':pid'];
 foreach ($params as $k => $v) {
     $ds->bindValue($k, $v, in_array($k, $int_params) ? PDO::PARAM_INT : PDO::PARAM_STR);
