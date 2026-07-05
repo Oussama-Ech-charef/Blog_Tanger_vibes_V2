@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_post'])) {
     $title = trim($_POST['title'] ?? '');
     $cat_id = (int)($_POST['category'] ?? 0);
     $content = trim($_POST['content'] ?? '');
-    $status = in_array($_POST['status'] ?? '', [STATUS_DRAFT, STATUS_PUBLISHED]) ? $_POST['status'] : STATUS_PUBLISHED;
+    $status = in_array($_POST['status'] ?? '', [STATUS_DRAFT, STATUS_PUBLISHED]) ? $_POST['status'] : STATUS_DRAFT;
 
     if (!validate_csrf_token($_POST['csrf_token'] ?? '')) $errors[] = 'Invalid request.';
     $errors = array_merge($errors, validate_post_input($title, $cat_id, $content));
