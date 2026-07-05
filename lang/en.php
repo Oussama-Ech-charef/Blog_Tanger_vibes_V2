@@ -49,7 +49,7 @@ return [
     'detail_comment_message_placeholder' => 'Share your vibe...',
     'detail_comment_btn' => 'Post comment',
     'detail_comments_empty' => 'No comments yet. Be the first to share your thoughts!',
-    'detail_comment_success' => 'Your comment has been posted successfully!',
+    'detail_comment_success' => 'Your comment has been submitted and is awaiting moderation.',
     'detail_comment_error_required' => 'Name and comment are required.',
     'detail_comment_error_name_length' => 'Name must be under 100 characters.',
     'detail_comment_error_text_length' => 'Comment must be under 1000 characters.',
