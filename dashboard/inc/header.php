@@ -19,6 +19,7 @@
         'dashboard-header.css',
         'dashboard-buttons.css',
         'dashboard-utilities.css',
+        'dashboard-alerts.css',
     ];
 
     // Page-specific CSS files
@@ -88,7 +89,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar_logo">
-            <img src="../<?= get_logo_path() ?>" alt="Tangier Vibes">
+            <img src="../assets/images/logo.png" alt="Tangier Vibes">
             <span>Tangier Vibes</span>
         </div>
 
