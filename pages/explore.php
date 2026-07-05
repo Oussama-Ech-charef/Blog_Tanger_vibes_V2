@@ -47,9 +47,10 @@ if (!empty($category_id)) {
 
 if (!empty($keyword)) {
     $like_kw = '%' . $keyword . '%';
-    $where .= " AND (posts.title LIKE :kw_title OR categories.cat_name LIKE :kw_cat)";
+    $where .= " AND (posts.title LIKE :kw_title OR categories.cat_name LIKE :kw_cat OR posts.content LIKE :kw_content)";
     $params[':kw_title'] = $like_kw;
     $params[':kw_cat'] = $like_kw;
+    $params[':kw_content'] = $like_kw;
 }
 
 // Count
