@@ -49,7 +49,7 @@ return [
     'detail_comment_message_placeholder' => 'Partagez votre ambiance...',
     'detail_comment_btn' => 'Publier le commentaire',
     'detail_comments_empty' => 'Aucun commentaire pour le moment. Soyez le premier à partager vos pensées !',
-    'detail_comment_success' => 'Votre commentaire a été publié avec succès !',
+    'detail_comment_success' => 'Votre commentaire a été soumis et est en attente de modération.',
     'detail_comment_error_required' => 'Le nom et le commentaire sont requis.',
     'detail_comment_error_name_length' => 'Le nom doit faire moins de 100 caractères.',
     'detail_comment_error_text_length' => 'Le commentaire doit faire moins de 1000 caractères.',
