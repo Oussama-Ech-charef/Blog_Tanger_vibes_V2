@@ -49,7 +49,7 @@ return [
     'detail_comment_message_placeholder' => 'شارك مشاعرك...',
     'detail_comment_btn' => 'نشر التعليق',
     'detail_comments_empty' => 'لا توجد تعليقات بعد. كن أول من يشارك أفكاره!',
-    'detail_comment_success' => 'تم نشر تعليقك بنجاح!',
+    'detail_comment_success' => 'تم إرسال تعليقك وهو في انتظار المراجعة.',
     'detail_comment_error_required' => 'الاسم والتعليق مطلوبان.',
     'detail_comment_error_name_length' => 'يجب أن يكون الاسم أقل من 100 حرف.',
     'detail_comment_error_text_length' => 'يجب أن يكون التعليق أقل من 1000 حرف.',
