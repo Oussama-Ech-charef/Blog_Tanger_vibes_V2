@@ -23,15 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_post'])) {
     if (!validate_csrf_token($_POST['csrf_token'] ?? '')) $errors[] = 'Invalid request.';
     $errors = array_merge($errors, validate_post_input($title, $cat_id, $content));
 
-    $image_path = $post['image'];
+    $old_image = $post['image'];
+    $image_path = $old_image;
+    $new_upload_path = null;
 
-    $img = process_post_image($post['image']);
+    $img = process_post_image();
     $errors = array_merge($errors, $img['errors']);
     if ($img['path'] !== null) {
+        $new_upload_path = $img['path'];
         $image_path = $img['path'];
     }
 
-    $image_path = handle_image_removal($image_path, isset($_POST['remove_image']) && $_POST['remove_image'] === '1');
+    $remove_requested = isset($_POST['remove_image']) && $_POST['remove_image'] === '1';
+    $image_path = handle_image_removal($image_path, $remove_requested);
 
     if (empty($errors)) {
         try {
@@ -40,9 +44,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_post'])) {
             update_post($conn, $post_id, $cat_id, $title, $image_path, $content, $new_status, false, $uid, true);
             log_post_activity($conn, 'post_updated', "Updated post: $title", $uid, $post_id);
 
+            // DB update succeeded — clean up old image if replaced or removed
+            if ($old_image && ($new_upload_path !== null || $remove_requested)) {
+                $old_file = __DIR__ . '/../' . ltrim($old_image, '/');
+                if (file_exists($old_file)) @unlink($old_file);
+            }
+
             header('Location: posts.php?msg=updated');
             exit;
         } catch (PDOException $e) {
+            // DB update failed — remove newly uploaded image if any
+            if ($new_upload_path !== null) {
+                $new_file = __DIR__ . '/../' . ltrim($new_upload_path, '/');
+                if (file_exists($new_file)) @unlink($new_file);
+            }
             error_log($e->getMessage());
             $errors[] = 'Database error.';
         }
