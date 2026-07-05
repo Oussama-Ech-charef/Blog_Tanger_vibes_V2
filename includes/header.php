@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/security.php';
 require_once __DIR__ . '/lang.php';
-require_once __DIR__ . '/helpers.php';
 
 check_session_timeout();
 
@@ -18,7 +17,7 @@ get_csrf_token();
         <div class="header_nav_desktop">
                     <!-- logo  -->
                     <a href="../pages/index.php" class="logo">
-                        <img src="../<?= get_logo_path() ?>" alt="Tangier Vibes Logo" class="logo_img logo_header">
+                        <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img logo_header">
                     </a>
 
                      <!-- links  desktop-->
