@@ -62,7 +62,7 @@ $site_name = get_setting($conn, 'site_name', 'Tangier Vibes');
 $site_desc = get_setting($conn, 'site_description', '');
 $admin_email = get_setting($conn, 'admin_email', '');
 $posts_per_page = (int)get_setting($conn, 'posts_per_page', '6');
-$logo_path = get_setting($conn, 'logo_path', 'assets/images/logo.png');
+$logo_path = get_logo_path();
 
 $ai = $conn->prepare("SELECT user_name, email, created_at FROM users WHERE id_user=:id");
 $ai->execute([':id'=>$_SESSION['id_user']]);
