@@ -1,6 +1,39 @@
 <?php
 
 /**
+ * @return string
+ */
+function get_logo_path() {
+    global $conn;
+    if (!isset($conn)) {
+        $conn_file = __DIR__ . '/../config/connection.php';
+        if (file_exists($conn_file)) {
+            require_once $conn_file;
+        }
+    }
+
+    static $cache = null;
+    if ($cache !== null) return $cache;
+
+    $default = 'assets/images/logo.png';
+
+    if (isset($conn)) {
+        try {
+            $s = $conn->prepare("SELECT setting_value FROM settings WHERE setting_key = 'logo_path'");
+            $s->execute();
+            $v = $s->fetchColumn();
+            $cache = $v !== false ? $v : $default;
+            return $cache;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+        }
+    }
+
+    $cache = $default;
+    return $cache;
+}
+
+/**
  * @param string $datetime
  * @return string
  */
