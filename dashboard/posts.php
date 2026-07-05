@@ -11,6 +11,23 @@ if (isset($_GET['msg'])) {
     elseif ($_GET['msg'] === 'updated') { $message = 'Post updated successfully.'; $message_type = 'success'; }
 }
 
+// Flash message from POST redirect
+if (isset($_SESSION['flash_msg'])) {
+    $message = $_SESSION['flash_msg'];
+    $message_type = $_SESSION['flash_type'] ?? 'success';
+    unset($_SESSION['flash_msg'], $_SESSION['flash_type']);
+}
+
+// Build redirect URL preserving filters (reads from POST hidden inputs and GET query params)
+function posts_redirect_url() {
+    $params = [];
+    foreach (['q', 'page', 'status', 'role', 'category'] as $k) {
+        $v = $_POST[$k] ?? $_GET[$k] ?? '';
+        if ($v !== '') $params[$k] = $v;
+    }
+    return 'posts.php' . (!empty($params) ? '?' . http_build_query($params) : '');
+}
+
 // Approve
 if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
@@ -24,11 +41,13 @@ if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
                 $prow = $t->fetch(PDO::FETCH_ASSOC);
                 $pt = $prow['title'];
                 $conn->prepare("INSERT INTO activity_log (action_type,description,user_id,entity_type,entity_id) VALUES ('post_approved',:d,:u,'post',:e)")->execute([':d'=>"Approved post: $pt",':u'=>$_SESSION['id_user'],':e'=>$pid]);
-                $message = 'Post approved and published.';
-                $message_type = 'success';
+                $_SESSION['flash_msg'] = 'Post approved and published.';
+                $_SESSION['flash_type'] = 'success';
+                header('Location: ' . posts_redirect_url());
+                exit;
             }
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = 'An error occurred.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = 'An error occurred.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+    } else { $_SESSION['flash_msg'] = 'Invalid security token.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
 }
 
 // Reject
@@ -45,11 +64,13 @@ if (isset($_POST['reject_id'])) {
                 $prow = $t->fetch(PDO::FETCH_ASSOC);
                 $pt = $prow['title'];
                 $conn->prepare("INSERT INTO activity_log (action_type,description,user_id,entity_type,entity_id) VALUES ('post_rejected',:d,:u,'post',:e)")->execute([':d'=>"Rejected post: $pt",':u'=>$_SESSION['id_user'],':e'=>$pid]);
-                $message = 'Post rejected.';
-                $message_type = 'success';
+                $_SESSION['flash_msg'] = 'Post rejected.';
+                $_SESSION['flash_type'] = 'success';
+                header('Location: ' . posts_redirect_url());
+                exit;
             }
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = 'An error occurred.'; $message_type = 'error'; }
-    } else { $message = 'Rejection reason is required.'; $message_type = 'error'; }
+        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = 'An error occurred.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+    } else { $_SESSION['flash_msg'] = 'Rejection reason is required.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
 }
 
 // Delete — admin can delete any post
@@ -57,32 +78,35 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         $pid = (int)$_POST['delete'];
         try {
-            // Fetch post info before deleting
             $t = $conn->prepare("SELECT title, image FROM posts WHERE id_post=:id");
             $t->execute([':id' => $pid]);
             $del_post = $t->fetch(PDO::FETCH_ASSOC);
             $title = $del_post ? $del_post['title'] : "#$pid";
 
-            // Delete associated comments
             $conn->prepare("DELETE FROM comments WHERE id_post=:id")->execute([':id'=>$pid]);
-            // Delete the post
             $s = $conn->prepare("DELETE FROM posts WHERE id_post=:id");
             $s->execute([':id'=>$pid]);
 
             if ($s->rowCount()) {
-                // Delete associated image file
-                if (!empty($del_post['image'])) {
-                    $img_path = __DIR__ . '/../' . $del_post['image'];
-                    if (file_exists($img_path)) { unlink($img_path); }
-                }
-                // Log the deletion
+                safe_delete_uploaded_image($del_post['image'] ?? null);
                 $conn->prepare("INSERT INTO activity_log (action_type,description,user_id,entity_type,entity_id) VALUES ('post_deleted',:d,:u,'post',:e)")
                     ->execute([':d'=>"Deleted post: $title",':u'=>$_SESSION['id_user'],':e'=>$pid]);
-                $message = 'Post deleted.';
-                $message_type = 'success';
+                $_SESSION['flash_msg'] = 'Post deleted.';
+                $_SESSION['flash_type'] = 'success';
+                header('Location: ' . posts_redirect_url());
+                exit;
             }
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = 'An error occurred.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = 'An error occurred.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+    } else { $_SESSION['flash_msg'] = 'Invalid security token.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+}
+
+// Quick view via ?view=id (for notification links) — loaded before header
+$quick_view_post = null;
+if (isset($_GET['view']) && is_numeric($_GET['view'])) {
+    $qv_id = (int)$_GET['view'];
+    $qv_s = $conn->prepare("SELECT posts.*, categories.cat_name, users.user_name FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE posts.id_post=:id");
+    $qv_s->execute([':id' => $qv_id]);
+    $quick_view_post = $qv_s->fetch(PDO::FETCH_ASSOC);
 }
 
 //  Build query with pagination 
@@ -122,9 +146,45 @@ $posts = $data_s->fetchAll(PDO::FETCH_ASSOC);
 
 $query_params = [];
 if (!empty($search)) $query_params['q'] = $search;
+foreach (['status', 'role', 'category'] as $k) {
+    $qv = $_GET[$k] ?? '';
+    if ($qv !== '') $query_params[$k] = $qv;
+}
 
 require_once __DIR__ . '/inc/header.php';
 ?>
+
+<?php if ($quick_view_post): ?>
+<?php
+$qv = $quick_view_post;
+$qv_close_url = posts_redirect_url();
+?>
+<div class="quickview_overlay" style="display:flex;">
+    <div class="quickview_box">
+        <div class="quickview_header">
+            <h2><?= htmlspecialchars($qv['title']) ?></h2>
+            <a href="<?= htmlspecialchars($qv_close_url) ?>" class="quickview_close">&times;</a>
+        </div>
+        <div class="quickview_body">
+            <?php if (!empty($qv['image'])): ?>
+            <div><img src="../<?= htmlspecialchars($qv['image']) ?>" alt="" style="max-width:100%;border-radius:8px;margin-bottom:16px;"></div>
+            <?php endif; ?>
+            <div class="quickview_meta">
+                <span class="quickview_meta_item"><i class="fa-solid fa-tag"></i> <?= htmlspecialchars($qv['cat_name']) ?></span>
+                <span class="quickview_meta_item"><i class="fa-solid fa-circle"></i> <?= ucfirst(htmlspecialchars($qv['status'])) ?></span>
+                <span class="quickview_meta_item"><i class="fa-solid fa-user"></i> <?= htmlspecialchars($qv['user_name']) ?></span>
+                <span class="quickview_meta_item"><i class="fa-solid fa-calendar"></i> <?= date('M j, Y', strtotime($qv['created_at'])) ?></span>
+            </div>
+            <?php if (!empty($qv['rejection_reason'])): ?>
+            <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;font-size:13px;color:#991B1B;margin-bottom:16px;">
+                <strong style="color:#EF4444;">Rejection Reason</strong><br><?= htmlspecialchars($qv['rejection_reason']) ?>
+            </div>
+            <?php endif; ?>
+            <div class="quickview_content"><?= render_post_content($qv['content']) ?></div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <?php render_notification($message, $message_type); ?>
 
@@ -233,6 +293,6 @@ require_once __DIR__ . '/inc/header.php';
         </form>
     </div>
 </div>
-<script src="../assets/js/posts-dropdown.js"></script>
+<?php $extra_scripts[] = '../assets/js/posts-dropdown.js'; ?>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
