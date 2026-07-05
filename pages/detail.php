@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $stmt = $conn->prepare("
                 insert into comments (id_post, author_name, comment_text, status)
-                values (:id_post, :author_name, :comment_text, 'approved')
+                values (:id_post, :author_name, :comment_text, 'pending')
             ");
             $stmt->execute([
                 ':id_post' => $post_id,
