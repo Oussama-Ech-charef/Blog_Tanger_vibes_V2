@@ -29,7 +29,7 @@ require_once __DIR__ . '/inc/header.php';
 
 <div class="grid_2col">
     <div class="card">
-        <div class="card_header"><h2><i class="fa-solid fa-user icon_primary" aria-hidden="true"></i><?= __('settings_admin_profile') ?></h2></div>
+        <div class="card_header"><h2><i class="fa-solid fa-user icon_primary" aria-hidden="true"></i><?= $is_admin ? __('settings_admin_profile') : __('settings_profile') ?></h2></div>
         <div class="card_body">
             <?php if ($admin_info): ?>
             <div style="display:grid;gap:16px;">
