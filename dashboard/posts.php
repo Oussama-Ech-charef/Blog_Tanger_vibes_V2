@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/init.php';
-$page_title = __('posts_management_title');
+$page_title = $is_admin ? __('posts_management_title') : __('posts_my_posts_title');
 
+$uid = current_user_id();
 $message = '';
 $message_type = '';
 
@@ -28,8 +29,9 @@ function posts_redirect_url() {
     return 'posts.php' . (!empty($params) ? '?' . http_build_query($params) : '');
 }
 
-// Approve
+// Approve — admin only
 if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
+    require_admin();
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         $pid = (int)$_POST['approve'];
         try {
@@ -50,8 +52,9 @@ if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
     } else { $_SESSION['flash_msg'] = __('posts_error_security'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
 }
 
-// Reject
+// Reject — admin only
 if (isset($_POST['reject_id'])) {
+    require_admin();
     $pid = (int)$_POST['reject_id'];
     $reason = trim($_POST['rejection_reason'] ?? '');
     if (validate_csrf_token($_POST['csrf_token'] ?? '') && !empty($reason)) {
@@ -73,19 +76,26 @@ if (isset($_POST['reject_id'])) {
     } else { $_SESSION['flash_msg'] = __('posts_error_reason_required'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
 }
 
-// Delete — admin can delete any post
+// Delete — admin can delete any post, user can delete own
 if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         $pid = (int)$_POST['delete'];
         try {
-            $t = $conn->prepare("SELECT title, image FROM posts WHERE id_post=:id");
-            $t->execute([':id' => $pid]);
+            $ownership_sql = $is_admin ? "" : " AND id_user = :uid";
+            $t = $conn->prepare("SELECT title, image FROM posts WHERE id_post=:id$ownership_sql");
+            $params_bind = [':id' => $pid];
+            if (!$is_admin) $params_bind[':uid'] = $uid;
+            $t->execute($params_bind);
             $del_post = $t->fetch(PDO::FETCH_ASSOC);
-            $title = $del_post ? $del_post['title'] : "#$pid";
+            if (!$del_post) { $_SESSION['flash_msg'] = __('posts_error_generic'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+            $title = $del_post['title'];
 
             $conn->prepare("DELETE FROM comments WHERE id_post=:id")->execute([':id'=>$pid]);
-            $s = $conn->prepare("DELETE FROM posts WHERE id_post=:id");
-            $s->execute([':id'=>$pid]);
+            $del_where = $is_admin ? "id_post=:id" : "id_post=:id AND id_user=:uid";
+            $del_params = [':id'=>$pid];
+            if (!$is_admin) $del_params[':uid'] = $uid;
+            $s = $conn->prepare("DELETE FROM posts WHERE $del_where");
+            $s->execute($del_params);
 
             if ($s->rowCount()) {
                 safe_delete_uploaded_image($del_post['image'] ?? null);
@@ -104,8 +114,11 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
 $quick_view_post = null;
 if (isset($_GET['view']) && is_numeric($_GET['view'])) {
     $qv_id = (int)$_GET['view'];
-    $qv_s = $conn->prepare("SELECT posts.*, categories.cat_name, users.user_name FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE posts.id_post=:id");
-    $qv_s->execute([':id' => $qv_id]);
+    $ownership_sql = $is_admin ? "" : " AND posts.id_user = :uid";
+    $qv_s = $conn->prepare("SELECT posts.*, categories.cat_name, users.user_name FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE posts.id_post=:id$ownership_sql");
+    $qv_params = [':id' => $qv_id];
+    if (!$is_admin) $qv_params[':uid'] = $uid;
+    $qv_s->execute($qv_params);
     $quick_view_post = $qv_s->fetch(PDO::FETCH_ASSOC);
 }
 
@@ -116,8 +129,8 @@ $p_offset = get_offset($p_page, $per_page);
 
 $search = trim($_GET['q'] ?? '');
 
-$where = "(users.role = 'admin' OR posts.status != :draft_status)";
-$params = [':draft_status' => STATUS_DRAFT];
+$where = $is_admin ? "(users.role = 'admin' OR posts.status != :draft_status)" : "posts.id_user = :uid";
+$params = $is_admin ? [':draft_status' => STATUS_DRAFT] : [':uid' => $uid];
 
 if (!empty($search)) {
     $where .= " AND (posts.title LIKE :s OR posts.content LIKE :s2)";
@@ -197,19 +210,21 @@ $qv_close_url = posts_redirect_url();
 </form>
 
 <div class="card">
-    <div class="card_header"><h2><?= __('posts_all_posts') ?></h2></div>
+    <div class="card_header"><h2><?= $is_admin ? __('posts_all_posts') : __('posts_my_posts_title') ?></h2></div>
     <div class="card_body_no_padding">
         <div class="table_wrapper">
             <table class="data_table">
-                <thead><tr><th><?= __('posts_th_title') ?></th><th><?= __('posts_th_category') ?></th><th><?= __('posts_th_author') ?></th><th><?= __('posts_th_role') ?></th><th><?= __('posts_th_status') ?></th><th><?= __('posts_th_date') ?></th><th><?= __('posts_th_actions') ?></th></tr></thead>
+                <thead><tr><th><?= __('posts_th_title') ?></th><th><?= __('posts_th_category') ?></th><?php if ($is_admin): ?><th><?= __('posts_th_author') ?></th><th><?= __('posts_th_role') ?></th><?php endif; ?><th><?= __('posts_th_status') ?></th><th><?= __('posts_th_date') ?></th><th><?= __('posts_th_actions') ?></th></tr></thead>
                 <tbody>
                     <?php if (!empty($posts)): ?>
                         <?php foreach ($posts as $p): ?>
                         <tr>
                             <td><strong><?=htmlspecialchars($p['title'])?></strong><?php if(!empty($p['rejection_reason'])):?><br><small class="rejection_reason"><?= sprintf(__('posts_rejection_reason'), htmlspecialchars($p['rejection_reason'])) ?></small><?php endif;?></td>
                             <td><?=htmlspecialchars($p['cat_name'])?></td>
+                            <?php if ($is_admin): ?>
                             <td><?=htmlspecialchars($p['user_name'])?></td>
                             <td><span class="role_badge role_<?=$p['author_role']?>"><?=ucfirst($p['author_role'])?></span></td>
+                            <?php endif; ?>
                             <td><span class="status_badge <?=$p['status']?>"><?=ucfirst(htmlspecialchars($p['status']))?></span></td>
                             <td class="date_cell"><?=date('M j, Y',strtotime($p['created_at']))?></td>
                             <td>
@@ -217,8 +232,9 @@ $qv_close_url = posts_redirect_url();
                                     <div class="action_dropdown">
                                         <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="<?= __('dashboard_aria_actions') ?>"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
-                                            <button type="button" class="dropdown_item" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('posts_view_post') ?></button>
-                                            <?php if ($p['status'] === STATUS_PENDING): ?>
+                                            <a href="preview.php?id=<?= $p['id_post'] ?>" class="dropdown_item"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('posts_view_post') ?></a>
+                                            <button type="button" class="dropdown_item" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-window-maximize" aria-hidden="true"></i> <?= __('posts_quick_view') ?></button>
+                                            <?php if ($is_admin && $p['status'] === STATUS_PENDING): ?>
                                             <div class="dropdown_divider"></div>
                                             <form method="POST" action="posts.php" class="dropdown_form">
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
@@ -228,10 +244,11 @@ $qv_close_url = posts_redirect_url();
                                             </form>
                                             <button type="button" class="dropdown_item dropdown_reject" data-post-id="<?=$p['id_post']?>" data-post-title="<?=htmlspecialchars($p['title'], ENT_QUOTES)?>"><i class="fa-solid fa-ban" aria-hidden="true"></i> <?= __('posts_reject') ?></button>
                                             <?php endif; ?>
-                                            <?php if ($p['author_role'] === 'admin'): ?>
+                                            <?php if ($is_admin || (int)$p['id_user'] === $uid): ?>
                                             <div class="dropdown_divider"></div>
                                             <a href="edit_post.php?id=<?=$p['id_post']?>" class="dropdown_item"><i class="fa-solid fa-pen" aria-hidden="true"></i> <?= __('posts_edit_post') ?></a>
                                             <?php endif; ?>
+                                            <?php if ($is_admin || (int)$p['id_user'] === $uid): ?>
                                             <div class="dropdown_divider"></div>
                                             <form method="POST" action="posts.php" class="dropdown_form">
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
@@ -239,6 +256,7 @@ $qv_close_url = posts_redirect_url();
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
                                                 <button type="submit" class="dropdown_item dropdown_danger dropdown_delete"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('posts_delete_post') ?></button>
                                             </form>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
@@ -246,7 +264,7 @@ $qv_close_url = posts_redirect_url();
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-file-lines"></i><h3><?= __('posts_empty_title') ?></h3><p><?= __('posts_empty_desc') ?></p></div></td></tr>
+                        <tr><td colspan="<?= $is_admin ? 7 : 5 ?>"><div class="empty_state"><i class="fa-solid fa-file-lines"></i><h3><?= __('posts_empty_title') ?></h3><p><?= __('posts_empty_desc') ?></p></div></td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
