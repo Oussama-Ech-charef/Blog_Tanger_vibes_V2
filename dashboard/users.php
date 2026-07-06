@@ -1,6 +1,6 @@
 <?php
-$page_title = 'User Management';
 require_once __DIR__ . '/init.php';
+$page_title = __('users_management_title');
 $message = ''; $message_type = '';
 
 $csrf = get_csrf_token();
@@ -15,10 +15,10 @@ if (isset($_POST['role'],$_POST['uid']) && is_numeric($_POST['uid'])) {
         if ($uid !== (int)$_SESSION['id_user']) {
             try {
                 $conn->prepare("UPDATE users SET role=:r WHERE id_user=:id")->execute([':r'=>$nr,':id'=>$uid]);
-                $message = "Role updated to $nr."; $message_type = 'success';
-            } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
-        } else { $message = 'Cannot change your own role.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+                $message = sprintf(__('users_role_updated'), $nr); $message_type = 'success';
+            } catch (PDOException $e) { error_log($e->getMessage()); $message = __('users_error_generic'); $message_type = 'error'; }
+        } else { $message = __('users_error_self_role'); $message_type = 'error'; }
+    } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
 // Activate / Deactivate
@@ -28,10 +28,10 @@ if (isset($_POST['activate']) && is_numeric($_POST['activate'])) {
         if ($uid !== (int)$_SESSION['id_user']) {
             try {
                 $conn->prepare("UPDATE users SET is_active=1 WHERE id_user=:id")->execute([':id'=>$uid]);
-                $message = 'User activated.'; $message_type = 'success';
-            } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
-        } else { $message = 'Cannot deactivate your own account.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+                $message = __('users_activated'); $message_type = 'success';
+            } catch (PDOException $e) { error_log($e->getMessage()); $message = __('users_error_generic'); $message_type = 'error'; }
+        } else { $message = __('users_error_self_deactivate'); $message_type = 'error'; }
+    } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 if (isset($_POST['deactivate']) && is_numeric($_POST['deactivate'])) {
     if (validate_csrf_token($_csrf_token)) {
@@ -39,10 +39,10 @@ if (isset($_POST['deactivate']) && is_numeric($_POST['deactivate'])) {
         if ($uid !== (int)$_SESSION['id_user']) {
             try {
                 $conn->prepare("UPDATE users SET is_active=0 WHERE id_user=:id")->execute([':id'=>$uid]);
-                $message = 'User deactivated.'; $message_type = 'success';
-            } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
-        } else { $message = 'Cannot deactivate your own account.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+                $message = __('users_deactivated'); $message_type = 'success';
+            } catch (PDOException $e) { error_log($e->getMessage()); $message = __('users_error_generic'); $message_type = 'error'; }
+        } else { $message = __('users_error_self_deactivate'); $message_type = 'error'; }
+    } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
 // Delete
@@ -54,10 +54,10 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
                 $conn->prepare("DELETE FROM comments WHERE id_post IN (SELECT id_post FROM posts WHERE id_user=:u)")->execute([':u'=>$uid]);
                 $conn->prepare("DELETE FROM posts WHERE id_user=:u")->execute([':u'=>$uid]);
                 $conn->prepare("DELETE FROM users WHERE id_user=:id")->execute([':id'=>$uid]);
-                $message = 'User deleted.'; $message_type = 'success';
-            } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
-        } else { $message = 'Cannot delete your own account.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+                $message = __('users_deleted'); $message_type = 'success';
+            } catch (PDOException $e) { error_log($e->getMessage()); $message = __('users_error_generic'); $message_type = 'error'; }
+        } else { $message = __('users_error_self_delete'); $message_type = 'error'; }
+    } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
 // Filter vars 
@@ -115,38 +115,38 @@ require_once __DIR__ . '/inc/header.php';
 <form method="GET" id="filterForm" class="filters_bar">
     <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
-        <input type="text" name="q" placeholder="Search by name or email..." value="<?=htmlspecialchars($search)?>" onchange="this.form.submit()">
+        <input type="text" name="q" placeholder="<?= __('users_search_placeholder') ?>" value="<?=htmlspecialchars($search)?>" onchange="this.form.submit()">
     </div>
     <select name="role" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Roles</option>
-        <option value="admin" <?=$role_filter==='admin'?'selected':''?>>Administrators</option>
-        <option value="user" <?=$role_filter==='user'?'selected':''?>>Normal Users</option>
+        <option value=""><?= __('users_filter_all_roles') ?></option>
+        <option value="admin" <?=$role_filter==='admin'?'selected':''?>><?= __('users_filter_admins') ?></option>
+        <option value="user" <?=$role_filter==='user'?'selected':''?>><?= __('users_filter_users') ?></option>
     </select>
     <select name="status" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Status</option>
-        <option value="active" <?=$status_filter==='active'?'selected':''?>>Active</option>
-        <option value="inactive" <?=$status_filter==='inactive'?'selected':''?>>Inactive</option>
+        <option value=""><?= __('users_filter_all_status') ?></option>
+        <option value="active" <?=$status_filter==='active'?'selected':''?>><?= __('users_filter_active') ?></option>
+        <option value="inactive" <?=$status_filter==='inactive'?'selected':''?>><?= __('users_filter_inactive') ?></option>
     </select>
-    <span class="ml_auto" style="font-size:14px;color:var(--db-text-secondary);font-weight:500;"><?=$total_records?> user(s)</span>
+    <span class="ml_auto" style="font-size:14px;color:var(--db-text-secondary);font-weight:500;"><?= sprintf(__('users_count'), $total_records) ?></span>
     <?php if (!empty($search) || !empty($role_filter) || !empty($status_filter)): ?>
-    <a href="users.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
+    <a href="users.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> <?= __('users_clear_filter') ?></a>
     <?php endif; ?>
 </form>
 
 <div class="card">
-    <div class="card_header"><h2>All Users</h2></div>
+    <div class="card_header"><h2><?= __('users_table_title') ?></h2></div>
     <div class="card_body_no_padding">
         <div class="table_wrapper">
             <table class="data_table">
-                <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Posts</th><th>Registered</th><th>Actions</th></tr></thead>
+                <thead><tr><th><?= __('users_th_user') ?></th><th><?= __('users_th_email') ?></th><th><?= __('users_th_role') ?></th><th><?= __('users_th_status') ?></th><th><?= __('users_th_posts') ?></th><th><?= __('users_th_registered') ?></th><th><?= __('users_th_actions') ?></th></tr></thead>
                 <tbody>
                     <?php if (!empty($users)): ?>
                         <?php foreach ($users as $u): ?>
                         <tr>
-                            <td><div class="flex_center" style="gap:10px;"><span class="user_avatar <?=avatar_color($u['user_name'])?>"><?=avatar_initials($u['user_name'])?></span><div><strong><?=htmlspecialchars($u['user_name'])?></strong><?php if((int)$u['id_user']===(int)$_SESSION['id_user']):?><br><span style="font-size:11px;color:var(--db-primary);font-weight:600;">(You)</span><?php endif;?></div></div></td>
+                            <td><div class="flex_center" style="gap:10px;"><span class="user_avatar <?=avatar_color($u['user_name'])?>"><?=avatar_initials($u['user_name'])?></span><div><strong><?=htmlspecialchars($u['user_name'])?></strong><?php if((int)$u['id_user']===(int)$_SESSION['id_user']):?><br><span style="font-size:11px;color:var(--db-primary);font-weight:600;"><?= __('users_label_you') ?></span><?php endif;?></div></div></td>
                             <td><span class="date_cell" style="color:var(--db-text-secondary);"><?=htmlspecialchars($u['email'])?></span></td>
                             <td><span class="role_badge <?=$u['role']?>"><?=ucfirst(htmlspecialchars($u['role']))?></span></td>
-                            <td><span class="status_badge status_<?=!empty($u['is_active'])?'approved':'rejected'?>"><?=!empty($u['is_active'])?'Active':'Inactive'?></span></td>
+                            <td><span class="status_badge status_<?=!empty($u['is_active'])?'approved':'rejected'?>"><?=!empty($u['is_active'])?__('users_status_active'):__('users_status_inactive')?></span></td>
                             <td><span class="fw_600"><?=(int)$u['post_count']?></span></td>
                             <td class="date_cell"><?=date('M j, Y',strtotime($u['created_at']))?></td>
                             <td><div class="cell_actions">
@@ -157,7 +157,7 @@ require_once __DIR__ . '/inc/header.php';
                                             <input type="hidden" name="role" value="user">
                                             <input type="hidden" name="uid" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_secondary" onclick="return confirm('Demote to user?')"><i class="fa-solid fa-user" aria-hidden="true"></i> Demote</button>
+                                            <button type="submit" class="btn_small btn_secondary" onclick="return confirm(__('users_confirm_demote'))"><i class="fa-solid fa-user" aria-hidden="true"></i> <?= __('users_btn_demote') ?></button>
                                         </form>
                                     <?php else: ?>
                                         <form method="POST" action="users.php" class="inline_form">
@@ -165,7 +165,7 @@ require_once __DIR__ . '/inc/header.php';
                                             <input type="hidden" name="role" value="admin">
                                             <input type="hidden" name="uid" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_success" onclick="return confirm('Promote to admin?')"><i class="fa-solid fa-shield" aria-hidden="true"></i> Make Admin</button>
+                                            <button type="submit" class="btn_small btn_success" onclick="return confirm(__('users_confirm_promote'))"><i class="fa-solid fa-shield" aria-hidden="true"></i> <?= __('users_btn_make_admin') ?></button>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!empty($u['is_active'])): ?>
@@ -173,30 +173,30 @@ require_once __DIR__ . '/inc/header.php';
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="deactivate" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_warning" onclick="return confirm('Deactivate user?')" aria-label="Deactivate user"><i class="fa-solid fa-pause"></i></button>
+                                            <button type="submit" class="btn_small btn_warning" onclick="return confirm(__('users_confirm_deactivate'))" aria-label="<?= __('dashboard_aria_deactivate_user') ?>"><i class="fa-solid fa-pause"></i></button>
                                         </form>
                                     <?php else: ?>
                                         <form method="POST" action="users.php" class="inline_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="activate" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_success" onclick="return confirm('Activate user?')" aria-label="Activate user"><i class="fa-solid fa-play"></i></button>
+                                            <button type="submit" class="btn_small btn_success" onclick="return confirm(__('users_confirm_activate'))" aria-label="<?= __('dashboard_aria_activate_user') ?>"><i class="fa-solid fa-play"></i></button>
                                         </form>
                                     <?php endif; ?>
                                     <form method="POST" action="users.php" class="inline_form">
                                         <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                         <input type="hidden" name="delete" value="<?=$u['id_user']?>">
                                         <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                        <button type="submit" class="btn_small btn_danger" onclick="return confirm('Delete user and all posts?')" aria-label="Delete user"><i class="fa-solid fa-trash"></i></button>
+                                        <button type="submit" class="btn_small btn_danger" onclick="return confirm(__('users_confirm_delete'))" aria-label="<?= __('dashboard_aria_delete_user') ?>"><i class="fa-solid fa-trash"></i></button>
                                     </form>
                                 <?php else: ?>
-                                    <span class="text_muted" style="font-size:12px;">Current user</span>
+                                    <span class="text_muted" style="font-size:12px;"><?= __('users_label_current_user') ?></span>
                                 <?php endif; ?>
                             </div></td>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-users"></i><h3>No users found</h3><p>Try adjusting your filters.</p></div></td></tr>
+                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-users"></i><h3><?= __('users_empty_title') ?></h3><p><?= __('users_empty_desc') ?></p></div></td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
