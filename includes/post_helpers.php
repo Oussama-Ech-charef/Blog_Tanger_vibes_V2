@@ -11,9 +11,9 @@ require_once __DIR__ . '/security.php';
  */
 function validate_post_input($title, $cat_id, $content) {
     $errors = [];
-    if (empty($title)) $errors[] = 'Title is required.';
-    if ((int)$cat_id <= 0) $errors[] = 'Category is required.';
-    if (trim(strip_tags((string)$content)) === '') $errors[] = 'Content is required.';
+    if (empty($title)) $errors[] = __('post_error_title_required');
+    if ((int)$cat_id <= 0) $errors[] = __('post_error_category_required');
+    if (trim(strip_tags((string)$content)) === '') $errors[] = __('post_error_content_required');
     return $errors;
 }
 
@@ -41,7 +41,7 @@ function process_post_image($existing_path = null) {
     if (move_uploaded_file($_FILES['image']['tmp_name'], $dest)) {
         $result['path'] = 'assets/uploads/' . $fn;
     } else {
-        $result['errors'][] = 'Failed to upload image.';
+        $result['errors'][] = __('post_error_upload_failed');
     }
 
     return $result;

@@ -122,9 +122,9 @@ function validate_uploaded_image($file) {
     // check upload errors
     if ($file['error'] !== UPLOAD_ERR_OK) {
         if ($file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE) {
-            $errors[] = "Selected image size exceeds the maximum allowed limit of $max_size_display.";
+            $errors[] = sprintf(__('upload_error_size'), $max_size_display);
         } else {
-            $errors[] = "Image upload failed. Please try again.";
+            $errors[] = __('upload_error_failed');
         }
         return $errors;
     }
@@ -132,7 +132,7 @@ function validate_uploaded_image($file) {
     // check file size
     if ($file['size'] > $max_size) {
         $actual = format_file_size($file['size']);
-        $errors[] = "Selected image size: $actual. Maximum allowed size: $max_size_display.";
+        $errors[] = sprintf(__('upload_error_size'), $max_size_display);
         return $errors;
     }
 
@@ -152,7 +152,7 @@ function validate_uploaded_image($file) {
     $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
 
     if (!in_array($mime, $allowed_mimes)) {
-        $errors[] = "Unsupported image format.";
+        $errors[] = __('upload_error_format');
         return $errors;
     }
 
@@ -161,7 +161,7 @@ function validate_uploaded_image($file) {
     $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
 
     if (!in_array($ext, $allowed_exts)) {
-        $errors[] = "Unsupported image format.";
+        $errors[] = __('upload_error_extension');
         return $errors;
     }
 

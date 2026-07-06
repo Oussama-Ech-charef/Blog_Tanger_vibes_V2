@@ -12,7 +12,7 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['success' => false, 'error' => 'Method not allowed.']);
+    echo json_encode(['success' => false, 'error' => __('auth_method_not_allowed')]);
     exit();
 }
 
@@ -86,7 +86,7 @@ if ($action === 'login') {
 
     // check if account is active
     if (isset($user['is_active']) && empty($user['is_active'])) {
-        echo json_encode(['success' => false, 'error' => 'Account deactivated. Contact an administrator.']);
+        echo json_encode(['success' => false, 'error' => __('login_error_deactivated')]);
         exit();
     }
 
@@ -167,4 +167,4 @@ if ($action === 'register') {
 }
 
 http_response_code(400);
-echo json_encode(['success' => false, 'error' => 'Invalid action.']);
+echo json_encode(['success' => false, 'error' => __('auth_invalid_action')]);
