@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_admin();
 $page_title = __('messages_inbox_title');
 $message = ''; $message_type = '';
 

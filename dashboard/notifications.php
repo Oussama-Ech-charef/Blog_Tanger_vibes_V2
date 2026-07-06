@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_admin();
 $page_title = __('notifications_title');
 
 // Mark single as read
