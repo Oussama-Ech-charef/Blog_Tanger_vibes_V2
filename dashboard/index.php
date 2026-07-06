@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Overview';
 require_once __DIR__ . '/init.php';
+$page_title = __('dashboard_overview_title');
 
 // Total posts by status
 $status_stmt = $conn->prepare("
@@ -74,56 +74,56 @@ foreach ($category_chart as $i => $r) { $cat_labels[] = $r['cat_name']; $cat_dat
 require_once __DIR__ . '/inc/header.php';
 ?>
 
-<?php if ($pending_count > 0): render_notification($pending_count . ' post(s) pending review.', 'warning'); endif; ?>
+<?php if ($pending_count > 0): render_notification(sprintf(__('notif_pending_review'), $pending_count), 'warning'); endif; ?>
 
 <section class="stats_grid">
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon blue"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span></div>
-        <p class="stat_card_label">Total Posts</p>
+        <p class="stat_card_label"><?= __('stat_total_posts') ?></p>
         <p class="stat_card_value"><?= (int)$post_stats['total'] ?></p>
-        <div class="stat_card_change positive"><?= (int)$post_stats['published'] ?> published &middot; <?= (int)$post_stats['pending'] ?> pending</div>
+        <div class="stat_card_change positive"><?= sprintf(__('stat_published_count'), (int)$post_stats['published'], (int)$post_stats['pending']) ?></div>
     </div>
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon green"><i class="fa-solid fa-check-circle" aria-hidden="true"></i></span></div>
-        <p class="stat_card_label">Published</p>
+        <p class="stat_card_label"><?= __('stat_published') ?></p>
         <p class="stat_card_value"><?= (int)$post_stats['published'] ?></p>
-        <div class="stat_card_change positive"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i> <?= (int)$post_stats['published'] ?> live</div>
+        <div class="stat_card_change positive"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i> <?= sprintf(__('stat_live_count'), (int)$post_stats['published']) ?></div>
     </div>
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon yellow"><i class="fa-solid fa-clock" aria-hidden="true"></i></span></div>
-        <p class="stat_card_label">Pending Review</p>
+        <p class="stat_card_label"><?= __('stat_pending_review') ?></p>
         <p class="stat_card_value"><?= (int)$post_stats['pending'] ?></p>
-        <div class="stat_card_change <?= $pending_count > 0 ? 'negative' : 'positive' ?>"><?= $pending_count > 0 ? 'Needs attention' : 'All clear' ?></div>
+        <div class="stat_card_change <?= $pending_count > 0 ? 'negative' : 'positive' ?>"><?= $pending_count > 0 ? __('stat_needs_attention') : __('stat_all_clear') ?></div>
     </div>
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon red"><i class="fa-solid fa-ban" aria-hidden="true"></i></span></div>
-        <p class="stat_card_label">Rejected</p>
+        <p class="stat_card_label"><?= __('stat_rejected') ?></p>
         <p class="stat_card_value"><?= (int)$post_stats['rejected'] ?></p>
     </div>
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon purple"><i class="fa-solid fa-comments" aria-hidden="true"></i></span></div>
-        <p class="stat_card_label">Comments</p>
+        <p class="stat_card_label"><?= __('stat_comments') ?></p>
         <p class="stat_card_value"><?= $comment_count ?></p>
     </div>
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon blue"><i class="fa-solid fa-users" aria-hidden="true"></i></span></div>
-        <p class="stat_card_label">Users</p>
+        <p class="stat_card_label"><?= __('stat_users') ?></p>
         <p class="stat_card_value"><?= $user_count ?></p>
-        <div class="stat_card_change positive"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i> <?= $new_users ?> new this month</div>
+        <div class="stat_card_change positive"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i> <?= sprintf(__('stat_new_users_month'), $new_users) ?></div>
     </div>
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon yellow"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span></div>
-        <p class="stat_card_label">Messages</p>
+        <p class="stat_card_label"><?= __('stat_messages') ?></p>
         <p class="stat_card_value"><?= $message_count ?></p>
-        <div class="stat_card_change <?= $unread_messages > 0 ? 'negative' : 'positive' ?>"><?= $unread_messages ?> recent</div>
+        <div class="stat_card_change <?= $unread_messages > 0 ? 'negative' : 'positive' ?>"><?= sprintf(__('stat_recent_messages'), $unread_messages) ?></div>
     </div>
 </section>
 
 <section class="chart_grid">
-    <div class="chart_container"><h3>Posts per Month</h3><canvas id="postsChart"></canvas></div>
-    <div class="chart_container"><h3>Comments per Month</h3><canvas id="commentsChart"></canvas></div>
-    <div class="chart_container"><h3>User Registrations</h3><canvas id="usersChart"></canvas></div>
-    <div class="chart_container"><h3>Content by Category</h3><canvas id="categoryChart"></canvas></div>
+    <div class="chart_container"><h3><?= __('chart_posts_month') ?></h3><canvas id="postsChart"></canvas></div>
+    <div class="chart_container"><h3><?= __('chart_comments_month') ?></h3><canvas id="commentsChart"></canvas></div>
+    <div class="chart_container"><h3><?= __('chart_user_registrations') ?></h3><canvas id="usersChart"></canvas></div>
+    <div class="chart_container"><h3><?= __('chart_content_category') ?></h3><canvas id="categoryChart"></canvas></div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
@@ -135,19 +135,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     new Chart(document.getElementById('postsChart'), {
         type: 'bar',
-        data: { labels: <?= json_encode($pm_labels) ?>, datasets: [{ label: 'Posts', data: <?= json_encode($pm_data) ?>, backgroundColor: 'rgba(0,71,171,0.15)', borderColor: '#0047AB', borderWidth: 2, borderRadius: 6, borderSkipped: false }] },
+        data: { labels: <?= json_encode($pm_labels) ?>, datasets: [{ label: '<?= __('chart_label_posts') ?>', data: <?= json_encode($pm_data) ?>, backgroundColor: 'rgba(0,71,171,0.15)', borderColor: '#0047AB', borderWidth: 2, borderRadius: 6, borderSkipped: false }] },
         options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } } }
     });
 
     new Chart(document.getElementById('commentsChart'), {
         type: 'bar',
-        data: { labels: <?= json_encode($cm_labels) ?>, datasets: [{ label: 'Comments', data: <?= json_encode($cm_data) ?>, backgroundColor: 'rgba(16,185,129,0.15)', borderColor: '#10B981', borderWidth: 2, borderRadius: 6, borderSkipped: false }] },
+        data: { labels: <?= json_encode($cm_labels) ?>, datasets: [{ label: '<?= __('chart_label_comments') ?>', data: <?= json_encode($cm_data) ?>, backgroundColor: 'rgba(16,185,129,0.15)', borderColor: '#10B981', borderWidth: 2, borderRadius: 6, borderSkipped: false }] },
         options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } } }
     });
 
     new Chart(document.getElementById('usersChart'), {
         type: 'line',
-        data: { labels: <?= json_encode($um_labels) ?>, datasets: [{ label: 'Users', data: <?= json_encode($um_data) ?>, borderColor: '#7C3AED', backgroundColor: 'rgba(124,58,237,0.08)', fill: true, tension: 0.4, pointBackgroundColor: '#7C3AED', pointRadius: 4, borderWidth: 2 }] },
+        data: { labels: <?= json_encode($um_labels) ?>, datasets: [{ label: '<?= __('chart_label_users') ?>', data: <?= json_encode($um_data) ?>, borderColor: '#7C3AED', backgroundColor: 'rgba(124,58,237,0.08)', fill: true, tension: 0.4, pointBackgroundColor: '#7C3AED', pointRadius: 4, borderWidth: 2 }] },
         options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } } }
     });
 
