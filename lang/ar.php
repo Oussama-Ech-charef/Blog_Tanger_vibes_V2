@@ -287,6 +287,8 @@ return [
     'sidebar_settings' => 'الإعدادات',
     'sidebar_back_to_site' => 'العودة إلى الموقع',
     'sidebar_logout' => 'تسجيل الخروج',
+    'sidebar_my_posts' => 'مقالاتي',
+    'sidebar_add_post' => 'إضافة مقال',
 
     // Dashboard topbar
     'topbar_view_site' => 'عرض الموقع',
@@ -294,10 +296,12 @@ return [
 
     // Dashboard overview
     'dashboard_overview_title' => 'نظرة عامة',
+    'dashboard_forbidden' => 'ليس لديك صلاحية الوصول إلى هذه الصفحة.',
     'stat_total_posts' => 'إجمالي المقالات',
     'stat_published' => 'منشور',
     'stat_pending_review' => 'قيد المراجعة',
     'stat_rejected' => 'مرفوض',
+    'stat_draft' => 'مسودات',
     'stat_comments' => 'التعليقات',
     'stat_users' => 'المستخدمون',
     'stat_messages' => 'الرسائل',
@@ -315,9 +319,11 @@ return [
     'chart_label_comments' => 'التعليقات',
     'chart_label_users' => 'المستخدمين',
     'notif_pending_review' => '%d مقال (مقالات) قيد المراجعة.',
+    'recent_posts_title' => 'أحدث المقالات',
 
     // Posts management
     'posts_management_title' => 'إدارة المقالات',
+    'posts_my_posts_title' => 'مقالاتي',
     'posts_created' => 'تم إنشاء المقال بنجاح.',
     'posts_updated' => 'تم تحديث المقال بنجاح.',
     'posts_approved' => 'تمت الموافقة على المقال ونشره.',
@@ -339,6 +345,8 @@ return [
     'posts_th_actions' => 'الإجراءات',
     'posts_rejection_reason' => 'السبب: %s',
     'posts_view_post' => 'عرض المقال',
+    'posts_quick_view' => 'معاينة سريعة',
+    'post_preview_title' => 'معاينة المقال',
     'posts_approve' => 'موافقة',
     'posts_reject' => 'رفض',
     'posts_edit_post' => 'تعديل',
@@ -372,6 +380,9 @@ return [
     'add_post_public' => 'عام',
     'add_post_publish_btn' => 'نشر',
     'add_post_save_draft_btn' => 'حفظ كمسودة',
+    'add_post_submission_header' => 'تقديم',
+    'add_post_submit_review' => 'إرسال للمراجعة',
+    'add_post_submit_review_btn' => 'إرسال للمراجعة',
     'add_post_category_header' => 'الفئة',
     'add_post_choose_category' => 'اختر فئة',
     'add_post_select_category' => 'اختر فئة...',
@@ -600,6 +611,7 @@ return [
     'settings_password_min_length' => '6 أحرف على الأقل.',
     'settings_password_mismatch' => 'كلمتا المرور غير متطابقتين.',
     'settings_password_changed' => 'تم تغيير كلمة المرور.',
+    'settings_profile' => 'الملف الشخصي',
     'settings_admin_profile' => 'الملف الشخصي للمشرف',
     'settings_username' => 'اسم المستخدم',
     'settings_email' => 'البريد الإلكتروني',
