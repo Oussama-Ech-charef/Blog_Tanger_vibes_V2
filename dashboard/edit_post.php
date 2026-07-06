@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Edit Post';
 require_once __DIR__ . '/init.php';
+$page_title = __('edit_post_title');
 require_once __DIR__ . '/../includes/post_helpers.php';
 
 $uid = (int)$_SESSION['id_user'];
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_post'])) {
     $cat_id = (int)($_POST['category'] ?? 0);
     $content = trim($_POST['content'] ?? '');
 
-    if (!validate_csrf_token($_POST['csrf_token'] ?? '')) $errors[] = 'Invalid request.';
+    if (!validate_csrf_token($_POST['csrf_token'] ?? '')) $errors[] = __('post_error_invalid');
     $errors = array_merge($errors, validate_post_input($title, $cat_id, $content));
 
     $old_image = $post['image'];
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_post'])) {
                 safe_delete_uploaded_image($new_upload_path);
             }
             error_log($e->getMessage());
-            $errors[] = 'Database error.';
+            $errors[] = __('post_error_db');
         }
     }
 }
@@ -81,13 +81,13 @@ require_once __DIR__ . '/inc/header.php';
 
                 <div class="add_post_header">
                     <div>
-                        <h1>Edit Post</h1>
-                        <p>Update your content and settings</p>
+                        <h1><?= __('edit_post_heading') ?></h1>
+                        <p><?= __('edit_post_desc') ?></p>
                     </div>
                     <div class="flex_row" style="gap:8px;">
                         <span class="status_badge <?= $post['status'] ?>"><?= ucfirst(htmlspecialchars($post['status'])) ?></span>
-                        <a href="../pages/detail.php?id=<?= $post_id ?>" class="btn btn_secondary btn_sm" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> Preview</a>
-                        <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back</a>
+                        <a href="../pages/detail.php?id=<?= $post_id ?>" class="btn btn_secondary btn_sm" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('edit_post_preview') ?></a>
+                        <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <?= __('add_post_back') ?></a>
                     </div>
                 </div>
 
@@ -97,15 +97,15 @@ require_once __DIR__ . '/inc/header.php';
                         <div class="upload_zone<?= $has_image ? ' has_image' : '' ?>" id="uploadZone">
                             <div class="upload_placeholder" id="uploadPlaceholder"<?= $has_image ? ' style="display:none;"' : '' ?>>
                                 <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-                                <span class="upload_text">Add a cover image</span>
-                                <span class="upload_hint">Click to browse or drag &amp; drop — JPEG, PNG, WebP</span>
+                                <span class="upload_text"><?= __('add_post_add_cover') ?></span>
+                                <span class="upload_hint">Click to browse or drag &amp; drop — <?= __('add_post_upload_hint') ?></span>
                             </div>
                             <div class="upload_preview" id="uploadPreview"<?= $has_image ? '' : ' style="display:none;"' ?>>
                                 <img id="previewImage" src="<?= $has_image ? '../' . htmlspecialchars($post['image']) : '' ?>" alt="Cover image preview">
                                 <div class="upload_info">
                                     <span id="imageInfo"><?= $has_image ? htmlspecialchars(basename($post['image'])) : '' ?></span>
                                     <button type="button" class="upload_remove" id="uploadRemove">
-                                        <i class="fa-solid fa-xmark"></i> Remove
+                                        <i class="fa-solid fa-xmark"></i> <?= __('add_post_remove') ?>
                                     </button>
                                 </div>
                             </div>
@@ -117,8 +117,8 @@ require_once __DIR__ . '/inc/header.php';
                 <!-- Card 2 — Post Title -->
                 <div class="add_post_card">
                     <div class="add_post_card_body">
-                        <label class="add_post_input_label" for="title">Post Title</label>
-                        <input type="text" id="title" name="title" value="<?= htmlspecialchars($post['title']) ?>" required maxlength="255" placeholder="Enter your post title..." class="title_input" autocomplete="off">
+                        <label class="add_post_input_label" for="title"><?= __('add_post_title_label') ?></label>
+                        <input type="text" id="title" name="title" value="<?= htmlspecialchars($post['title']) ?>" required maxlength="255" placeholder="<?= __('add_post_title_placeholder') ?>" class="title_input" autocomplete="off">
                     </div>
                 </div>
 
@@ -137,29 +137,29 @@ require_once __DIR__ . '/inc/header.php';
                 <div class="add_post_card">
                     <div class="add_post_card_header">
                         <i class="fa-solid fa-rocket" aria-hidden="true"></i>
-                        <span>Publish</span>
+                        <span><?= __('add_post_publish_header') ?></span>
                     </div>
                     <div class="add_post_card_body">
                         <div class="add_post_form_group">
-                            <label class="add_post_label" for="status">Status</label>
+                            <label class="add_post_label" for="status"><?= __('add_post_status') ?></label>
                             <select id="status" name="status" class="add_post_select">
-                                <option value="published" <?= $post['status'] === STATUS_PUBLISHED ? 'selected' : '' ?>>Published</option>
-                                <option value="draft" <?= $post['status'] === STATUS_DRAFT ? 'selected' : '' ?>>Draft</option>
+                                <option value="published" <?= $post['status'] === STATUS_PUBLISHED ? 'selected' : '' ?>><?= __('add_post_published') ?></option>
+                                <option value="draft" <?= $post['status'] === STATUS_DRAFT ? 'selected' : '' ?>><?= __('add_post_draft') ?></option>
                             </select>
                         </div>
                         <div class="add_post_form_group">
-                            <label class="add_post_label">Visibility</label>
+                            <label class="add_post_label"><?= __('add_post_visibility') ?></label>
                             <div class="add_post_visibility">
                                 <i class="fa-solid fa-globe" aria-hidden="true"></i>
-                                <span>Public</span>
+                                <span><?= __('add_post_public') ?></span>
                             </div>
                         </div>
                         <div class="add_post_sidebar_actions">
                             <button type="submit" class="btn btn_primary btn_full" data-set-status="published">
-                                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Update &amp; Publish
+                                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('edit_post_update_publish') ?>
                             </button>
                             <button type="submit" class="btn btn_secondary btn_full" data-set-status="draft">
-                                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save as Draft
+                                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> <?= __('edit_post_save_draft') ?>
                             </button>
                         </div>
                     </div>
@@ -169,13 +169,13 @@ require_once __DIR__ . '/inc/header.php';
                 <div class="add_post_card">
                     <div class="add_post_card_header">
                         <i class="fa-solid fa-tag" aria-hidden="true"></i>
-                        <span>Category</span>
+                        <span><?= __('add_post_category_header') ?></span>
                     </div>
                     <div class="add_post_card_body">
                         <div class="add_post_form_group">
-                            <label class="add_post_label" for="category">Choose category</label>
+                            <label class="add_post_label" for="category"><?= __('add_post_choose_category') ?></label>
                             <select id="category" name="category" required class="add_post_select">
-                                <option value="">Select a category...</option>
+                                <option value=""><?= __('add_post_select_category') ?></option>
                                 <?php foreach ($categories as $c): ?>
                                 <option value="<?= $c['id_category'] ?>" <?= (int)$post['id_category'] === (int)$c['id_category'] ? 'selected' : '' ?>><?= htmlspecialchars($c['cat_name']) ?></option>
                                 <?php endforeach; ?>
@@ -188,14 +188,14 @@ require_once __DIR__ . '/inc/header.php';
                 <div class="add_post_card">
                     <div class="add_post_card_header">
                         <i class="fa-solid fa-image" aria-hidden="true"></i>
-                        <span>Featured Image</span>
+                        <span><?= __('add_post_featured_image') ?></span>
                     </div>
                     <div class="add_post_card_body">
                         <div class="add_post_image_area">
                             <img class="add_post_image_preview<?= $has_image ? ' show' : '' ?>" id="sidebarPreview" src="<?= $has_image ? '../' . htmlspecialchars($post['image']) : '' ?>" alt="Featured image preview">
                             <div class="add_post_image_placeholder" id="sidebarPlaceholder"<?= $has_image ? ' style="display:none;"' : '' ?>>
                                 <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-                                <span>Upload image</span>
+                                <span><?= __('add_post_upload_image') ?></span>
                             </div>
                         </div>
                     </div>
@@ -205,23 +205,23 @@ require_once __DIR__ . '/inc/header.php';
                 <div class="add_post_card">
                     <div class="add_post_card_header">
                         <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                        <span>Post Information</span>
+                        <span><?= __('add_post_info_header') ?></span>
                     </div>
                     <div class="add_post_card_body">
                         <div class="add_post_info_row">
-                            <span class="add_post_info_label">Author</span>
+                            <span class="add_post_info_label"><?= __('add_post_author') ?></span>
                             <span class="add_post_info_value"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
                         </div>
                         <div class="add_post_info_row">
-                            <span class="add_post_info_label">Created</span>
+                            <span class="add_post_info_label"><?= __('add_post_created') ?></span>
                             <span class="add_post_info_value"><?= date('M j, Y', strtotime($post['created_at'] ?? $post['updated_at'] ?? 'now')) ?></span>
                         </div>
                         <div class="add_post_info_row">
-                            <span class="add_post_info_label">Words</span>
+                            <span class="add_post_info_label"><?= __('add_post_words') ?></span>
                             <span class="add_post_info_value" id="wordCount">0</span>
                         </div>
                         <div class="add_post_info_row">
-                            <span class="add_post_info_label">Characters</span>
+                            <span class="add_post_info_label"><?= __('add_post_characters') ?></span>
                             <span class="add_post_info_value" id="charCount">0</span>
                         </div>
                     </div>

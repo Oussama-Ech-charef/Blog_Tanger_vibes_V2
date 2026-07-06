@@ -50,7 +50,7 @@
             var val = this.getAttribute('data-val') || null;
 
             if (cmd === 'createLink') {
-                var url = prompt('Enter URL:');
+                var url = prompt(Lang ? Lang.editorLinkUrl : 'Enter URL:');
                 if (url) {
                     focusEditor();
                     document.execCommand(cmd, false, url);
@@ -60,7 +60,7 @@
             }
 
             if (cmd === 'insertImage') {
-                var imgUrl = prompt('Enter image URL:');
+                var imgUrl = prompt(Lang ? Lang.editorImageUrl : 'Enter image URL:');
                 if (imgUrl) {
                     focusEditor();
                     document.execCommand(cmd, false, imgUrl);
