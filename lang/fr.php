@@ -287,6 +287,8 @@ return [
     'sidebar_settings' => 'Paramètres',
     'sidebar_back_to_site' => 'Retour au site',
     'sidebar_logout' => 'Déconnexion',
+    'sidebar_my_posts' => 'Mes articles',
+    'sidebar_add_post' => 'Ajouter un article',
 
     // Dashboard topbar
     'topbar_view_site' => 'Voir le site',
@@ -294,10 +296,12 @@ return [
 
     // Dashboard overview
     'dashboard_overview_title' => 'Aperçu',
+    'dashboard_forbidden' => 'Vous n\'avez pas la permission d\'accéder à cette page.',
     'stat_total_posts' => 'Nombre d\'articles',
     'stat_published' => 'Publié',
     'stat_pending_review' => 'En attente',
     'stat_rejected' => 'Rejeté',
+    'stat_draft' => 'Brouillons',
     'stat_comments' => 'Commentaires',
     'stat_users' => 'Utilisateurs',
     'stat_messages' => 'Messages',
@@ -315,9 +319,11 @@ return [
     'chart_label_comments' => 'Commentaires',
     'chart_label_users' => 'Utilisateurs',
     'notif_pending_review' => '%d article(s) en attente de révision.',
+    'recent_posts_title' => 'Articles récents',
 
     // Posts management
     'posts_management_title' => 'Gestion des articles',
+    'posts_my_posts_title' => 'Mes articles',
     'posts_created' => 'Article créé avec succès.',
     'posts_updated' => 'Article mis à jour avec succès.',
     'posts_approved' => 'Article approuvé et publié.',
@@ -339,6 +345,8 @@ return [
     'posts_th_actions' => 'Actions',
     'posts_rejection_reason' => 'Motif : %s',
     'posts_view_post' => 'Voir l\'article',
+    'posts_quick_view' => 'Aperçu rapide',
+    'post_preview_title' => 'Aperçu de l\'article',
     'posts_approve' => 'Approuver',
     'posts_reject' => 'Rejeter',
     'posts_edit_post' => 'Modifier',
@@ -372,6 +380,9 @@ return [
     'add_post_public' => 'Public',
     'add_post_publish_btn' => 'Publier',
     'add_post_save_draft_btn' => 'Enregistrer le brouillon',
+    'add_post_submission_header' => 'Soumission',
+    'add_post_submit_review' => 'Soumettre pour révision',
+    'add_post_submit_review_btn' => 'Soumettre pour révision',
     'add_post_category_header' => 'Catégorie',
     'add_post_choose_category' => 'Choisir une catégorie',
     'add_post_select_category' => 'Sélectionnez une catégorie...',
@@ -600,6 +611,7 @@ return [
     'settings_password_min_length' => 'Minimum 6 caractères.',
     'settings_password_mismatch' => 'Les mots de passe ne correspondent pas.',
     'settings_password_changed' => 'Mot de passe modifié.',
+    'settings_profile' => 'Profil',
     'settings_admin_profile' => 'Profil administrateur',
     'settings_username' => 'Nom d\'utilisateur',
     'settings_email' => 'Email',
