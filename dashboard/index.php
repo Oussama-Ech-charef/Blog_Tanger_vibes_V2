@@ -2,7 +2,10 @@
 require_once __DIR__ . '/init.php';
 $page_title = __('dashboard_overview_title');
 
-// Total posts by status
+$uid = current_user_id();
+
+if ($is_admin):
+// Admin global statistics
 $status_stmt = $conn->prepare("
     SELECT COUNT(*) as total,
            SUM(status = :pub) as published,
@@ -71,11 +74,34 @@ for ($i = 11; $i >= 0; $i--) {
 $cat_labels = []; $cat_data = []; $cat_colors = ['#0047AB','#10B981','#F59E0B','#EF4444','#7C3AED','#EC4899'];
 foreach ($category_chart as $i => $r) { $cat_labels[] = $r['cat_name']; $cat_data[] = (int)$r['count']; }
 
+else:
+// User personal statistics
+$status_stmt = $conn->prepare("
+    SELECT COUNT(*) as total,
+           SUM(status = :pub) as published,
+           SUM(status = :pend) as pending,
+           SUM(status = :rej) as rejected,
+           SUM(status = :draft) as draft FROM posts WHERE id_user = :uid
+");
+$status_stmt->execute([
+    ':pub' => STATUS_PUBLISHED,
+    ':pend' => STATUS_PENDING,
+    ':rej' => STATUS_REJECTED,
+    ':draft' => STATUS_DRAFT,
+    ':uid' => $uid
+]);
+$post_stats = $status_stmt->fetch(PDO::FETCH_ASSOC);
+
+$recent_posts = $conn->prepare("SELECT id_post, title, status, created_at FROM posts WHERE id_user = :uid ORDER BY created_at DESC LIMIT 5");
+$recent_posts->execute([':uid' => $uid]);
+$recent_posts = $recent_posts->fetchAll(PDO::FETCH_ASSOC);
+endif;
+
 require_once __DIR__ . '/inc/header.php';
 ?>
 
+<?php if ($is_admin): ?>
 <?php if ($pending_count > 0): render_notification(sprintf(__('notif_pending_review'), $pending_count), 'warning'); endif; ?>
-
 <section class="stats_grid">
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon blue"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span></div>
@@ -158,5 +184,58 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+<?php else: ?>
+<section class="stats_grid">
+    <div class="stat_card">
+        <div class="stat_card_header"><span class="stat_card_icon blue"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span></div>
+        <p class="stat_card_label"><?= __('stat_total_posts') ?></p>
+        <p class="stat_card_value"><?= (int)$post_stats['total'] ?></p>
+    </div>
+    <div class="stat_card">
+        <div class="stat_card_header"><span class="stat_card_icon green"><i class="fa-solid fa-check-circle" aria-hidden="true"></i></span></div>
+        <p class="stat_card_label"><?= __('stat_published') ?></p>
+        <p class="stat_card_value"><?= (int)$post_stats['published'] ?></p>
+    </div>
+    <div class="stat_card">
+        <div class="stat_card_header"><span class="stat_card_icon yellow"><i class="fa-solid fa-clock" aria-hidden="true"></i></span></div>
+        <p class="stat_card_label"><?= __('stat_pending_review') ?></p>
+        <p class="stat_card_value"><?= (int)$post_stats['pending'] ?></p>
+    </div>
+    <div class="stat_card">
+        <div class="stat_card_header"><span class="stat_card_icon purple"><i class="fa-solid fa-pen" aria-hidden="true"></i></span></div>
+        <p class="stat_card_label"><?= __('stat_draft') ?></p>
+        <p class="stat_card_value"><?= (int)$post_stats['draft'] ?></p>
+    </div>
+    <div class="stat_card">
+        <div class="stat_card_header"><span class="stat_card_icon red"><i class="fa-solid fa-ban" aria-hidden="true"></i></span></div>
+        <p class="stat_card_label"><?= __('stat_rejected') ?></p>
+        <p class="stat_card_value"><?= (int)$post_stats['rejected'] ?></p>
+    </div>
+</section>
+
+<?php if (!empty($recent_posts)): ?>
+<section class="card" style="margin-top:24px;">
+    <div class="card_header"><h2><?= __('recent_posts_title') ?></h2></div>
+    <div class="card_body_no_padding">
+        <div class="table_wrapper">
+            <table class="data_table">
+                <thead><tr><th><?= __('posts_th_title') ?></th><th><?= __('posts_th_status') ?></th><th><?= __('posts_th_date') ?></th><th><?= __('posts_th_actions') ?></th></tr></thead>
+                <tbody>
+                    <?php foreach ($recent_posts as $rp): ?>
+                    <tr>
+                        <td><a href="edit_post.php?id=<?= $rp['id_post'] ?>" style="color:var(--db-primary);font-weight:500;"><?= htmlspecialchars($rp['title']) ?></a></td>
+                        <td><span class="status_badge <?= $rp['status'] ?>"><?= ucfirst(htmlspecialchars($rp['status'])) ?></span></td>
+                        <td class="date_cell"><?= date('M j, Y', strtotime($rp['created_at'])) ?></td>
+                        <td><a href="preview.php?id=<?= $rp['id_post'] ?>" class="btn_small btn_secondary"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('posts_view_post') ?></a></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
