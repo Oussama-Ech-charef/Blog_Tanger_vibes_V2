@@ -11,7 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_post'])) {
     $title = trim($_POST['title'] ?? '');
     $cat_id = (int)($_POST['category'] ?? 0);
     $content = trim($_POST['content'] ?? '');
-    $status = in_array($_POST['status'] ?? '', [STATUS_DRAFT, STATUS_PUBLISHED]) ? $_POST['status'] : STATUS_DRAFT;
+
+    if ($is_admin) {
+        $status = in_array($_POST['status'] ?? '', [STATUS_DRAFT, STATUS_PUBLISHED]) ? $_POST['status'] : STATUS_DRAFT;
+    } else {
+        // Users can only set draft or pending (submit for review)
+        $status = in_array($_POST['status'] ?? '', [STATUS_DRAFT, STATUS_PENDING]) ? $_POST['status'] : STATUS_DRAFT;
+    }
 
     if (!validate_csrf_token($_POST['csrf_token'] ?? '')) $errors[] = __('post_error_invalid');
     $errors = array_merge($errors, validate_post_input($title, $cat_id, $content));
@@ -21,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_post'])) {
 
     if (empty($errors)) {
         try {
-            $nid = insert_post($conn, $cat_id, $uid, $title, $img['path'], $content, $status, true);
+            $nid = insert_post($conn, $cat_id, $uid, $title, $img['path'], $content, $status, $is_admin);
             header('Location: posts.php?msg=created');
             exit;
         } catch (PDOException $e) {
@@ -61,7 +67,7 @@ require_once __DIR__ . '/inc/header.php';
                             <div class="upload_placeholder" id="uploadPlaceholder">
                                 <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
                                 <span class="upload_text"><?= __('add_post_add_cover') ?></span>
-                                <span class="upload_hint">Click to browse or drag &amp; drop — <?= __('add_post_upload_hint') ?></span>
+                                <span class="upload_hint"><?= __('add_post_upload_hint') ?></span>
                             </div>
                             <div class="upload_preview" id="uploadPreview" style="display:none;">
                                 <img id="previewImage" src="" alt="Cover image preview">
@@ -100,16 +106,22 @@ require_once __DIR__ . '/inc/header.php';
                 <div class="add_post_card">
                     <div class="add_post_card_header">
                         <i class="fa-solid fa-rocket" aria-hidden="true"></i>
-                        <span><?= __('add_post_publish_header') ?></span>
+                        <span><?= $is_admin ? __('add_post_publish_header') : __('add_post_submission_header') ?></span>
                     </div>
                     <div class="add_post_card_body">
                         <div class="add_post_form_group">
                             <label class="add_post_label" for="status"><?= __('add_post_status') ?></label>
                             <select id="status" name="status" class="add_post_select">
+                                <?php if ($is_admin): ?>
                                 <option value="published"><?= __('add_post_published') ?></option>
                                 <option value="draft" selected><?= __('add_post_draft') ?></option>
+                                <?php else: ?>
+                                <option value="pending" selected><?= __('add_post_submit_review') ?></option>
+                                <option value="draft"><?= __('add_post_draft') ?></option>
+                                <?php endif; ?>
                             </select>
                         </div>
+                        <?php if ($is_admin): ?>
                         <div class="add_post_form_group">
                             <label class="add_post_label"><?= __('add_post_visibility') ?></label>
                             <div class="add_post_visibility">
@@ -117,13 +129,23 @@ require_once __DIR__ . '/inc/header.php';
                                 <span><?= __('add_post_public') ?></span>
                             </div>
                         </div>
+                        <?php endif; ?>
                         <div class="add_post_sidebar_actions">
+                            <?php if ($is_admin): ?>
                             <button type="submit" class="btn btn_primary btn_full" data-set-status="published">
                                 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('add_post_publish_btn') ?>
                             </button>
                             <button type="submit" class="btn btn_secondary btn_full" data-set-status="draft">
                                 <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> <?= __('add_post_save_draft_btn') ?>
                             </button>
+                            <?php else: ?>
+                            <button type="submit" class="btn btn_primary btn_full" data-set-status="pending">
+                                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('add_post_submit_review_btn') ?>
+                            </button>
+                            <button type="submit" class="btn btn_secondary btn_full" data-set-status="draft">
+                                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> <?= __('add_post_save_draft_btn') ?>
+                            </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
