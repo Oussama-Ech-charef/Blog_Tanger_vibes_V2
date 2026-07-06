@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Notifications';
 require_once __DIR__ . '/init.php';
+$page_title = __('notifications_title');
 
 // Mark single as read
 if (isset($_POST['read']) && is_numeric($_POST['read'])) {
@@ -24,16 +24,16 @@ if (isset($_POST['mark_all_read']) && validate_csrf_token($_POST['csrf_token'] ?
 
 //  Category mapping
 $category_options = [
-    ''                => 'All Notifications',
-    'posts'           => 'Posts',
-    'comments'        => 'Comments',
-    'users'           => 'Users',
-    'categories'      => 'Categories',
-    'contact_messages'=> 'Contact Messages',
-    'approvals'       => 'Approvals',
-    'rejections'      => 'Rejections',
-    'system'          => 'System Events',
-    'security'        => 'Security Events',
+    ''                => __('notif_category_all'),
+    'posts'           => __('notif_category_posts'),
+    'comments'        => __('notif_category_comments'),
+    'users'           => __('notif_category_users'),
+    'categories'      => __('notif_category_categories'),
+    'contact_messages'=> __('notif_category_contact'),
+    'approvals'       => __('notif_category_approvals'),
+    'rejections'      => __('notif_category_rejections'),
+    'system'          => __('notif_category_system'),
+    'security'        => __('notif_category_security'),
 ];
 
 $category_action_map = [
@@ -50,15 +50,15 @@ $category_action_map = [
 
 //  Action type info for display 
 $type_info = [
-    'post_created'     => ['icon' => 'fa-solid fa-plus',          'color' => '#10B981', 'bg' => '#D1FAE5', 'label' => 'Post Created'],
-    'post_submitted'   => ['icon' => 'fa-solid fa-paper-plane',   'color' => '#3B82F6', 'bg' => '#DBEAFE', 'label' => 'Submitted'],
-    'post_approved'    => ['icon' => 'fa-solid fa-check-circle',  'color' => '#059669', 'bg' => '#D1FAE5', 'label' => 'Approved'],
-    'post_rejected'    => ['icon' => 'fa-solid fa-ban',           'color' => '#DC2626', 'bg' => '#FEE2E2', 'label' => 'Rejected'],
-    'post_updated'     => ['icon' => 'fa-solid fa-pen',           'color' => '#7C3AED', 'bg' => '#EDE9FE', 'label' => 'Updated'],
-    'post_deleted'     => ['icon' => 'fa-solid fa-trash',         'color' => '#EF4444', 'bg' => '#FEE2E2', 'label' => 'Deleted'],
-    'comment_added'    => ['icon' => 'fa-solid fa-comment',       'color' => '#0047AB', 'bg' => '#E8F0FE', 'label' => 'Comment'],
-    'user_registered'  => ['icon' => 'fa-solid fa-user-plus',     'color' => '#7C3AED', 'bg' => '#EDE9FE', 'label' => 'New User'],
-    'message_received' => ['icon' => 'fa-solid fa-envelope',      'color' => '#D97706', 'bg' => '#FEF3C7', 'label' => 'Message'],
+    'post_created'     => ['icon' => 'fa-solid fa-plus',          'color' => '#10B981', 'bg' => '#D1FAE5', 'label' => __('notif_type_post_created')],
+    'post_submitted'   => ['icon' => 'fa-solid fa-paper-plane',   'color' => '#3B82F6', 'bg' => '#DBEAFE', 'label' => __('notif_type_post_submitted')],
+    'post_approved'    => ['icon' => 'fa-solid fa-check-circle',  'color' => '#059669', 'bg' => '#D1FAE5', 'label' => __('notif_type_post_approved')],
+    'post_rejected'    => ['icon' => 'fa-solid fa-ban',           'color' => '#DC2626', 'bg' => '#FEE2E2', 'label' => __('notif_type_post_rejected')],
+    'post_updated'     => ['icon' => 'fa-solid fa-pen',           'color' => '#7C3AED', 'bg' => '#EDE9FE', 'label' => __('notif_type_post_updated')],
+    'post_deleted'     => ['icon' => 'fa-solid fa-trash',         'color' => '#EF4444', 'bg' => '#FEE2E2', 'label' => __('notif_type_post_deleted')],
+    'comment_added'    => ['icon' => 'fa-solid fa-comment',       'color' => '#0047AB', 'bg' => '#E8F0FE', 'label' => __('notif_type_comment_added')],
+    'user_registered'  => ['icon' => 'fa-solid fa-user-plus',     'color' => '#7C3AED', 'bg' => '#EDE9FE', 'label' => __('notif_type_user_registered')],
+    'message_received' => ['icon' => 'fa-solid fa-envelope',      'color' => '#D97706', 'bg' => '#FEF3C7', 'label' => __('notif_type_message_received')],
 ];
 
 //  Link builder 
@@ -84,11 +84,11 @@ function get_date_group($date_str) {
     $today = strtotime('today');
     $yesterday = strtotime('yesterday');
 
-    if ($ts >= $today) return 'Today';
-    if ($ts >= $yesterday) return 'Yesterday';
-    if ($ts >= strtotime('monday this week')) return 'This Week';
-    if ($ts >= strtotime('monday last week') && $ts < strtotime('monday this week')) return 'Last Week';
-    if (date('m', $ts) === date('m') && date('Y', $ts) === date('Y')) return 'This Month';
+    if ($ts >= $today) return __('notifications_group_today');
+    if ($ts >= $yesterday) return __('notifications_group_yesterday');
+    if ($ts >= strtotime('monday this week')) return __('notifications_group_this_week');
+    if ($ts >= strtotime('monday last week') && $ts < strtotime('monday this week')) return __('notifications_group_last_week');
+    if (date('m', $ts) === date('m') && date('Y', $ts) === date('Y')) return __('notifications_group_this_month');
     return date('F Y', $ts);
 }
 
@@ -205,10 +205,10 @@ require_once __DIR__ . '/inc/header.php';
 <div class="notif_page_header">
     <div>
         <h1 class="notif_page_title">
-            <i class="fa-solid fa-bell icon_primary" aria-hidden="true"></i> Notifications
+            <i class="fa-solid fa-bell icon_primary" aria-hidden="true"></i> <?= __('notifications_title') ?>
         </h1>
         <p class="notif_page_subtitle">
-            <?= $unread_count ?> unread notification<?= $unread_count !== 1 ? 's' : '' ?>
+            <?= sprintf(__('notifications_subtitle'), $unread_count) ?>
         </p>
     </div>
     <?php if ($unread_count > 0): ?>
@@ -216,7 +216,7 @@ require_once __DIR__ . '/inc/header.php';
         <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
         <button type="submit" name="mark_all_read" class="btn btn_secondary btn_sm" style="display:inline-flex;align-items:center;gap:6px;">
-            <i class="fa-solid fa-check-double" aria-hidden="true"></i> Mark All as Read
+            <i class="fa-solid fa-check-double" aria-hidden="true"></i> <?= __('notifications_mark_all_read') ?>
         </button>
     </form>
     <?php endif; ?>
@@ -225,7 +225,7 @@ require_once __DIR__ . '/inc/header.php';
 <form method="GET" id="notifFilterForm" class="notif_filters_bar">
     <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
-        <input type="text" name="q" placeholder="Search notifications..." value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
+        <input type="text" name="q" placeholder="<?= __('notifications_search_placeholder') ?>" value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
     </div>
     <select name="category" class="filter_select" onchange="this.form.submit()">
         <?php foreach ($category_options as $val => $label): ?>
@@ -233,31 +233,31 @@ require_once __DIR__ . '/inc/header.php';
         <?php endforeach; ?>
     </select>
     <select name="status" class="filter_select" onchange="this.form.submit()">
-        <option value="">All</option>
-        <option value="unread" <?=$status_filter==='unread'?'selected':''?>>Unread</option>
-        <option value="read" <?=$status_filter==='read'?'selected':''?>>Read</option>
+        <option value=""><?= __('notifications_filter_all') ?></option>
+        <option value="unread" <?=$status_filter==='unread'?'selected':''?>><?= __('notifications_filter_unread') ?></option>
+        <option value="read" <?=$status_filter==='read'?'selected':''?>><?= __('notifications_filter_read') ?></option>
     </select>
     <select name="date" class="filter_select" onchange="if(this.value!=='custom'){this.form.submit();}else{document.getElementById('notifDateRange').style.display='flex';}">
-        <option value="">All Dates</option>
-        <option value="today" <?=$date_filter==='today'?'selected':''?>>Today</option>
-        <option value="7days" <?=$date_filter==='7days'?'selected':''?>>Last 7 Days</option>
-        <option value="30days" <?=$date_filter==='30days'?'selected':''?>>Last 30 Days</option>
-        <option value="month" <?=$date_filter==='month'?'selected':''?>>This Month</option>
-        <option value="custom" <?=$date_filter==='custom'?'selected':''?>>Custom Range</option>
+        <option value=""><?= __('notifications_filter_all_dates') ?></option>
+        <option value="today" <?=$date_filter==='today'?'selected':''?>><?= __('notifications_filter_today') ?></option>
+        <option value="7days" <?=$date_filter==='7days'?'selected':''?>><?= __('notifications_filter_7days') ?></option>
+        <option value="30days" <?=$date_filter==='30days'?'selected':''?>><?= __('notifications_filter_30days') ?></option>
+        <option value="month" <?=$date_filter==='month'?'selected':''?>><?= __('notifications_filter_month') ?></option>
+        <option value="custom" <?=$date_filter==='custom'?'selected':''?>><?= __('notifications_filter_custom') ?></option>
     </select>
     <div class="notif_date_range" id="notifDateRange" style="display:<?=$date_filter==='custom'?'flex':'none'?>">
         <input type="date" name="date_from" value="<?= htmlspecialchars($date_from) ?>" onchange="this.form.submit()">
-        <span class="text_muted date_cell">to</span>
+        <span class="text_muted date_cell"><?= __('notifications_filter_to') ?></span>
         <input type="date" name="date_to" value="<?= htmlspecialchars($date_to) ?>" onchange="this.form.submit()">
     </div>
     <select name="user" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Users</option>
+        <option value=""><?= __('notifications_filter_all_users') ?></option>
         <?php foreach ($all_users as $u): ?>
             <option value="<?=$u['id_user']?>" <?=$user_filter==$u['id_user']?'selected':''?>><?=htmlspecialchars($u['user_name'])?> (<?=ucfirst($u['role'])?>)</option>
         <?php endforeach; ?>
     </select>
     <?php if (!empty($search) || !empty($category_filter) || !empty($status_filter) || !empty($date_filter) || !empty($user_filter)): ?>
-    <a href="notifications.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
+    <a href="notifications.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> <?= __('notifications_clear_filter') ?></a>
     <?php endif; ?>
 </form>
 
@@ -299,7 +299,7 @@ require_once __DIR__ . '/inc/header.php';
                 <div class="notif_actions">
                     <?php if ($link): ?>
                     <a href="<?= $link ?>" class="btn_small btn_secondary clear_filter_btn">
-                        <i class="fa-solid fa-eye" aria-hidden="true"></i> View
+                        <i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('notifications_btn_view') ?>
                     </a>
                     <?php endif; ?>
                     <?php if (!$n['is_read']): ?>
@@ -307,7 +307,7 @@ require_once __DIR__ . '/inc/header.php';
                         <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                         <input type="hidden" name="read" value="<?= $n['id_activity'] ?>">
-                        <button type="submit" class="btn_small btn_secondary" style="border:none;cursor:pointer" aria-label="Mark as read">
+                        <button type="submit" class="btn_small btn_secondary" style="border:none;cursor:pointer" aria-label="<?= __('dashboard_aria_mark_read') ?>">
                             <i class="fa-solid fa-check"></i>
                         </button>
                     </form>
@@ -321,8 +321,8 @@ require_once __DIR__ . '/inc/header.php';
         <?php else: ?>
             <div class="notif_empty_state">
                 <i class="fa-solid fa-bell notif_empty_icon" aria-hidden="true"></i>
-                <h3 class="notif_empty_title">No notifications</h3>
-                <p class="notif_empty_desc">Try adjusting your filters.</p>
+                <h3 class="notif_empty_title"><?= __('notifications_empty_title') ?></h3>
+                <p class="notif_empty_desc"><?= __('notifications_empty_desc') ?></p>
             </div>
         <?php endif; ?>
     </div>
