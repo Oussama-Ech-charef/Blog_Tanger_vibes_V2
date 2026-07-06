@@ -287,6 +287,8 @@ return [
     'sidebar_settings' => 'Settings',
     'sidebar_back_to_site' => 'Back to Site',
     'sidebar_logout' => 'Logout',
+    'sidebar_my_posts' => 'My Posts',
+    'sidebar_add_post' => 'Add Post',
 
     // Dashboard topbar
     'topbar_view_site' => 'View Site',
@@ -294,10 +296,12 @@ return [
 
     // Dashboard overview
     'dashboard_overview_title' => 'Overview',
+    'dashboard_forbidden' => 'You do not have permission to access this page.',
     'stat_total_posts' => 'Total Posts',
     'stat_published' => 'Published',
     'stat_pending_review' => 'Pending Review',
     'stat_rejected' => 'Rejected',
+    'stat_draft' => 'Drafts',
     'stat_comments' => 'Comments',
     'stat_users' => 'Users',
     'stat_messages' => 'Messages',
@@ -315,9 +319,11 @@ return [
     'chart_label_comments' => 'Comments',
     'chart_label_users' => 'Users',
     'notif_pending_review' => '%d post(s) pending review.',
+    'recent_posts_title' => 'Recent Posts',
 
     // Posts management
     'posts_management_title' => 'Posts Management',
+    'posts_my_posts_title' => 'My Posts',
     'posts_created' => 'Post created successfully.',
     'posts_updated' => 'Post updated successfully.',
     'posts_approved' => 'Post approved and published.',
@@ -339,6 +345,8 @@ return [
     'posts_th_actions' => 'Actions',
     'posts_rejection_reason' => 'Reason: %s',
     'posts_view_post' => 'View Post',
+    'posts_quick_view' => 'Quick View',
+    'post_preview_title' => 'Post Preview',
     'posts_approve' => 'Approve',
     'posts_reject' => 'Reject',
     'posts_edit_post' => 'Edit Post',
@@ -372,6 +380,9 @@ return [
     'add_post_public' => 'Public',
     'add_post_publish_btn' => 'Publish',
     'add_post_save_draft_btn' => 'Save Draft',
+    'add_post_submission_header' => 'Submission',
+    'add_post_submit_review' => 'Submit for Review',
+    'add_post_submit_review_btn' => 'Submit for Review',
     'add_post_category_header' => 'Category',
     'add_post_choose_category' => 'Choose category',
     'add_post_select_category' => 'Select a category...',
@@ -600,6 +611,7 @@ return [
     'settings_password_min_length' => 'Min 6 characters.',
     'settings_password_mismatch' => 'Passwords do not match.',
     'settings_password_changed' => 'Password changed.',
+    'settings_profile' => 'Profile',
     'settings_admin_profile' => 'Admin Profile',
     'settings_username' => 'Username',
     'settings_email' => 'Email',
