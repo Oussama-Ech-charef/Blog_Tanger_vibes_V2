@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Comments Moderation';
 require_once __DIR__ . '/init.php';
+$page_title = __('comments_moderation_title');
 $message = ''; $message_type = '';
 
 // Approve
@@ -8,9 +8,9 @@ if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         try {
             $conn->prepare("UPDATE comments SET status='approved' WHERE id_comment=:id")->execute([':id'=>(int)$_POST['approve']]);
-            $message = 'Comment approved.'; $message_type = 'success';
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+            $message = __('comments_approved'); $message_type = 'success';
+        } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
+    } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
 // Reject
@@ -18,9 +18,9 @@ if (isset($_POST['reject']) && is_numeric($_POST['reject'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         try {
             $conn->prepare("UPDATE comments SET status=:rej_status WHERE id_comment=:id")->execute([':rej_status' => STATUS_REJECTED, ':id'=>(int)$_POST['reject']]);
-            $message = 'Comment rejected.'; $message_type = 'success';
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+            $message = __('comments_rejected'); $message_type = 'success';
+        } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
+    } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
 // Delete
@@ -28,9 +28,9 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         try {
             $conn->prepare("DELETE FROM comments WHERE id_comment=:id")->execute([':id'=>(int)$_POST['delete']]);
-            $message = 'Comment deleted.'; $message_type = 'success';
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+            $message = __('comments_deleted'); $message_type = 'success';
+        } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
+    } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
 // Bulk delete
@@ -40,9 +40,9 @@ if (isset($_POST['bulk_delete']) && !empty($_POST['comment_ids'])) {
         $phs = implode(',', array_fill(0, count($ids), '?'));
         try {
             $conn->prepare("DELETE FROM comments WHERE id_comment IN ($phs)")->execute($ids);
-            $message = count($ids).' comment(s) deleted.'; $message_type = 'success';
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = 'Error.'; $message_type = 'error'; }
-    } else { $message = 'Invalid security token.'; $message_type = 'error'; }
+            $message = sprintf(__('comments_bulk_deleted'), count($ids)); $message_type = 'success';
+        } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
+    } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
 $csrf = get_csrf_token();
@@ -164,69 +164,69 @@ require_once __DIR__ . '/inc/header.php';
 <form method="GET" id="filterForm" class="filters_bar" style="flex-wrap:wrap;">
     <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
-        <input type="text" name="q" placeholder="Search comments, author, post..." value="<?=htmlspecialchars($search)?>" onchange="this.form.submit()">
+        <input type="text" name="q" placeholder="<?= __('comments_search_placeholder') ?>" value="<?=htmlspecialchars($search)?>" onchange="this.form.submit()">
     </div>
     <select name="status" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Status</option>
-        <option value="approved" <?=$status_filter==='approved'?'selected':''?>>Approved</option>
-        <option value="pending" <?=$status_filter===STATUS_PENDING?'selected':''?>>Pending</option>
-        <option value="rejected" <?=$status_filter===STATUS_REJECTED?'selected':''?>>Rejected</option>
+        <option value=""><?= __('comments_filter_all_status') ?></option>
+        <option value="approved" <?=$status_filter==='approved'?'selected':''?>><?= __('comments_filter_approved') ?></option>
+        <option value="pending" <?=$status_filter===STATUS_PENDING?'selected':''?>><?= __('comments_filter_pending') ?></option>
+        <option value="rejected" <?=$status_filter===STATUS_REJECTED?'selected':''?>><?= __('comments_filter_rejected') ?></option>
     </select>
     <select name="role" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Roles</option>
-        <option value="admin" <?=$role_filter==='admin'?'selected':''?>>Administrators</option>
-        <option value="user" <?=$role_filter==='user'?'selected':''?>>Users</option>
+        <option value=""><?= __('comments_filter_all_roles') ?></option>
+        <option value="admin" <?=$role_filter==='admin'?'selected':''?>><?= __('comments_filter_admins') ?></option>
+        <option value="user" <?=$role_filter==='user'?'selected':''?>><?= __('comments_filter_users') ?></option>
     </select>
     <select name="user" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Users</option>
+        <option value=""><?= __('comments_filter_all_users') ?></option>
         <?php foreach ($users_for_filter as $u): ?>
             <option value="<?=$u['id_user']?>" <?=$user_filter==$u['id_user']?'selected':''?>><?=htmlspecialchars($u['user_name'])?></option>
         <?php endforeach; ?>
     </select>
     <select name="post" class="filter_select" onchange="this.form.submit()">
-        <option value="">All Posts</option>
+        <option value=""><?= __('comments_filter_all_posts') ?></option>
         <?php foreach ($posts_for_filter as $p): ?>
             <option value="<?=$p['id_post']?>" <?=$post_filter==$p['id_post']?'selected':''?>><?=htmlspecialchars(truncate_text($p['title'], 40))?></option>
         <?php endforeach; ?>
     </select>
     <select name="date" class="filter_select" onchange="if(this.value!=='custom'){this.form.submit();}else{document.getElementById('commentDateRange').style.display='flex';}">
-        <option value="">All Dates</option>
-        <option value="today" <?=$date_filter==='today'?'selected':''?>>Today</option>
-        <option value="yesterday" <?=$date_filter==='yesterday'?'selected':''?>>Yesterday</option>
-        <option value="7days" <?=$date_filter==='7days'?'selected':''?>>Last 7 Days</option>
-        <option value="30days" <?=$date_filter==='30days'?'selected':''?>>Last 30 Days</option>
-        <option value="month" <?=$date_filter==='month'?'selected':''?>>This Month</option>
-        <option value="year" <?=$date_filter==='year'?'selected':''?>>This Year</option>
-        <option value="custom" <?=$date_filter==='custom'?'selected':''?>>Custom Range</option>
+        <option value=""><?= __('comments_filter_all_dates') ?></option>
+        <option value="today" <?=$date_filter==='today'?'selected':''?>><?= __('comments_filter_today') ?></option>
+        <option value="yesterday" <?=$date_filter==='yesterday'?'selected':''?>><?= __('comments_filter_yesterday') ?></option>
+        <option value="7days" <?=$date_filter==='7days'?'selected':''?>><?= __('comments_filter_7days') ?></option>
+        <option value="30days" <?=$date_filter==='30days'?'selected':''?>><?= __('comments_filter_30days') ?></option>
+        <option value="month" <?=$date_filter==='month'?'selected':''?>><?= __('comments_filter_month') ?></option>
+        <option value="year" <?=$date_filter==='year'?'selected':''?>><?= __('comments_filter_year') ?></option>
+        <option value="custom" <?=$date_filter==='custom'?'selected':''?>><?= __('comments_filter_custom') ?></option>
     </select>
     <div class="notif_date_range" id="commentDateRange" style="display:<?=$date_filter==='custom'?'flex':'none'?>">
         <input type="date" name="date_from" value="<?= htmlspecialchars($date_from) ?>" onchange="this.form.submit()">
-        <span class="date_cell" style="color:var(--db-text-muted);">to</span>
+        <span class="date_cell" style="color:var(--db-text-muted);"><?= __('comments_filter_to') ?></span>
         <input type="date" name="date_to" value="<?= htmlspecialchars($date_to) ?>" onchange="this.form.submit()">
     </div>
-    <span class="ml_auto" style="font-size:14px;color:var(--db-text-secondary);font-weight:500;"><?=$total_records?> comment(s)</span>
+    <span class="ml_auto" style="font-size:14px;color:var(--db-text-secondary);font-weight:500;"><?= sprintf(__('comments_count'), $total_records) ?></span>
     <?php if (!empty($search) || !empty($status_filter) || !empty($role_filter) || !empty($user_filter) || !empty($post_filter) || !empty($date_filter)): ?>
-    <a href="comments.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> Clear</a>
+    <a href="comments.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> <?= __('comments_clear_filter') ?></a>
     <?php endif; ?>
 </form>
 
 <div class="card">
     <div class="card_header">
-        <h2>Comments</h2>
+        <h2><?= __('comments_table_title') ?></h2>
         <?php if (!empty($comments)): ?>
-        <form method="POST" onsubmit="return confirm('Delete selected?')">
+        <form method="POST" onsubmit="return confirm(__('comments_confirm_bulk_delete'))">
             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
             <input type="hidden" name="bulk_delete" value="1">
             <input type="hidden" name="comment_ids" id="bulkIds">
-            <button type="submit" class="btn btn_danger btn_sm" id="bulkDeleteBtn" style="display:none" onclick="document.getElementById('bulkIds').value=Array.from(document.querySelectorAll('.cb:checked')).map(c=>c.value).join(',')"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Selected</button>
+            <button type="submit" class="btn btn_danger btn_sm" id="bulkDeleteBtn" style="display:none" onclick="document.getElementById('bulkIds').value=Array.from(document.querySelectorAll('.cb:checked')).map(c=>c.value).join(',')"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('comments_delete_selected') ?></button>
         </form>
         <?php endif; ?>
     </div>
     <div class="card_body_no_padding">
         <div class="table_wrapper">
             <table class="data_table">
-                <thead><tr><th style="width:36px;"><input type="checkbox" id="selectAll" onchange="document.querySelectorAll('.cb').forEach(c=>c.checked=this.checked);toggleBulk()"></th><th>Author</th><th>Comment</th><th>Post</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                <thead><tr><th style="width:36px;"><input type="checkbox" id="selectAll" onchange="document.querySelectorAll('.cb').forEach(c=>c.checked=this.checked);toggleBulk()"></th><th><?= __('comments_th_author') ?></th><th><?= __('comments_th_comment') ?></th><th><?= __('comments_th_post') ?></th><th><?= __('comments_th_status') ?></th><th><?= __('comments_th_date') ?></th><th><?= __('comments_th_actions') ?></th></tr></thead>
                 <tbody>
                     <?php if (!empty($comments)): ?>
                         <?php foreach ($comments as $c): ?>
@@ -244,23 +244,23 @@ require_once __DIR__ . '/inc/header.php';
                                 </div>
                             </td>
                             <td style="max-width:300px;"><span class="text_clamp_2"><?=htmlspecialchars($c['comment_text'])?></span></td>
-                            <td><?php if($c['post_title']):?><a href="../pages/detail.php?id=<?=$c['id_post']?>" target="_blank" rel="noopener" class="view_link"><?=htmlspecialchars(truncate_text($c['post_title'],40))?></a><?php else:?><span class="text_muted">[deleted]</span><?php endif;?></td>
+                            <td><?php if($c['post_title']):?><a href="../pages/detail.php?id=<?=$c['id_post']?>" target="_blank" rel="noopener" class="view_link"><?=htmlspecialchars(truncate_text($c['post_title'],40))?></a><?php else:?><span class="text_muted"><?= __('comments_deleted_post') ?></span><?php endif;?></td>
                             <td><span class="status_badge status_<?=$c['status']?>"><?=ucfirst(htmlspecialchars($c['status'] ?? STATUS_PENDING))?></span></td>
                             <td class="date_cell"><?=time_ago($c['created_at'])?></td>
                             <td>
                                 <div class="cell_actions cell_actions_right">
                                     <div class="action_dropdown">
-                                        <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="Actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                        <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="<?= __('dashboard_aria_actions') ?>"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
                                             <?php if (!empty($c['id_post'])): ?>
-                                            <a href="../pages/detail.php?id=<?=$c['id_post']?>" class="dropdown_item" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> View Comment</a>
+                                            <a href="../pages/detail.php?id=<?=$c['id_post']?>" class="dropdown_item" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('comments_view_comment') ?></a>
                                             <?php endif; ?>
                                             <?php if ($c['status'] !== 'approved'): ?>
                                             <form method="POST" action="comments.php" class="dropdown_form">
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                                 <input type="hidden" name="approve" value="<?=$c['id_comment']?>">
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                                <button type="submit" class="dropdown_item"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve Comment</button>
+                                                <button type="submit" class="dropdown_item"><i class="fa-solid fa-check" aria-hidden="true"></i> <?= __('comments_approve_comment') ?></button>
                                             </form>
                                             <?php endif; ?>
                                             <?php if ($c['status'] !== STATUS_REJECTED): ?>
@@ -268,7 +268,7 @@ require_once __DIR__ . '/inc/header.php';
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                                 <input type="hidden" name="reject" value="<?=$c['id_comment']?>">
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                                <button type="submit" class="dropdown_item" onclick="return confirm('Reject comment?')"><i class="fa-solid fa-ban" aria-hidden="true"></i> Reject Comment</button>
+                                                <button type="submit" class="dropdown_item" onclick="return confirm(__('comments_confirm_reject'))"><i class="fa-solid fa-ban" aria-hidden="true"></i> <?= __('comments_reject_comment') ?></button>
                                             </form>
                                             <?php endif; ?>
                                             <div class="dropdown_divider"></div>
@@ -276,7 +276,7 @@ require_once __DIR__ . '/inc/header.php';
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                                 <input type="hidden" name="delete" value="<?=$c['id_comment']?>">
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                                <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm('Delete this comment permanently?')"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Comment</button>
+                                                <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(__('comments_confirm_delete'))"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('comments_delete_comment') ?></button>
                                             </form>
                                         </div>
                                     </div>
@@ -285,7 +285,7 @@ require_once __DIR__ . '/inc/header.php';
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-comments"></i><h3>No comments</h3><p>Try adjusting your filters.</p></div></td></tr>
+                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-comments"></i><h3><?= __('comments_empty_title') ?></h3><p><?= __('comments_empty_desc') ?></p></div></td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
