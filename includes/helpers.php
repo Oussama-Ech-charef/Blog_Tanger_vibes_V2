@@ -9,10 +9,10 @@ function time_ago($datetime) {
     $then = new DateTime($datetime);
     $diff = $now->getTimestamp() - $then->getTimestamp();
 
-    if ($diff < 60) return 'just now';
-    if ($diff < 3600) return floor($diff / 60) . 'm ago';
-    if ($diff < 86400) return floor($diff / 3600) . 'h ago';
-    if ($diff < 604800) return floor($diff / 86400) . 'd ago';
+    if ($diff < 60) return __('time_just_now');
+    if ($diff < 3600) return sprintf(__('time_minutes_ago'), floor($diff / 60));
+    if ($diff < 86400) return sprintf(__('time_hours_ago'), floor($diff / 3600));
+    if ($diff < 604800) return sprintf(__('time_days_ago'), floor($diff / 86400));
     return date('M j, Y', strtotime($datetime));
 }
 
@@ -195,7 +195,10 @@ function render_post_card($post, $btn_key = 'latest_read_more') {
  * @param string $placeholder
  * @return string
  */
-function render_search_input($name, $value, $placeholder = 'Search...') {
+function render_search_input($name, $value, $placeholder = null) {
+    if ($placeholder === null) {
+        $placeholder = __('search_placeholder');
+    }
     $html = '<div class="search_input">';
     $html .= '<i class="fa-solid fa-search" aria-hidden="true"></i>';
     $html .= '<input type="text" name="' . htmlspecialchars($name) . '" placeholder="' . htmlspecialchars($placeholder) . '" value="' . htmlspecialchars($value) . '">';
@@ -254,7 +257,7 @@ function render_date_range_filter($id, $date_from = '', $date_to = '', $selected
     $display = $selected === 'custom' ? 'flex' : 'none';
     $html = '<div class="notif_date_range" id="' . htmlspecialchars($id) . '" style="display:' . $display . '">';
     $html .= '<input type="date" name="' . htmlspecialchars($param_from) . '" value="' . htmlspecialchars($date_from) . '">';
-    $html .= '<span class="text_muted date_cell">to</span>';
+    $html .= '<span class="text_muted date_cell">' . __('filter_to') . '</span>';
     $html .= '<input type="date" name="' . htmlspecialchars($param_to) . '" value="' . htmlspecialchars($date_to) . '">';
     $html .= '</div>';
     return $html;
@@ -266,9 +269,11 @@ function render_date_range_filter($id, $date_from = '', $date_to = '', $selected
  * @param string $error_msg
  * @return array{string,string}
  */
-function execute_db_action($db_op, $success_msg = 'Operation completed.', $error_msg = 'An error occurred.') {
+function execute_db_action($db_op, $success_msg = '', $error_msg = '') {
+    if ($success_msg === '') $success_msg = __('db_op_success');
+    if ($error_msg === '') $error_msg = __('db_op_error');
     if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
-        return ['Invalid security token.', 'error'];
+        return [__('csrf_invalid'), 'error'];
     }
     try {
         $db_op();

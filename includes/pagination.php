@@ -125,7 +125,7 @@ function render_dashboard_pagination($base_url, $current_page, $total_pages, $qu
         <div class="pagination_info"><?= __('pagination_showing', $start_record, $end_record, $total_records) ?></div>
         <?php endif; ?>
         <div class="dashboard_pagination">
-            <a href="<?= $base_url . $sep . ($current_page - 1) ?>" class="page_btn prev<?= $prev_disabled ?>" aria-label="Previous page"<?= $prev_disabled ? ' tabindex="-1" aria-disabled="true"' : '' ?>><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a>
+            <a href="<?= $base_url . $sep . ($current_page - 1) ?>" class="page_btn prev<?= $prev_disabled ?>" aria-label="<?= __('pagination_prev_aria') ?>"<?= $prev_disabled ? ' tabindex="-1" aria-disabled="true"' : '' ?>><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a>
 
             <?php
             $window = 2;
@@ -146,7 +146,7 @@ function render_dashboard_pagination($base_url, $current_page, $total_pages, $qu
                 <a href="<?= $base_url . $sep . $total_pages ?>" class="page_btn<?= $current_page === $total_pages ? ' active' : '' ?>"><?= $total_pages ?></a>
             <?php endif; ?>
 
-            <a href="<?= $base_url . $sep . ($current_page + 1) ?>" class="page_btn next<?= $next_disabled ?>" aria-label="Next page"<?= $next_disabled ? ' tabindex="-1" aria-disabled="true"' : '' ?>><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
+            <a href="<?= $base_url . $sep . ($current_page + 1) ?>" class="page_btn next<?= $next_disabled ?>" aria-label="<?= __('pagination_next_aria') ?>"<?= $next_disabled ? ' tabindex="-1" aria-disabled="true"' : '' ?>><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
         </div>
     </div>
     <?php
