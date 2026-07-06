@@ -23,7 +23,7 @@
                 var rejectModal = document.getElementById('rejectModal');
 
                 if (rejectPostId) rejectPostId.value = btn.getAttribute('data-post-id');
-                if (rejectPostTitle) rejectPostTitle.textContent = 'Reject: "' + btn.getAttribute('data-post-title') + '"';
+                if (rejectPostTitle) rejectPostTitle.textContent = Lang.rejectModalTitle.replace('%s', btn.getAttribute('data-post-title'));
                 if (rejectModal) rejectModal.classList.add('open');
             });
         });
@@ -48,7 +48,7 @@
         /* ── Confirm dialogs (Approve / Delete) ────────────── */
         document.querySelectorAll('.dropdown_approve').forEach(function (btn) {
             btn.addEventListener('click', function (e) {
-                if (!confirm('Approve and publish?')) {
+                if (!confirm(Lang.confirmApprove)) {
                     e.preventDefault();
                 }
             });
@@ -56,7 +56,7 @@
 
         document.querySelectorAll('.dropdown_delete').forEach(function (btn) {
             btn.addEventListener('click', function (e) {
-                if (!confirm('Delete this post permanently?')) {
+                if (!confirm(Lang.confirmDeletePost)) {
                     e.preventDefault();
                 }
             });

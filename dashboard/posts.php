@@ -1,14 +1,14 @@
 <?php
-$page_title = 'Posts Management';
 require_once __DIR__ . '/init.php';
+$page_title = __('posts_management_title');
 
 $message = '';
 $message_type = '';
 
 // Handle redirect messages from add_post/edit_post
 if (isset($_GET['msg'])) {
-    if ($_GET['msg'] === 'created') { $message = 'Post created successfully.'; $message_type = 'success'; }
-    elseif ($_GET['msg'] === 'updated') { $message = 'Post updated successfully.'; $message_type = 'success'; }
+    if ($_GET['msg'] === 'created') { $message = __('posts_created'); $message_type = 'success'; }
+    elseif ($_GET['msg'] === 'updated') { $message = __('posts_updated'); $message_type = 'success'; }
 }
 
 // Flash message from POST redirect
@@ -41,13 +41,13 @@ if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
                 $prow = $t->fetch(PDO::FETCH_ASSOC);
                 $pt = $prow['title'];
                 $conn->prepare("INSERT INTO activity_log (action_type,description,user_id,entity_type,entity_id) VALUES ('post_approved',:d,:u,'post',:e)")->execute([':d'=>"Approved post: $pt",':u'=>$_SESSION['id_user'],':e'=>$pid]);
-                $_SESSION['flash_msg'] = 'Post approved and published.';
+                $_SESSION['flash_msg'] = __('posts_approved');
                 $_SESSION['flash_type'] = 'success';
                 header('Location: ' . posts_redirect_url());
                 exit;
             }
-        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = 'An error occurred.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
-    } else { $_SESSION['flash_msg'] = 'Invalid security token.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = __('posts_error_generic'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+    } else { $_SESSION['flash_msg'] = __('posts_error_security'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
 }
 
 // Reject
@@ -64,13 +64,13 @@ if (isset($_POST['reject_id'])) {
                 $prow = $t->fetch(PDO::FETCH_ASSOC);
                 $pt = $prow['title'];
                 $conn->prepare("INSERT INTO activity_log (action_type,description,user_id,entity_type,entity_id) VALUES ('post_rejected',:d,:u,'post',:e)")->execute([':d'=>"Rejected post: $pt",':u'=>$_SESSION['id_user'],':e'=>$pid]);
-                $_SESSION['flash_msg'] = 'Post rejected.';
+                $_SESSION['flash_msg'] = __('posts_rejected');
                 $_SESSION['flash_type'] = 'success';
                 header('Location: ' . posts_redirect_url());
                 exit;
             }
-        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = 'An error occurred.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
-    } else { $_SESSION['flash_msg'] = 'Rejection reason is required.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = __('posts_error_generic'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+    } else { $_SESSION['flash_msg'] = __('posts_error_reason_required'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
 }
 
 // Delete — admin can delete any post
@@ -91,13 +91,13 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
                 safe_delete_uploaded_image($del_post['image'] ?? null);
                 $conn->prepare("INSERT INTO activity_log (action_type,description,user_id,entity_type,entity_id) VALUES ('post_deleted',:d,:u,'post',:e)")
                     ->execute([':d'=>"Deleted post: $title",':u'=>$_SESSION['id_user'],':e'=>$pid]);
-                $_SESSION['flash_msg'] = 'Post deleted.';
+                $_SESSION['flash_msg'] = __('posts_deleted');
                 $_SESSION['flash_type'] = 'success';
                 header('Location: ' . posts_redirect_url());
                 exit;
             }
-        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = 'An error occurred.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
-    } else { $_SESSION['flash_msg'] = 'Invalid security token.'; $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+        } catch (PDOException $e) { error_log($e->getMessage()); $_SESSION['flash_msg'] = __('posts_error_generic'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
+    } else { $_SESSION['flash_msg'] = __('posts_error_security'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
 }
 
 // Quick view via ?view=id (for notification links) — loaded before header
@@ -177,7 +177,7 @@ $qv_close_url = posts_redirect_url();
             </div>
             <?php if (!empty($qv['rejection_reason'])): ?>
             <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;font-size:13px;color:#991B1B;margin-bottom:16px;">
-                <strong style="color:#EF4444;">Rejection Reason</strong><br><?= htmlspecialchars($qv['rejection_reason']) ?>
+                <strong style="color:#EF4444;"><?= __('posts_quickview_rejection_reason') ?></strong><br><?= htmlspecialchars($qv['rejection_reason']) ?>
             </div>
             <?php endif; ?>
             <div class="quickview_content"><?= render_post_content($qv['content']) ?></div>
@@ -191,22 +191,22 @@ $qv_close_url = posts_redirect_url();
 <form method="GET" id="filterForm" class="filters_bar">
     <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
-        <input type="text" name="q" placeholder="Search title or content..." value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
+        <input type="text" name="q" placeholder="<?= __('posts_search_title_placeholder') ?>" value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
     </div>
-    <a href="add_post.php" class="btn btn_primary btn_sm ml_auto"><i class="fa-solid fa-plus" aria-hidden="true"></i> New Post</a>
+    <a href="add_post.php" class="btn btn_primary btn_sm ml_auto"><i class="fa-solid fa-plus" aria-hidden="true"></i> <?= __('posts_new_post') ?></a>
 </form>
 
 <div class="card">
-    <div class="card_header"><h2>All Posts</h2></div>
+    <div class="card_header"><h2><?= __('posts_all_posts') ?></h2></div>
     <div class="card_body_no_padding">
         <div class="table_wrapper">
             <table class="data_table">
-                <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Role</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                <thead><tr><th><?= __('posts_th_title') ?></th><th><?= __('posts_th_category') ?></th><th><?= __('posts_th_author') ?></th><th><?= __('posts_th_role') ?></th><th><?= __('posts_th_status') ?></th><th><?= __('posts_th_date') ?></th><th><?= __('posts_th_actions') ?></th></tr></thead>
                 <tbody>
                     <?php if (!empty($posts)): ?>
                         <?php foreach ($posts as $p): ?>
                         <tr>
-                            <td><strong><?=htmlspecialchars($p['title'])?></strong><?php if(!empty($p['rejection_reason'])):?><br><small class="rejection_reason">Reason: <?=htmlspecialchars($p['rejection_reason'])?></small><?php endif;?></td>
+                            <td><strong><?=htmlspecialchars($p['title'])?></strong><?php if(!empty($p['rejection_reason'])):?><br><small class="rejection_reason"><?= sprintf(__('posts_rejection_reason'), htmlspecialchars($p['rejection_reason'])) ?></small><?php endif;?></td>
                             <td><?=htmlspecialchars($p['cat_name'])?></td>
                             <td><?=htmlspecialchars($p['user_name'])?></td>
                             <td><span class="role_badge role_<?=$p['author_role']?>"><?=ucfirst($p['author_role'])?></span></td>
@@ -215,29 +215,29 @@ $qv_close_url = posts_redirect_url();
                             <td>
                                 <div class="cell_actions">
                                     <div class="action_dropdown">
-                                        <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="Actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                        <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="<?= __('dashboard_aria_actions') ?>"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
-                                            <button type="button" class="dropdown_item" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-eye" aria-hidden="true"></i> View Post</button>
+                                            <button type="button" class="dropdown_item" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('posts_view_post') ?></button>
                                             <?php if ($p['status'] === STATUS_PENDING): ?>
                                             <div class="dropdown_divider"></div>
                                             <form method="POST" action="posts.php" class="dropdown_form">
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
                                                 <input type="hidden" name="approve" value="<?=$p['id_post']?>">
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                                <button type="submit" class="dropdown_item dropdown_approve"><i class="fa-solid fa-check" aria-hidden="true"></i> Approve</button>
+                                                <button type="submit" class="dropdown_item dropdown_approve"><i class="fa-solid fa-check" aria-hidden="true"></i> <?= __('posts_approve') ?></button>
                                             </form>
-                                            <button type="button" class="dropdown_item dropdown_reject" data-post-id="<?=$p['id_post']?>" data-post-title="<?=htmlspecialchars($p['title'], ENT_QUOTES)?>"><i class="fa-solid fa-ban" aria-hidden="true"></i> Reject</button>
+                                            <button type="button" class="dropdown_item dropdown_reject" data-post-id="<?=$p['id_post']?>" data-post-title="<?=htmlspecialchars($p['title'], ENT_QUOTES)?>"><i class="fa-solid fa-ban" aria-hidden="true"></i> <?= __('posts_reject') ?></button>
                                             <?php endif; ?>
                                             <?php if ($p['author_role'] === 'admin'): ?>
                                             <div class="dropdown_divider"></div>
-                                            <a href="edit_post.php?id=<?=$p['id_post']?>" class="dropdown_item"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit Post</a>
+                                            <a href="edit_post.php?id=<?=$p['id_post']?>" class="dropdown_item"><i class="fa-solid fa-pen" aria-hidden="true"></i> <?= __('posts_edit_post') ?></a>
                                             <?php endif; ?>
                                             <div class="dropdown_divider"></div>
                                             <form method="POST" action="posts.php" class="dropdown_form">
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
                                                 <input type="hidden" name="delete" value="<?=$p['id_post']?>">
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                                <button type="submit" class="dropdown_item dropdown_danger dropdown_delete"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete Post</button>
+                                                <button type="submit" class="dropdown_item dropdown_danger dropdown_delete"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('posts_delete_post') ?></button>
                                             </form>
                                         </div>
                                     </div>
@@ -246,7 +246,7 @@ $qv_close_url = posts_redirect_url();
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-file-lines"></i><h3>No posts found</h3><p>Try adjusting your filters.</p></div></td></tr>
+                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-file-lines"></i><h3><?= __('posts_empty_title') ?></h3><p><?= __('posts_empty_desc') ?></p></div></td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -272,7 +272,7 @@ $qv_close_url = posts_redirect_url();
                 <span class="quickview_meta_item"><i class="fa-solid fa-calendar"></i> <span id="qvDate"></span></span>
             </div>
             <div id="qvRejection" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;font-size:13px;color:#991B1B;">
-                <strong style="display:block;margin-bottom:4px;color:#EF4444;">Rejection Reason</strong>
+                <strong style="display:block;margin-bottom:4px;color:#EF4444;"><?= __('posts_quickview_rejection_reason') ?></strong>
                 <span id="qvRejectionText"></span>
             </div>
             <div class="quickview_content" id="qvContent"></div>
@@ -282,14 +282,14 @@ $qv_close_url = posts_redirect_url();
 
 <div class="modal_overlay" id="rejectModal">
     <div class="modal_box">
-        <h2>Reject Post</h2>
-        <p id="rejectPostTitle">Provide a reason.</p>
+        <h2><?= __('posts_reject_title') ?></h2>
+        <p id="rejectPostTitle"><?= __('posts_reject_desc') ?></p>
         <form method="POST" action="posts.php" class="reject_form">
             <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
             <input type="hidden" name="reject_id" id="rejectPostId" value="">
             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-            <textarea name="rejection_reason" id="rejection_reason" placeholder="Explain what needs to be changed..." required></textarea>
-            <div class="modal_actions"><button type="button" class="btn btn_secondary modal_cancel">Cancel</button><button type="submit" class="btn btn_danger">Reject Post</button></div>
+            <textarea name="rejection_reason" id="rejection_reason" placeholder="<?= __('posts_reject_placeholder') ?>" required></textarea>
+            <div class="modal_actions"><button type="button" class="btn btn_secondary modal_cancel"><?= __('posts_reject_cancel') ?></button><button type="submit" class="btn btn_danger"><?= __('posts_reject_confirm') ?></button></div>
         </form>
     </div>
 </div>
