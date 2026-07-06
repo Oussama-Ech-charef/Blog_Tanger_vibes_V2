@@ -191,7 +191,7 @@ window.closeAllDropdowns = function () {
         /* ── Delete category confirm ──────────────────────────── */
         document.querySelectorAll('.delete-cat-form').forEach(function (f) {
             f.addEventListener('submit', function (e) {
-                if (!confirm('Delete "' + f.getAttribute('data-cat-name') + '"?')) e.preventDefault();
+                if (!confirm(Lang.confirmDeleteCat.replace('%s', f.getAttribute('data-cat-name')))) e.preventDefault();
             });
         });
 
