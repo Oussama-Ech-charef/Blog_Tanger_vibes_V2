@@ -53,6 +53,26 @@
     text-align: right;
 }
 
+/* action dropdown — open to the left in RTL */
+[dir="rtl"] .action_dropdown_menu {
+    right: auto;
+    left: 0;
+}
+
+/* sidebar links — correct alignment for RTL */
+[dir="rtl"] .sidebar_link {
+    text-align: right;
+}
+
+/* stat card header — keep icons on correct side */
+[dir="rtl"] .stat_card_header {
+    justify-content: flex-start;
+}
+
+[dir="rtl"] .stat_card_header .stat_card_icon {
+    margin-left: 0;
+}
+
 /* ── Contact ─────────────────────────────────────────────────────── */
 
 /* FAQ button — left-aligned by default, use start in RTL */
