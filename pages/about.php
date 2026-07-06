@@ -24,12 +24,12 @@ $user_count = (int)$user_stmt->fetchColumn();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Tangier Vibes</title>
-    <meta name="description" content="Learn about Tangier Vibes, your ultimate guide to discovering the magic, culture, and coastal beauty of Tangier, Morocco.">
+    <title><?= __('about_page_title') ?> - Tangier Vibes</title>
+    <meta name="description" content="<?= __('about_meta_desc') ?>">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
-    <meta property="og:title" content="About Us - Tangier Vibes">
-    <meta property="og:description" content="Learn about Tangier Vibes, your ultimate guide to discovering the magic, culture, and coastal beauty of Tangier, Morocco.">
+    <meta property="og:title" content="<?= __('about_og_title') ?> - Tangier Vibes">
+    <meta property="og:description" content="<?= __('about_og_desc') ?>">
     <meta property="og:image" content="../assets/images/logo.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tanger.lovestoblog.com/about.php">

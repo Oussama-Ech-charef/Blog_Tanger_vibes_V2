@@ -64,13 +64,13 @@ if (isset($conn)) {
         <div class="footer_col">
             <h4 class="footer_title"><?= __('footer_follow_title') ?></h4>
             <div class="footer_icons">
-                <a href="#" class="social_icon" title="Facebook" aria-label="Facebook">
+                <a href="#" class="social_icon" title="<?= __('social_facebook') ?>" aria-label="<?= __('social_facebook') ?>">
                     <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
                 </a>
-                <a href="#" class="social_icon" title="Instagram" aria-label="Instagram">
+                <a href="#" class="social_icon" title="<?= __('social_instagram') ?>" aria-label="<?= __('social_instagram') ?>">
                     <i class="fa-brands fa-instagram" aria-hidden="true"></i>
                 </a>
-                <a href="#" class="social_icon" title="X (Twitter)" aria-label="X">
+                <a href="#" class="social_icon" title="<?= __('social_x') ?>" aria-label="<?= __('social_x') ?>">
                     <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
                 </a>
             </div>

@@ -27,12 +27,12 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tangier Vibes - Explore Tangier, Morocco</title>
-    <meta name="description" content="Discover the best of Tangier, Morocco. Beaches, restaurants, culture, hotels, and hidden gems curated by locals.">
+    <title>Tangier Vibes - <?= __('home_page_title') ?></title>
+    <meta name="description" content="<?= __('home_meta_desc') ?>">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
-    <meta property="og:title" content="Tangier Vibes - Explore Tangier, Morocco">
-    <meta property="og:description" content="Your ultimate guide to discovering the magic, culture, and coastal beauty of Tangier, Morocco.">
+    <meta property="og:title" content="Tangier Vibes - <?= __('home_og_title') ?>">
+    <meta property="og:description" content="<?= __('home_og_desc') ?>">
     <meta property="og:image" content="../assets/images/logo.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tanger.lovestoblog.com/">

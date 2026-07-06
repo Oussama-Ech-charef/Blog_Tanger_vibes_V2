@@ -9,7 +9,7 @@ check_session_timeout();
 get_csrf_token();
 
 ?>
-<a href="#main_content" class="skip-link">Skip to content</a>
+<a href="#main_content" class="skip-link"><?= __('skip_to_content') ?></a>
 
 <header class="site_header">
 
@@ -35,7 +35,7 @@ get_csrf_token();
                             <i class="fa-solid fa-magnifying-glass search_icon" aria-hidden="true"></i>
                             <input type="text" name="q" placeholder="<?= __('search_placeholder') ?>" value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
                             <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
-                                <a href="../pages/explore.php" class="search_clear_icon" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></a>
+                                <a href="../pages/explore.php" class="search_clear_icon" aria-label="<?= __('search_clear') ?>"><i class="fa-solid fa-xmark"></i></a>
                             <?php endif; ?>
                         </form>
 
@@ -97,21 +97,21 @@ get_csrf_token();
 
                     <!-- language switcher desktop -->
                     <div class="lang_dropdown desktop_switcher">
-                        <button class="lang_trigger" aria-label="Select language" data-lang-dropdown>
+                        <button class="lang_trigger" aria-label="<?= __('lang_select_aria') ?>" data-lang-dropdown>
                             <i class="fa-solid fa-globe lang_globe" aria-hidden="true"></i>
                             <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
                             <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
                         </button>
                         <div class="lang_menu">
-                            <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en">English</a>
-                            <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr">Français</a>
-                            <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar">العربية</a>
+                            <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en"><?= __('lang_en') ?></a>
+                            <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr"><?= __('lang_fr') ?></a>
+                            <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar"><?= __('lang_ar') ?></a>
                         </div>
                     </div>
 
                         <!-- menu open  -->
                     <div class="menu">
-                        <button class="menu_btn" id="menu_btn" aria-label="Toggle menu">
+                        <button class="menu_btn" id="menu_btn" aria-label="<?= __('menu_toggle_aria') ?>">
                             <i class="fa-solid fa-bars" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -124,7 +124,7 @@ get_csrf_token();
 
                     <!-- close menu  -->
                     <div class="mobile_menu_header">
-                        <button class="close_menu" id="close_menu" aria-label="Fermer le menu">
+                        <button class="close_menu" id="close_menu" aria-label="<?= __('menu_close_aria') ?>">
                                     <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -138,7 +138,7 @@ get_csrf_token();
                             <i class="fa-solid fa-magnifying-glass search_icon" aria-hidden="true"></i>
                             <input type="text" name="q" placeholder="<?= __('search_placeholder') ?>" value="<?= htmlspecialchars(trim($_GET['q'] ?? '')); ?>">
                             <?php if (!empty(trim($_GET['q'] ?? ''))): ?>
-                                <a href="../pages/explore.php" class="search_clear_icon" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></a>
+                                <a href="../pages/explore.php" class="search_clear_icon" aria-label="<?= __('search_clear') ?>"><i class="fa-solid fa-xmark"></i></a>
                             <?php endif; ?>
                         </form>
 
@@ -188,15 +188,15 @@ get_csrf_token();
 
                     <!-- language switcher mobile -->
                     <div class="lang_dropdown mobile_switcher">
-                        <button class="lang_trigger" aria-label="Select language" data-lang-dropdown>
+                        <button class="lang_trigger" aria-label="<?= __('lang_select_aria') ?>" data-lang-dropdown>
                             <i class="fa-solid fa-globe lang_globe" aria-hidden="true"></i>
                             <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
                             <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
                         </button>
                         <div class="lang_menu">
-                            <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en">English</a>
-                            <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr">Français</a>
-                            <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar">العربية</a>
+                            <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en"><?= __('lang_en') ?></a>
+                            <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr"><?= __('lang_fr') ?></a>
+                            <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar"><?= __('lang_ar') ?></a>
                         </div>
                     </div>
 

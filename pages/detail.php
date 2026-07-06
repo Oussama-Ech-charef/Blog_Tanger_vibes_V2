@@ -172,9 +172,9 @@ $comment_count = count($comments);
         ?>
         <div class="social">
             <i class="fas fa-share-alt" aria-hidden="true"></i> <?= __('detail_share') ?>:
-            <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $share_url ?>" target="_blank" rel="noopener noreferrer">Facebook</a> /
-            <a href="https://twitter.com/intent/tweet?text=<?= $share_title ?>&url=<?= $share_url ?>" target="_blank" rel="noopener noreferrer">X (Twitter)</a> /
-            <a href="https://wa.me/?text=<?= $share_title ?>%20<?= $share_url ?>" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $share_url ?>" target="_blank" rel="noopener noreferrer"><?= __('share_facebook') ?></a> /
+            <a href="https://twitter.com/intent/tweet?text=<?= $share_title ?>&url=<?= $share_url ?>" target="_blank" rel="noopener noreferrer"><?= __('share_twitter') ?></a> /
+            <a href="https://wa.me/?text=<?= $share_title ?>%20<?= $share_url ?>" target="_blank" rel="noopener noreferrer"><?= __('share_whatsapp') ?></a>
         </div>
 
         <!-- map design -->

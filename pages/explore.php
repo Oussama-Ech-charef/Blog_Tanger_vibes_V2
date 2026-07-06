@@ -109,12 +109,12 @@ $has_filter = !empty($category_id);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explore Tangier - Tangier Vibes</title>
-    <meta name="description" content="Browse all published places in Tangier. Filter by category and discover beaches, restaurants, culture, and more.">
+    <title><?= __('explore_page_title') ?></title>
+    <meta name="description" content="<?= __('explore_meta_desc') ?>">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="apple-touch-icon" href="../assets/images/logo.png">
-    <meta property="og:title" content="Explore Tangier - Tangier Vibes">
-    <meta property="og:description" content="Browse all published places in Tangier. Filter by category and discover beaches, restaurants, culture, and more.">
+    <meta property="og:title" content="<?= __('explore_og_title') ?>">
+    <meta property="og:description" content="<?= __('explore_og_desc') ?>">
     <meta property="og:image" content="../assets/images/logo.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tanger.lovestoblog.com/explore.php">
