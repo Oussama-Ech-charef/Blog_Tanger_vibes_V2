@@ -74,6 +74,10 @@
         case 'settings.php':
             $db_css[] = 'dashboard-forms.css';
             break;
+        case 'preview.php':
+            $db_css[] = 'dashboard-forms.css';
+            $db_css[] = 'dashboard-modals.css';
+            break;
     }
 
     foreach ($db_css as $css_file) {
@@ -81,6 +85,7 @@
     }
     ?>
     <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
 var Lang = {
     confirmApprove: '<?= __('js_confirm_approve') ?>',
@@ -120,6 +125,7 @@ var Lang = {
                 <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
                 <span><?= __('sidebar_overview') ?></span>
             </a>
+            <?php if ($is_admin): ?>
             <a href="posts.php" class="sidebar_link <?= $sidebar_page === 'posts.php' || $sidebar_page === 'add_post.php' || $sidebar_page === 'edit_post.php' ? 'active' : '' ?>">
                 <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
                 <span><?= __('sidebar_posts') ?></span>
@@ -144,6 +150,16 @@ var Lang = {
                 <i class="fa-solid fa-tags" aria-hidden="true"></i>
                 <span><?= __('sidebar_categories') ?></span>
             </a>
+            <?php else: ?>
+            <a href="posts.php" class="sidebar_link <?= $sidebar_page === 'posts.php' ? 'active' : '' ?>">
+                <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                <span><?= __('sidebar_my_posts') ?></span>
+            </a>
+            <a href="add_post.php" class="sidebar_link <?= $sidebar_page === 'add_post.php' || $sidebar_page === 'edit_post.php' ? 'active' : '' ?>">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span><?= __('sidebar_add_post') ?></span>
+            </a>
+            <?php endif; ?>
             <a href="settings.php" class="sidebar_link <?= $sidebar_page === 'settings.php' ? 'active' : '' ?>">
                 <i class="fa-solid fa-gear" aria-hidden="true"></i>
                 <span><?= __('sidebar_settings') ?></span>
