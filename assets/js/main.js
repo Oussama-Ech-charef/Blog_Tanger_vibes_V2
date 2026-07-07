@@ -8,24 +8,22 @@ function autoDismissPopup(selector, delay) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // get menu elements
+    // Mobile menu toggle
     const menuBtn = document.getElementById('menu_btn');
     const closeMenuBtn = document.getElementById('close_menu');
     const mobileNav = document.querySelector('.header_nav_mobile');
 
     if (menuBtn && closeMenuBtn && mobileNav) {
-        // open menu
         menuBtn.addEventListener('click', function() {
             mobileNav.classList.add('open');
         });
 
-        // close menu
         closeMenuBtn.addEventListener('click', function() {
             mobileNav.classList.remove('open');
         });
     }
 
-    // language dropdown toggle
+    // Language dropdown toggle
     const triggers = document.querySelectorAll('[data-lang-dropdown]');
 
     triggers.forEach(function(trigger) {
@@ -45,34 +43,74 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // user dropdown toggle
+    // User dropdown toggle
     const userTriggers = document.querySelectorAll('[data-user-dropdown]');
 
     userTriggers.forEach(function(trigger) {
         trigger.addEventListener('click', function(e) {
             e.stopPropagation();
             const dropdown = trigger.closest('.user_dropdown');
+            const menu = dropdown.querySelector('.user_dropdown_menu');
             const isOpen = dropdown.classList.contains('open');
 
-            // close all other user dropdowns
             document.querySelectorAll('.user_dropdown.open').forEach(function(d) {
                 d.classList.remove('open');
+                d.querySelector('[data-user-dropdown]').setAttribute('aria-expanded', 'false');
             });
 
             if (!isOpen) {
                 dropdown.classList.add('open');
+                trigger.setAttribute('aria-expanded', 'true');
+                var firstItem = menu.querySelector('[role="menuitem"]');
+                if (firstItem) firstItem.focus();
             }
         });
     });
 
-    // close all dropdowns when clicking outside
+    // Close dropdowns when clicking outside
     document.addEventListener('click', function() {
         document.querySelectorAll('.lang_dropdown.open').forEach(function(d) {
             d.classList.remove('open');
         });
         document.querySelectorAll('.user_dropdown.open').forEach(function(d) {
             d.classList.remove('open');
+            var btn = d.querySelector('[data-user-dropdown]');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
         });
+    });
+
+    // Keyboard navigation for user dropdowns
+    document.addEventListener('keydown', function(e) {
+        // Escape closes open dropdowns
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.user_dropdown.open').forEach(function(d) {
+                d.classList.remove('open');
+                var btn = d.querySelector('[data-user-dropdown]');
+                if (btn) {
+                    btn.setAttribute('aria-expanded', 'false');
+                    btn.focus();
+                }
+            });
+        }
+
+        // Arrow down/up within user dropdown menu
+        var openMenu = document.querySelector('.user_dropdown.open .user_dropdown_menu');
+        if (!openMenu) return;
+
+        var items = Array.from(openMenu.querySelectorAll('[role="menuitem"]'));
+        if (items.length === 0) return;
+
+        var currentIndex = items.indexOf(document.activeElement);
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            var nextIndex = (currentIndex + 1) % items.length;
+            items[nextIndex].focus();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            var prevIndex = (currentIndex - 1 + items.length) % items.length;
+            items[prevIndex].focus();
+        }
     });
 
     // auto-dismiss notification popups

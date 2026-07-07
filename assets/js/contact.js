@@ -1,3 +1,4 @@
+// FAQ accordion and notification dismiss
 document.addEventListener('DOMContentLoaded', function() {
     const items = document.querySelectorAll('.faq_item');
     items.forEach(function(item) {
