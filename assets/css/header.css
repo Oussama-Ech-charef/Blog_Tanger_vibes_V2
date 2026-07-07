@@ -194,27 +194,31 @@
     background: #fee2e2;
 }
 
-/* ─── User Dropdown (desktop) ──────────────────────────────────────────── */
+/* ============ USER DROPDOWN (DESKTOP) ============ */
 
 .user_dropdown {
     position: relative;
     flex-shrink: 0;
 }
 
+/* Trigger button */
 .user_dropdown_trigger {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 4px 10px 4px 4px;
+    padding: 4px 12px 4px 4px;
     border: 1px solid var(--color_border);
     border-radius: 40px;
     background: var(--bg_color);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     font-family: var(--font_main);
+    font-size: 0.85rem;
+    font-weight: 600;
     color: var(--color_dark);
     user-select: none;
     white-space: nowrap;
+    outline: none;
 }
 
 .user_dropdown_trigger:hover {
@@ -222,6 +226,16 @@
     background: var(--color_light);
 }
 
+.user_dropdown.open .user_dropdown_trigger {
+    border-color: var(--color_primary);
+    box-shadow: 0 0 0 3px rgba(15,111,152,0.12);
+}
+
+.user_dropdown_trigger:focus-visible {
+    box-shadow: 0 0 0 3px rgba(15,111,152,0.25);
+}
+
+/* Avatar base */
 .user_avatar {
     display: inline-flex;
     align-items: center;
@@ -234,12 +248,15 @@
     font-size: 0.85rem;
     font-weight: 700;
     flex-shrink: 0;
+    line-height: 1;
 }
 
 .user_avatar.large {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
+    width: 54px;
+    height: 54px;
+    font-size: 1.3rem;
+    border: 2px solid rgba(15,111,152,0.12);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .user_name_text {
@@ -251,99 +268,170 @@
     white-space: nowrap;
 }
 
+/* Dropdown panel — premium card */
 .user_dropdown_menu {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 10px);
     inset-inline-end: 0;
-    min-width: 220px;
-    padding: 6px;
+    width: 320px;
+    max-width: calc(100vw - 32px);
+    padding: 10px;
     border: 1px solid var(--color_border);
-    border-radius: 12px;
+    border-radius: 20px;
     background: var(--bg_color);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    box-shadow:
+        0 4px 16px rgba(0,0,0,0.04),
+        0 12px 40px rgba(0,0,0,0.08),
+        0 0 0 1px rgba(0,0,0,0.02);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-6px);
-    transition: all 0.25s ease;
+    transform: translateY(10px) scale(0.97);
+    transform-origin: top right;
+    transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 1300;
+    will-change: transform, opacity;
+}
+
+[dir="rtl"] .user_dropdown_menu {
+    transform-origin: top left;
 }
 
 .user_dropdown.open .user_dropdown_menu {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 .user_dropdown.open .lang_chevron {
     transform: rotate(180deg);
 }
 
+/* Header section — avatar + identity */
 .user_dropdown_header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 8px 10px;
+    gap: 16px;
+    padding: 8px 8px 12px;
+}
+
+.user_dropdown_identity {
+    flex: 1;
+    min-width: 0;
 }
 
 .user_dropdown_name {
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 600;
     color: var(--color_dark);
+    line-height: 1.3;
 }
 
 .user_dropdown_role {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     color: var(--color_gray);
     font-weight: 500;
+    margin-top: 2px;
 }
 
+/* Divider */
 .user_dropdown_divider {
     height: 1px;
-    background: var(--color_border);
-    margin: 4px 8px;
+    background: var(--border_light);
+    margin: 4px 0;
 }
 
+/* Menu items wrapper */
+.user_dropdown_items {
+    padding: 4px 0;
+}
+
+/* Individual menu items */
 .user_dropdown_item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
-    border-radius: 8px;
+    gap: 14px;
+    padding: 0 12px;
+    height: 48px;
+    border-radius: 12px;
     color: var(--color_dark);
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 500;
     text-decoration: none;
-    transition: all 0.15s;
+    transition: background 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
     width: 100%;
     border: none;
     background: none;
     cursor: pointer;
     font-family: var(--font_main);
-    text-align: left;
+    text-align: start;
+    outline: none;
+}
+
+.user_dropdown_item:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(15,111,152,0.3);
 }
 
 .user_dropdown_item i {
-    width: 18px;
+    width: 20px;
     text-align: center;
     color: var(--color_gray);
-    font-size: 0.9rem;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: color 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.user_dropdown_item span {
+    flex: 1;
+    min-width: 0;
 }
 
 .user_dropdown_item:hover {
-    background: var(--color_light);
+    background: rgba(15,111,152,0.07);
     color: var(--color_primary);
+    transform: translateX(4px);
+}
+
+[dir="rtl"] .user_dropdown_item:hover {
+    transform: translateX(-4px);
 }
 
 .user_dropdown_item:hover i {
     color: var(--color_primary);
 }
 
+/* Notification badge */
+.user_dropdown_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 999px;
+    line-height: 1;
+    flex-shrink: 0;
+    flex: none;
+}
+
+/* Logout item */
 .user_dropdown_logout {
     color: #dc2626;
 }
 
+.user_dropdown_logout i {
+    color: #dc2626;
+}
+
 .user_dropdown_logout:hover {
-    background: #fef2f2;
+    background: rgba(220,38,38,0.06);
     color: #b91c1c;
 }
 
@@ -353,47 +441,104 @@
 
 .user_dropdown_form {
     margin: 0;
-    padding: 0;
+    padding: 4px 0 0;
 }
 
-/* ─── Mobile user header ───────────────────────────────────────────────── */
+/* ============ MOBILE USER SECTION ============ */
 
 .mobile_user_header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 4px 0;
+    gap: 14px;
+    padding: 8px 0 12px;
+    border-bottom: 1px solid var(--border_light);
+    margin-bottom: 8px;
+}
+
+.mobile_user_identity {
+    flex: 1;
+    min-width: 0;
 }
 
 .mobile_user_name {
+    display: block;
     font-size: 1rem;
     font-weight: 700;
     color: var(--color_dark);
 }
 
+.mobile_user_role {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--color_gray);
+    font-weight: 500;
+    margin-top: 1px;
+}
+
+.mobile_user_links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 8px;
+}
+
+.mobile_user_link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--color_dark);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.mobile_user_link i {
+    width: 20px;
+    text-align: center;
+    color: var(--color_gray);
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.mobile_user_link:hover {
+    background: rgba(15,111,152,0.07);
+    color: var(--color_primary);
+}
+
+.mobile_user_link:hover i {
+    color: var(--color_primary);
+}
+
 .mobile_logout_form {
     width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid var(--border_light);
 }
 
 .mobile_logout_btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
-    height: 44px;
+    height: 46px;
     padding: 0 20px;
-    border-radius: 40px;
-    background: var(--color_light);
+    border-radius: 12px;
+    background: transparent;
     color: #dc2626;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    border: none;
+    font-family: var(--font_main);
 }
 
 .mobile_logout_btn:hover {
-    background: #fef2f2;
+    background: rgba(220,38,38,0.06);
     color: #b91c1c;
 }
 
@@ -559,7 +704,7 @@
     }
 }
 
-/* ─── Language Dropdown ──────────────────────────────────────────────── */
+/* Language dropdown */
 
 .lang_dropdown {
     position: relative;

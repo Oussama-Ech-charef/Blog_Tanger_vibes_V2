@@ -231,6 +231,18 @@
     background-color: var(--color_dark);
 }
 
+/* scroll reveal */
+.motion-reveal,
+.motion-reveal-left {
+    opacity: 0;
+    transform: translateY(40px);
+    will-change: transform, opacity;
+}
+
+.motion-reveal-left {
+    transform: translateX(-30px) translateY(0);
+}
+
 /* mobile */
 @media (max-width: 700px) {
     .detail_container {
