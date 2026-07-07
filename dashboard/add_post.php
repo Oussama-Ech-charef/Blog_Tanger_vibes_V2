@@ -1,4 +1,5 @@
 <?php
+// Add new post
 require_once __DIR__ . '/init.php';
 $page_title = __('add_post_title');
 require_once __DIR__ . '/../includes/post_helpers.php';

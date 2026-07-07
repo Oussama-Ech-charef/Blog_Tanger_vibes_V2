@@ -1,4 +1,5 @@
 <?php
+// Edit existing post
 require_once __DIR__ . '/init.php';
 $page_title = __('edit_post_title');
 require_once __DIR__ . '/../includes/post_helpers.php';
@@ -53,14 +54,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_post'])) {
                 } else {
                     $new_status = STATUS_PENDING;
                 }
-                // Clear rejection_reason when user resubmits
+                // Clear rejection reason when user resubmits
                 $clear_reason = true;
             }
 
             update_post($conn, $post_id, $cat_id, $title, $image_path, $content, $new_status, $clear_reason ?? false, $uid, $is_admin);
             log_post_activity($conn, 'post_updated', "Updated post: $title", $uid, $post_id);
 
-                // DB update succeeded — clean up old image if replaced or removed
+                // Clean up old image if replaced or removed
             if ($old_image && ($new_upload_path !== null || $remove_requested)) {
                 safe_delete_uploaded_image($old_image);
             }
@@ -269,7 +270,7 @@ require_once __DIR__ . '/inc/header.php';
 <script src="../assets/js/dashboard-editor.js"></script>
 <script>
 (function () {
-    /* Toggle remove_image flag when Remove button is clicked */
+    // Toggle remove_image flag when Remove button is clicked
     var removeBtn = document.getElementById('uploadRemove');
     var removeFlag = document.getElementById('removeImageFlag');
     if (removeBtn && removeFlag) {
@@ -278,7 +279,7 @@ require_once __DIR__ . '/inc/header.php';
         });
     }
 
-    /* Ensure existing image src survives JS init */
+    // Keep existing image src after JS init
     var previewImg = document.getElementById('previewImage');
     var sidebarPreview = document.getElementById('sidebarPreview');
     if (previewImg && previewImg.getAttribute('src') && !previewImg.src) {

@@ -1,4 +1,5 @@
 <?php
+// Post preview page
 require_once __DIR__ . '/init.php';
 $page_title = __('post_preview_title');
 

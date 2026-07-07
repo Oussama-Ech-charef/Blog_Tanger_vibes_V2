@@ -1,4 +1,5 @@
 <?php
+// Posts management
 require_once __DIR__ . '/init.php';
 $page_title = $is_admin ? __('posts_management_title') : __('posts_my_posts_title');
 
@@ -12,17 +13,17 @@ if (isset($_GET['msg'])) {
     elseif ($_GET['msg'] === 'updated') { $message = __('posts_updated'); $message_type = 'success'; }
 }
 
-// Flash message from POST redirect
+// Read flash message from POST redirect
 if (isset($_SESSION['flash_msg'])) {
     $message = $_SESSION['flash_msg'];
     $message_type = $_SESSION['flash_type'] ?? 'success';
     unset($_SESSION['flash_msg'], $_SESSION['flash_type']);
 }
 
-// Build redirect URL preserving filters (reads from POST hidden inputs and GET query params)
+// Build redirect URL keeping filter params
 function posts_redirect_url() {
     $params = [];
-    foreach (['q', 'page', 'status', 'role', 'category'] as $k) {
+    foreach (['q', 'page'] as $k) {
         $v = $_POST[$k] ?? $_GET[$k] ?? '';
         if ($v !== '') $params[$k] = $v;
     }
@@ -110,7 +111,7 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     } else { $_SESSION['flash_msg'] = __('posts_error_security'); $_SESSION['flash_type'] = 'error'; header('Location: ' . posts_redirect_url()); exit; }
 }
 
-// Quick view via ?view=id (for notification links) — loaded before header
+// Quick view from notification link
 $quick_view_post = null;
 if (isset($_GET['view']) && is_numeric($_GET['view'])) {
     $qv_id = (int)$_GET['view'];
@@ -122,8 +123,8 @@ if (isset($_GET['view']) && is_numeric($_GET['view'])) {
     $quick_view_post = $qv_s->fetch(PDO::FETCH_ASSOC);
 }
 
-//  Build query with pagination 
-$per_page = 8;
+// Build paginated query
+$per_page = isset($_GET['per_page']) ? max(4, min(50, (int)$_GET['per_page'])) : 8;
 $p_page = get_valid_page('page');
 $p_offset = get_offset($p_page, $per_page);
 
@@ -138,7 +139,7 @@ if (!empty($search)) {
     $params[':s2'] = '%'.$search.'%';
 }
 
-// Count total matching records
+// Count total matching posts
 $count_s = $conn->prepare("SELECT COUNT(*) FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE $where");
 $count_s->execute($params);
 $total_records = (int)$count_s->fetchColumn();
@@ -147,7 +148,7 @@ $total_pages = get_total_pages($total_records, $per_page);
 $p_page = min($p_page, $total_pages);
 $p_offset = get_offset($p_page, $per_page);
 
-// Fetch only current page with LIMIT / OFFSET
+// Fetch posts for current page
 $data_s = $conn->prepare("SELECT posts.*, categories.cat_name, users.user_name, users.role AS author_role FROM posts INNER JOIN categories ON posts.id_category=categories.id_category INNER JOIN users ON posts.id_user=users.id_user WHERE $where ORDER BY posts.created_at DESC LIMIT :lim OFFSET :off");
 foreach ($params as $key => $val) {
     $data_s->bindValue($key, $val);
@@ -157,12 +158,8 @@ $data_s->bindValue(':off', $p_offset, PDO::PARAM_INT);
 $data_s->execute();
 $posts = $data_s->fetchAll(PDO::FETCH_ASSOC);
 
-$query_params = [];
+$query_params = ['per_page' => $per_page];
 if (!empty($search)) $query_params['q'] = $search;
-foreach (['status', 'role', 'category'] as $k) {
-    $qv = $_GET[$k] ?? '';
-    if ($qv !== '') $query_params[$k] = $qv;
-}
 
 require_once __DIR__ . '/inc/header.php';
 ?>
@@ -204,12 +201,13 @@ $qv_close_url = posts_redirect_url();
 <form method="GET" id="filterForm" class="filters_bar">
     <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
+        <input type="hidden" name="per_page" value="<?= $per_page ?>">
         <input type="text" name="q" placeholder="<?= __('posts_search_title_placeholder') ?>" value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
     </div>
     <a href="add_post.php" class="btn btn_primary btn_sm ml_auto"><i class="fa-solid fa-plus" aria-hidden="true"></i> <?= __('posts_new_post') ?></a>
 </form>
 
-<div class="card">
+<div class="card card_posts_table">
     <div class="card_header"><h2><?= $is_admin ? __('posts_all_posts') : __('posts_my_posts_title') ?></h2></div>
     <div class="card_body_no_padding">
         <div class="table_wrapper">
@@ -233,7 +231,7 @@ $qv_close_url = posts_redirect_url();
                                         <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="<?= __('dashboard_aria_actions') ?>"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
                                             <a href="preview.php?id=<?= $p['id_post'] ?>" class="dropdown_item"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('posts_view_post') ?></a>
-                                            <button type="button" class="dropdown_item" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>$p['content'],'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-window-maximize" aria-hidden="true"></i> <?= __('posts_quick_view') ?></button>
+                                            <button type="button" class="dropdown_item" data-post-quickview='<?= json_encode(['title'=>$p['title'],'cat_name'=>$p['cat_name'],'user_name'=>$p['user_name'],'status'=>$p['status'],'content'=>render_post_content($p['content']),'image'=>$p['image'],'created_at'=>$p['created_at'],'rejection_reason'=>$p['rejection_reason']], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>'><i class="fa-solid fa-window-maximize" aria-hidden="true"></i> <?= __('posts_quick_view') ?></button>
                                             <?php if ($is_admin && $p['status'] === STATUS_PENDING): ?>
                                             <div class="dropdown_divider"></div>
                                             <form method="POST" action="posts.php" class="dropdown_form">
