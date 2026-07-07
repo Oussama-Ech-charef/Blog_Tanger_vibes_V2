@@ -1,4 +1,4 @@
-/* ── Pagination wrapper ────────────────────────────────────── */
+/* Pagination wrapper */
 .pagination_wrapper {
     display: flex;
     align-items: center;
@@ -16,7 +16,7 @@
     white-space: nowrap;
 }
 
-/* ── Pagination (dashboard style) ─────────────────────────── */
+/* Pagination (dashboard style) */
 .dashboard_pagination {
     display: flex;
     align-items: center;

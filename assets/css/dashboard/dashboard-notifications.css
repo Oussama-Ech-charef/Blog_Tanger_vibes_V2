@@ -1,4 +1,4 @@
-/* ── Notifications Page ───────────────────────────────────── */
+/* Notifications page */
 .notif_page_header {
     display: flex;
     justify-content: space-between;
@@ -127,7 +127,7 @@
     margin-left: 6px;
 }
 
-/* ── Notifications Date Range ─────────────────────────────── */
+/* Notifications date range */
 .notif_date_range {
     display: flex;
     align-items: center;
@@ -147,7 +147,7 @@
     width: 140px;
 }
 
-/* ── Notification Page Empty State ────────────────────────── */
+/* Notification page empty state */
 .notif_empty_state {
     text-align: center;
     padding: 60px 20px;

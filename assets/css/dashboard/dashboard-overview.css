@@ -1,4 +1,4 @@
-/* ── Stat Cards Grid ──────────────────────────────────────── */
+/* Stat cards grid */
 .stats_grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -110,7 +110,7 @@
     color: var(--db-danger);
 }
 
-/* ── Chart Containers ─────────────────────────────────────── */
+/* Chart containers */
 .chart_grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

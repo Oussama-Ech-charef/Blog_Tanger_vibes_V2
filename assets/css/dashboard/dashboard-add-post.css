@@ -23,7 +23,7 @@
     top: 24px;
 }
 
-/* ── Header ─────────────────────────────────────────── */
+/* Header */
 
 .add_post_header {
     display: flex;
@@ -48,7 +48,7 @@
     margin: 0;
 }
 
-/* ── Cards ──────────────────────────────────────────── */
+/* Cards */
 
 .add_post_card {
     background: var(--db-card-bg);
@@ -85,7 +85,7 @@
     padding: 24px;
 }
 
-/* ── Upload Zone ────────────────────────────────────── */
+/* Upload zone */
 
 .upload_zone {
     position: relative;
@@ -204,7 +204,7 @@
     border-color: var(--db-danger);
 }
 
-/* ── Title Input ────────────────────────────────────── */
+/* Title input */
 
 .add_post_input_label {
     display: block;
@@ -235,7 +235,7 @@
     opacity: 0.5;
 }
 
-/* ── Form Controls ──────────────────────────────────── */
+/* Form controls */
 
 .add_post_form_group {
     margin-bottom: 18px;
@@ -309,7 +309,7 @@
     justify-content: center;
 }
 
-/* ── Sidebar Image ──────────────────────────────────── */
+/* Sidebar image */
 
 .add_post_image_area {
     text-align: center;
@@ -353,7 +353,7 @@
     font-weight: 500;
 }
 
-/* ── Post Info ──────────────────────────────────────── */
+/* Post info */
 
 .add_post_info_row {
     display: flex;
@@ -377,7 +377,7 @@
     color: var(--db-text-primary);
 }
 
-/* ── Responsive ─────────────────────────────────────── */
+/* Responsive */
 
 @media (max-width: 1200px) {
     .add_post_layout > form {
