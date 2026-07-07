@@ -1,38 +1,22 @@
 <?php
 
-/**
- * @param string $param
- * @return int
- */
+// Get current page from URL
 function get_valid_page($param = 'page') {
     $page = isset($_GET[$param]) ? (int)$_GET[$param] : 1;
     return max(1, $page);
 }
 
-/**
- * @param int $page
- * @param int $per_page
- * @return int
- */
+// Calculate offset for pagination
 function get_offset($page, $per_page) {
     return ($page - 1) * $per_page;
 }
 
-/**
- * @param int $total_records
- * @param int $per_page
- * @return int
- */
+// Get total number of pages
 function get_total_pages($total_records, $per_page) {
     return max(1, (int)ceil($total_records / $per_page));
 }
 
-/**
- * @param int $current_page
- * @param int $total_pages
- * @param array $query_params
- * @return string
- */
+// Render public pagination
 function render_pagination($current_page, $total_pages, $query_params = []) {
     if ($total_pages <= 1) {
         return '';
@@ -100,15 +84,7 @@ function render_pagination($current_page, $total_pages, $query_params = []) {
     return $html;
 }
 
-/**
- * @param string $base_url
- * @param int $current_page
- * @param int $total_pages
- * @param array $query_params
- * @param int $per_page
- * @param int $total_records
- * @return void
- */
+// Render dashboard pagination with info
 function render_dashboard_pagination($base_url, $current_page, $total_pages, $query_params = [], $per_page = 0, $total_records = 0) {
     if ($total_pages <= 1) return;
 

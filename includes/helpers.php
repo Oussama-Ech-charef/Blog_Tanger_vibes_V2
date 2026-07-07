@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @param string $datetime
- * @return string
- */
+// Show relative time (e.g. "3 min ago")
 function time_ago($datetime) {
     $now = new DateTime();
     $then = new DateTime($datetime);
@@ -16,20 +13,13 @@ function time_ago($datetime) {
     return date('M j, Y', strtotime($datetime));
 }
 
-/**
- * @param string $text
- * @param int $length
- * @return string
- */
+// Truncate text to a given length
 function truncate_text($text, $length = 80) {
     if (strlen($text) <= $length) return htmlspecialchars($text);
     return htmlspecialchars(substr($text, 0, $length)) . '...';
 }
 
-/**
- * @param string $html
- * @return string
- */
+// Render post content with allowed HTML tags
 function render_post_content($html) {
     $html = trim((string)$html);
     if ($html === '') return '';
@@ -120,20 +110,14 @@ function render_post_content($html) {
     return trim($output);
 }
 
-/**
- * @param string $name
- * @return string
- */
+// Choose avatar color based on name
 function avatar_color($name) {
     $colors = ['blue', 'green', 'purple', 'orange'];
     $index = abs(crc32($name)) % count($colors);
     return $colors[$index];
 }
 
-/**
- * @param string $name
- * @return string
- */
+// Get initials from a name
 function avatar_initials($name) {
     $parts = explode(' ', trim($name));
     if (count($parts) >= 2) {
@@ -142,11 +126,7 @@ function avatar_initials($name) {
     return strtoupper(substr($name, 0, 2));
 }
 
-/**
- * @param string $message
- * @param string $type
- * @return void
- */
+// Render a notification bubble
 function render_notification($message, $type = 'success') {
     if (empty($message)) return;
     $icon = match ($type) {
@@ -159,23 +139,16 @@ function render_notification($message, $type = 'success') {
     echo '<div class="notification ' . $type . '"><i class="fa-solid ' . $icon . '" aria-hidden="true"></i> ' . htmlspecialchars($message) . '</div>';
 }
 
-/**
- * @param array $errors
- * @return void
- */
+// Render error notifications
 function render_errors($errors) {
     if (empty($errors)) return;
     $msg = implode(' | ', array_map('htmlspecialchars', $errors));
     render_notification($msg, 'error');
 }
 
-/**
- * @param array $post
- * @param string $btn_key
- * @return string
- */
+// Render a post card for the public pages
 function render_post_card($post, $btn_key = 'latest_read_more') {
-    $html = '<a href="detail.php?id=' . (int)$post['id_post'] . '" class="card_place">';
+    $html = '<a href="detail.php?id=' . (int)$post['id_post'] . '" class="card_place motion-reveal motion-reveal-scale">';
     $html .= '<img src="../' . htmlspecialchars((string)($post['image'] ?? '')) . '" alt="' . htmlspecialchars((string)($post['title'] ?? '')) . '" loading="lazy">';
     $html .= '<div class="card_content">';
     $html .= '<span class="category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> ' . htmlspecialchars((string)($post['cat_name'] ?? '')) . '</span>';
@@ -189,12 +162,7 @@ function render_post_card($post, $btn_key = 'latest_read_more') {
     return $html;
 }
 
-/**
- * @param string $name
- * @param string $value
- * @param string $placeholder
- * @return string
- */
+// Render a search input field
 function render_search_input($name, $value, $placeholder = null) {
     if ($placeholder === null) {
         $placeholder = __('search_placeholder');
@@ -206,10 +174,7 @@ function render_search_input($name, $value, $placeholder = null) {
     return $html;
 }
 
-/**
- * @param string|null $path
- * @return bool
- */
+// Safely delete an uploaded image (path traversal check)
 function safe_delete_uploaded_image($path) {
     if (empty($path)) return false;
     $uploads_dir = realpath(__DIR__ . '/../assets/uploads');
@@ -224,13 +189,7 @@ function safe_delete_uploaded_image($path) {
     return @unlink($target);
 }
 
-/**
- * @param string $name
- * @param array $options
- * @param string $selected
- * @param string $label
- * @return string
- */
+// Render a filter select dropdown
 function render_filter_select($name, $options, $selected = '', $label = '') {
     $html = '<select name="' . htmlspecialchars($name) . '" class="filter_select">';
     if (!empty($label)) {
@@ -244,15 +203,7 @@ function render_filter_select($name, $options, $selected = '', $label = '') {
     return $html;
 }
 
-/**
- * @param string $id
- * @param string $date_from
- * @param string $date_to
- * @param string $selected
- * @param string $param_from
- * @param string $param_to
- * @return string
- */
+// Render a date range filter
 function render_date_range_filter($id, $date_from = '', $date_to = '', $selected = '', $param_from = 'date_from', $param_to = 'date_to') {
     $display = $selected === 'custom' ? 'flex' : 'none';
     $html = '<div class="notif_date_range" id="' . htmlspecialchars($id) . '" style="display:' . $display . '">';
@@ -263,12 +214,7 @@ function render_date_range_filter($id, $date_from = '', $date_to = '', $selected
     return $html;
 }
 
-/**
- * @param callable $db_op
- * @param string $success_msg
- * @param string $error_msg
- * @return array{string,string}
- */
+// Execute a DB action with CSRF validation
 function execute_db_action($db_op, $success_msg = '', $error_msg = '') {
     if ($success_msg === '') $success_msg = __('db_op_success');
     if ($error_msg === '') $error_msg = __('db_op_error');

@@ -64,13 +64,13 @@ if (isset($conn)) {
         <div class="footer_col">
             <h4 class="footer_title"><?= __('footer_follow_title') ?></h4>
             <div class="footer_icons">
-                <a href="#" class="social_icon" title="<?= __('social_facebook') ?>" aria-label="<?= __('social_facebook') ?>">
+                <a href="#" class="social_icon" data-social="facebook" data-tooltip="<?= __('social_facebook') ?>" aria-label="<?= __('social_facebook') ?>">
                     <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
                 </a>
-                <a href="#" class="social_icon" title="<?= __('social_instagram') ?>" aria-label="<?= __('social_instagram') ?>">
+                <a href="#" class="social_icon" data-social="instagram" data-tooltip="<?= __('social_instagram') ?>" aria-label="<?= __('social_instagram') ?>">
                     <i class="fa-brands fa-instagram" aria-hidden="true"></i>
                 </a>
-                <a href="#" class="social_icon" title="<?= __('social_x') ?>" aria-label="<?= __('social_x') ?>">
+                <a href="#" class="social_icon" data-social="x" data-tooltip="<?= __('social_x') ?>" aria-label="<?= __('social_x') ?>">
                     <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
                 </a>
             </div>
@@ -95,3 +95,13 @@ if (isset($conn)) {
 </footer>
 
 <?php require_once __DIR__ . '/auth_modal.php'; ?>
+<script src="../assets/js/image-fallback.js"></script>
+<script type="importmap">
+{
+    "imports": {
+        "motion": "https://cdn.jsdelivr.net/npm/motion@11/+esm"
+    }
+}
+</script>
+<script type="module" src="../assets/js/scroll-animations.js"></script>
+<script type="module" src="../assets/js/counters.js"></script>
