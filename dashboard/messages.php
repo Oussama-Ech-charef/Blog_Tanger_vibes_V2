@@ -1,4 +1,5 @@
 <?php
+// Messages inbox
 require_once __DIR__ . '/init.php';
 require_admin();
 $page_title = __('messages_inbox_title');
@@ -6,7 +7,7 @@ $message = ''; $message_type = '';
 
 $csrf = get_csrf_token();
 
-// Mark as read
+// Mark message as read
 if (isset($_POST['mark_read']) && is_numeric($_POST['mark_read'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         try {
@@ -15,7 +16,7 @@ if (isset($_POST['mark_read']) && is_numeric($_POST['mark_read'])) {
     }
 }
 
-// Delete
+// Delete message
 if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         try {
@@ -25,7 +26,7 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
-// View single (must happen after read/delete to pick up changes)
+// View single message
 $view_message = null;
 if (isset($_GET['view']) && is_numeric($_GET['view'])) {
     $s = $conn->prepare("SELECT * FROM contact_messages WHERE id_message=:id");

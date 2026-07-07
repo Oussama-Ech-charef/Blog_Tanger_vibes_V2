@@ -1,4 +1,5 @@
 <?php
+// User settings page
 require_once __DIR__ . '/init.php';
 $page_title = __('settings_title');
 $message = ''; $message_type = '';

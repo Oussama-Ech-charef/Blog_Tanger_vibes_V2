@@ -1,9 +1,10 @@
 <?php
+// Notifications page
 require_once __DIR__ . '/init.php';
 require_admin();
 $page_title = __('notifications_title');
 
-// Mark single as read
+// Mark single notification as read
 if (isset($_POST['read']) && is_numeric($_POST['read'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
         $conn->prepare("UPDATE activity_log SET is_read=1 WHERE id_activity=:id")->execute([':id'=>(int)$_POST['read']]);
@@ -16,14 +17,14 @@ if (isset($_POST['read']) && is_numeric($_POST['read'])) {
 
 // Mark all as read
 if (isset($_POST['mark_all_read']) && validate_csrf_token($_POST['csrf_token'] ?? '')) {
-    $conn->prepare("UPDATE activity_log SET is_read=1 WHERE action_type NOT IN ('draft_saved')")->execute();
+    $conn->prepare("UPDATE activity_log SET is_read=1 WHERE action_type NOT IN ('draft_saved') AND (user_id IS NULL OR user_id IN (SELECT id_user FROM users WHERE role='user'))")->execute();
     $q = $_GET;
     unset($q['mark_all_read']);
     header('Location: notifications.php?' . http_build_query($q));
     exit();
 }
 
-//  Category mapping
+// Category mapping
 $category_options = [
     ''                => __('notif_category_all'),
     'posts'           => __('notif_category_posts'),
@@ -49,7 +50,7 @@ $category_action_map = [
     'security'        => [],
 ];
 
-//  Action type info for display 
+// Action type display info
 $type_info = [
     'post_created'     => ['icon' => 'fa-solid fa-plus',          'color' => '#10B981', 'bg' => '#D1FAE5', 'label' => __('notif_type_post_created')],
     'post_submitted'   => ['icon' => 'fa-solid fa-paper-plane',   'color' => '#3B82F6', 'bg' => '#DBEAFE', 'label' => __('notif_type_post_submitted')],
@@ -62,7 +63,7 @@ $type_info = [
     'message_received' => ['icon' => 'fa-solid fa-envelope',      'color' => '#D97706', 'bg' => '#FEF3C7', 'label' => __('notif_type_message_received')],
 ];
 
-//  Link builder 
+// Build notification link
 function notification_link($action_type, $entity_type, $entity_id) {
     if ($action_type === 'message_received') {
         return $entity_id ? "messages.php?view=$entity_id" : 'messages.php';
@@ -79,7 +80,7 @@ function notification_link($action_type, $entity_type, $entity_id) {
     return null;
 }
 
-//  Date grouping 
+// Group notifications by date
 function get_date_group($date_str) {
     $ts = strtotime($date_str);
     $today = strtotime('today');
@@ -93,7 +94,7 @@ function get_date_group($date_str) {
     return date('F Y', $ts);
 }
 
-//  Read filters
+// Read filter values
 $category_filter = $_GET['category'] ?? '';
 $status_filter = $_GET['status'] ?? '';
 $date_filter = $_GET['date'] ?? '';
@@ -104,12 +105,13 @@ $user_filter = $_GET['user'] ?? '';
 $per_page = 25;
 $page = get_valid_page();
 
-// Load users for filte
+// Load users for filter
 $all_users = $conn->query("SELECT id_user, user_name, role FROM users WHERE is_active=1 ORDER BY user_name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 // Build WHERE clause 
 $where_parts = ["al.action_type != ?"];
 $params = ['draft_saved'];
+$where_parts[] = "(al.user_id IS NULL OR al.user_id IN (SELECT id_user FROM users WHERE role='user'))";
 
 // Category filter
 if (!empty($category_filter) && isset($category_action_map[$category_filter])) {
@@ -167,7 +169,7 @@ if (!empty($search)) {
 
 $where = implode(' AND ', $where_parts);
 
-// Count 
+// Count matching notifications
 $cs = $conn->prepare("SELECT COUNT(*) FROM activity_log al LEFT JOIN users u ON al.user_id = u.id_user WHERE $where");
 $cs->execute($params);
 $total_records = (int)$cs->fetchColumn();
@@ -175,7 +177,7 @@ $total_pages = get_total_pages($total_records, $per_page);
 $current_page = min($page, $total_pages);
 $offset = get_offset($current_page, $per_page);
 
-//  Fetch 
+// Fetch notifications for current page
 $ds = $conn->prepare("SELECT al.*, u.user_name FROM activity_log al LEFT JOIN users u ON al.user_id = u.id_user WHERE $where ORDER BY al.created_at DESC LIMIT ? OFFSET ?");
 
 // Bind all WHERE params
@@ -187,10 +189,12 @@ $ds->bindValue(count($params) + 2, $offset, PDO::PARAM_INT);
 $ds->execute();
 $notifications = $ds->fetchAll(PDO::FETCH_ASSOC);
 
-//  Count unread for header 
-$unread_count = (int)$conn->query("SELECT COUNT(*) FROM activity_log WHERE is_read=0 AND action_type NOT IN ('draft_saved')")->fetchColumn();
+// Count unread for header
+$unread_stmt = $conn->prepare("SELECT COUNT(*) FROM activity_log WHERE is_read=0 AND action_type NOT IN ('draft_saved') AND (user_id IS NULL OR user_id IN (SELECT id_user FROM users WHERE role='user'))");
+$unread_stmt->execute();
+$unread_count = (int)$unread_stmt->fetchColumn();
 
-//  Build query params for pagination
+// Build query params for pagination
 $query_params = [];
 if (!empty($category_filter)) $query_params['category'] = $category_filter;
 if (!empty($status_filter)) $query_params['status'] = $status_filter;

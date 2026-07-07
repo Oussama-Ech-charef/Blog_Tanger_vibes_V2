@@ -1,10 +1,11 @@
 <?php
+// Categories management
 require_once __DIR__ . '/init.php';
 require_admin();
 $page_title = __('categories_management_title');
 $message = ''; $message_type = '';
 
-// Add
+// Add category
 if (isset($_POST['add_category'])) {
     $name = trim($_POST['cat_name'] ?? '');
     if (validate_csrf_token($_POST['csrf_token']??'') && !empty($name) && strlen($name)<=100) {
@@ -18,7 +19,7 @@ if (isset($_POST['add_category'])) {
     } else { $message = __('categories_invalid'); $message_type = 'error'; }
 }
 
-// Edit
+// Edit category
 if (isset($_POST['edit_category'])) {
     $id = (int)($_POST['cat_id']??0); $name = trim($_POST['cat_name']??'');
     if (validate_csrf_token($_POST['csrf_token']??'') && $id>0 && !empty($name) && strlen($name)<=100) {
@@ -32,7 +33,7 @@ if (isset($_POST['edit_category'])) {
     } else { $message = __('categories_invalid'); $message_type = 'error'; }
 }
 
-// Delete
+// Delete category
 if (isset($_POST['delete_category'])) {
     $cid = (int)($_POST['cat_id'] ?? 0);
     if (validate_csrf_token($_POST['csrf_token'] ?? '') && $cid > 0) {

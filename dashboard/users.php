@@ -1,15 +1,14 @@
 <?php
+// Users management
 require_once __DIR__ . '/init.php';
 require_admin();
 $page_title = __('users_management_title');
 $message = ''; $message_type = '';
 
 $csrf = get_csrf_token();
-
-// Verify CSRF helper
 $_csrf_token = $_POST['csrf_token'] ?? '';
 
-// Change role
+// Change user role
 if (isset($_POST['role'],$_POST['uid']) && is_numeric($_POST['uid'])) {
     if (validate_csrf_token($_csrf_token)) {
         $uid = (int)$_POST['uid']; $nr = $_POST['role']==='admin'?'admin':'user';
@@ -22,7 +21,7 @@ if (isset($_POST['role'],$_POST['uid']) && is_numeric($_POST['uid'])) {
     } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
-// Activate / Deactivate
+// Activate user
 if (isset($_POST['activate']) && is_numeric($_POST['activate'])) {
     if (validate_csrf_token($_csrf_token)) {
         $uid = (int)$_POST['activate'];
@@ -46,7 +45,7 @@ if (isset($_POST['deactivate']) && is_numeric($_POST['deactivate'])) {
     } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
-// Delete
+// Delete user
 if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     if (validate_csrf_token($_csrf_token)) {
         $uid = (int)$_POST['delete'];
@@ -61,7 +60,7 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
     } else { $message = __('posts_error_security'); $message_type = 'error'; }
 }
 
-// Filter vars 
+// Filter vars
 $per_page = 20;
 $page = get_valid_page();
 $search = trim($_GET['q'] ?? '');
@@ -86,7 +85,7 @@ if ($status_filter === 'active') {
     $where .= " AND is_active=0";
 }
 
-//  Count & Fetch 
+// Count and fetch users
 $cs = $conn->prepare("SELECT COUNT(*) FROM users WHERE $where");
 $cs->execute($params);
 $total_records = (int)$cs->fetchColumn();
