@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lang']) && in_array($_G
     $parsed = parse_url($uri);
     $redirect = $parsed['path'] ?? '/';
     if ($redirect !== '' && $redirect[0] === '/' && strpos($redirect, '://') === false && strpos($redirect, '..') === false) {
-        // safe — internal path
+        // Safe internal path
     } else {
         $redirect = '/';
     }

@@ -1,6 +1,6 @@
 <?php
 
-// Load .env file for database credentials
+// Load database credentials from .env file
 $envFile = __DIR__ . '/../.env';
 if (file_exists($envFile)) {
     $envContent = file_get_contents($envFile);

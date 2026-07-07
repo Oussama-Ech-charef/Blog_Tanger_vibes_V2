@@ -1,7 +1,6 @@
 <?php
 
-
-// ensure session is started with secure cookie settings
+// Start session with secure cookie settings
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'httponly' => true,
@@ -10,10 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// generate or retrieve CSRF token
-/**
- * @return string
- */
+// Generate or retrieve CSRF token
 function get_csrf_token() {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -22,11 +18,7 @@ function get_csrf_token() {
 }
 
 
-// validate CSRF token
-/**
- * @param string $token
- * @return bool
- */
+// Validate CSRF token
 function validate_csrf_token($token) {
     if (empty($_SESSION['csrf_token']) || empty($token)) {
         return false;
@@ -35,7 +27,7 @@ function validate_csrf_token($token) {
 }
 
 
-// check session timeout (30 min)
+// Check session timeout (30 min)
 function check_session_timeout() {
     $timeout = 1800;
 
@@ -56,10 +48,7 @@ function check_session_timeout() {
 }
 
 
-// send security headers (call before any HTML output)
-/**
- * @return void
- */
+// Send security headers before any output
 function send_security_headers() {
     header("X-Frame-Options: DENY");
     header("X-Content-Type-Options: nosniff");
@@ -72,11 +61,7 @@ function send_security_headers() {
 }
 
 
-// convert PHP ini size value (e.g. "2M", "50M") to bytes
-/**
- * @param string $value
- * @return int
- */
+// Convert PHP ini size value (e.g. "2M") to bytes
 function parse_ini_size($value) {
     $value = trim($value);
     $unit = strtoupper(substr($value, -1));
@@ -89,19 +74,12 @@ function parse_ini_size($value) {
     }
 }
 
-// format bytes to MB with 1 decimal place
-/**
- * @param int $bytes
- * @return string
- */
+// Format bytes to MB with 1 decimal place
 function format_file_size($bytes) {
     return number_format($bytes / (1024 * 1024), 1) . ' MB';
 }
 
-// get effective max upload size (min of target 50MB and actual server limits)
-/**
- * @return int
- */
+// Get effective max upload size (min of target and server limits)
 function get_effective_max_upload() {
     $target = 50 * 1024 * 1024;
     $ini_upload = parse_ini_size(ini_get('upload_max_filesize'));
@@ -109,17 +87,13 @@ function get_effective_max_upload() {
     return min($target, $ini_upload, $ini_post);
 }
 
-// validate uploaded image file
-/**
- * @param array $file
- * @return array
- */
+// Validate uploaded image file
 function validate_uploaded_image($file) {
     $errors = [];
     $max_size = get_effective_max_upload();
     $max_size_display = format_file_size($max_size);
 
-    // check upload errors
+    // Check upload errors
     if ($file['error'] !== UPLOAD_ERR_OK) {
         if ($file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE) {
             $errors[] = sprintf(__('upload_error_size'), $max_size_display);
@@ -129,14 +103,14 @@ function validate_uploaded_image($file) {
         return $errors;
     }
 
-    // check file size
+    // Check file size
     if ($file['size'] > $max_size) {
         $actual = format_file_size($file['size']);
         $errors[] = sprintf(__('upload_error_size'), $max_size_display);
         return $errors;
     }
 
-    // check MIME type
+    // Check MIME type
     $mime = '';
     if (function_exists('finfo_open')) {
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -156,7 +130,7 @@ function validate_uploaded_image($file) {
         return $errors;
     }
 
-    // check extension
+    // Check file extension
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
 
@@ -169,11 +143,7 @@ function validate_uploaded_image($file) {
 }
 
 
-// generate secure filename
-/**
- * @param string $extension
- * @return string
- */
+// Generate secure filename
 function generate_secure_filename($extension) {
     return "post_" . date('Ymd') . "_" . bin2hex(random_bytes(6)) . "." . $extension;
 }
