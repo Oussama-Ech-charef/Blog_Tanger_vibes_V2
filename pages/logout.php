@@ -4,7 +4,7 @@ require_once '../includes/security.php';
 
 send_security_headers();
 
-// POST only with CSRF validation
+// Require POST method with CSRF validation
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: index.php");
     exit();
@@ -16,12 +16,12 @@ if (!validate_csrf_token($csrf_token)) {
     exit();
 }
 
-// clear session
+// Clear session
 session_unset();
 
 session_destroy();
 
-// clear session cookie
+// Clear session cookie from browser
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(session_name(), '', time() - 42000,

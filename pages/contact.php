@@ -23,7 +23,7 @@ $form_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // validate CSRF
+    // Validate CSRF token
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
         $error = __('contact_error_invalid');
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form_subject = trim($_POST['subject'] ?? '');
     $form_message = trim($_POST['message'] ?? '');
 
-    // validation
+    // Validate form fields
     if (empty($error)) {
         if (empty($form_name) || empty($form_email) || empty($form_subject) || empty($form_message)) {
             $error = __('contact_error_required');
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($error)) {
         try {
-            // insert
+            // Insert message into database
             $stmt = $conn->prepare("
                 INSERT INTO contact_messages (full_name, email, subject, message)
                 VALUES (:full_name, :email, :subject, :message)
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':message'   => $form_message
             ]);
 
-            // log activity
+            // Log activity for admins
             try {
                 $new_id = $conn->lastInsertId();
                 $log = $conn->prepare("INSERT INTO activity_log (action_type, description, user_id, entity_type, entity_id) VALUES ('message_received', :desc, null, 'message', :eid)");
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <!-- hero -->
-    <section class="contact_head">
+    <section class="contact_head motion-reveal">
         <span class="contact_label">
             <i class="fa-solid fa-envelope" aria-hidden="true"></i>
             <?= __('contact_label') ?>
@@ -128,19 +128,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- info cards -->
     <section class="contact_section">
         <div class="contact_info_grid">
-            <div class="info_card">
+            <div class="info_card motion-reveal">
                 <div class="info_icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></div>
                 <h3><?= __('contact_email_title') ?></h3>
                 <p><a href="mailto:contact@tangiervibes.com">contact@tangiervibes.com</a></p>
             </div>
 
-            <div class="info_card">
+            <div class="info_card motion-reveal">
                 <div class="info_icon"><i class="fa-solid fa-phone" aria-hidden="true"></i></div>
                 <h3><?= __('contact_phone_title') ?></h3>
                 <p>+212 600 000 000</p>
             </div>
 
-            <div class="info_card">
+            <div class="info_card motion-reveal">
                 <div class="info_icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></div>
                 <h3><?= __('contact_address_title') ?></h3>
                 <p>Tangier, Morocco</p>
@@ -150,8 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- form + map layout -->
     <section class="contact_section">
-        <h2 class="section_title"><?= __('contact_form_title') ?></h2>
-        <p class="section_desc">
+        <h2 class="section_title motion-reveal"><?= __('contact_form_title') ?></h2>
+        <p class="section_desc motion-reveal">
             <?= __('contact_form_desc') ?>
         </p>
 
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <div class="contact_layout">
-            <div class="contact_form_box">
+            <div class="contact_form_box motion-reveal">
                 <form action="contact.php" method="POST" class="contact_form">
                     <input type="hidden" name="csrf_token" value="<?= get_csrf_token(); ?>">
 
@@ -209,13 +209,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- faq -->
     <section class="contact_section">
-        <h2 class="section_title"><?= __('faq_title') ?></h2>
-        <p class="section_desc">
+        <h2 class="section_title motion-reveal"><?= __('faq_title') ?></h2>
+        <p class="section_desc motion-reveal">
             <?= __('faq_desc') ?>
         </p>
 
         <div class="faq_list">
-            <div class="faq_item">
+            <div class="faq_item motion-reveal">
                 <button class="faq_question">
                     <?= __('faq_q1') ?>
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
@@ -225,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <div class="faq_item">
+            <div class="faq_item motion-reveal">
                 <button class="faq_question">
                     <?= __('faq_q2') ?>
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <div class="faq_item">
+            <div class="faq_item motion-reveal">
                 <button class="faq_question">
                     <?= __('faq_q3') ?>
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <div class="faq_item">
+            <div class="faq_item motion-reveal">
                 <button class="faq_question">
                     <?= __('faq_q4') ?>
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>

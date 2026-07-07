@@ -7,7 +7,7 @@ require_once '../includes/helpers.php';
 
 send_security_headers();
 
-// get latest posts
+// Get latest published posts
 $stmt = $conn->prepare("
     SELECT posts.*, categories.cat_name, users.user_name
     FROM posts
@@ -54,7 +54,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php require '../includes/header.php'; ?>
 
     <main id="main_content">
-        <!-- hero -->
+        <!-- Hero section -->
         <section class="hero_section">
             <picture>
                 <source srcset="../assets/images/home_1920.jpg 1920w, ../assets/images/home_1200.jpg 1200w, ../assets/images/home_768.jpg 768w, ../assets/images/home_480.jpg 480w" sizes="100vw" type="image/jpeg">
@@ -63,10 +63,10 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="hero_shadow"></div>
 
             <div class="hero_content">
-                <p class="hero_label"><?= __('hero_label') ?></p>
-                <h1 class="hero_title"><?= __('hero_title') ?></h1>
-                <p class="hero_desc"><?= __('hero_desc') ?></p>
-                <div class="hero_btns">
+                <p class="hero_label motion-reveal"><?= __('hero_label') ?></p>
+                <h1 class="hero_title motion-reveal"><?= __('hero_title') ?></h1>
+                <p class="hero_desc motion-reveal"><?= __('hero_desc') ?></p>
+                <div class="hero_btns motion-reveal">
                     <a href="explore.php" class="btn_explor">
                         <?= __('hero_btn') ?>
                     </a>
@@ -74,9 +74,9 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </section>
 
-        <!-- latest posts -->
+        <!-- Latest posts section -->
         <section class="latest_section">
-            <div class="section_header">
+            <div class="section_header motion-reveal">
                 <h2 class="title"><?= __('latest_title') ?></h2>
                 <p class="description"><?= __('latest_desc') ?></p>
             </div>
@@ -91,7 +91,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php endif; ?>
             </div>
 
-            <div class="footer_section">
+            <div class="footer_section motion-reveal">
                 <a href="explore.php" class="view_explor">
                     <?= __('latest_view_all') ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </a>
@@ -102,5 +102,20 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php require '../includes/footer.php'; ?>
     <script src="../assets/js/main.js"></script>
+<?php if (isset($_GET['login'])): ?>
+<script>
+(function() {
+    function openAuthModal() {
+        var toggle = document.querySelector('[data-auth-toggle]');
+        if (toggle) toggle.click();
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', openAuthModal);
+    } else {
+        openAuthModal();
+    }
+})();
+</script>
+<?php endif; ?>
 </body>
 </html>

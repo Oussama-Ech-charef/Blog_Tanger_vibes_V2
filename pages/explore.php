@@ -1,5 +1,5 @@
 <?php
-
+// Explore page
 require_once '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/pagination.php';
@@ -138,7 +138,7 @@ $has_filter = !empty($category_id);
     <main class="explore_page" id="main_content">
 
         <!-- page header -->
-        <section class="explore_head">
+        <section class="explore_head motion-reveal">
             <span class="explore_label">
                 <i class="fa-solid fa-compass" aria-hidden="true"></i>
                 <?= __('explore_label') ?>
@@ -150,7 +150,7 @@ $has_filter = !empty($category_id);
         </section>
 
         <?php if ($has_search): ?>
-            <div class="search_results_info">
+            <div class="search_results_info motion-reveal">
                 <?php if ($total_records > 0): ?>
                     <p><?= __('explore_results_count', $total_records) ?> "<strong><?= htmlspecialchars($keyword); ?></strong>"</p>
                 <?php else: ?>
@@ -160,7 +160,7 @@ $has_filter = !empty($category_id);
         <?php endif; ?>
 
         <!-- filters -->
-        <section class="explore_filters">
+        <section class="explore_filters motion-reveal">
             <a href="explore.php<?= $has_search ? '?q=' . urlencode($keyword) : ''; ?>" class="<?= empty($category_id) ? 'active' : ''; ?>">
                 <?= __('explore_filter_all') ?>
             </a>
@@ -184,7 +184,7 @@ $has_filter = !empty($category_id);
                 <?php endforeach; ?>
             <?php elseif ($has_search): ?>
 
-                <div class="empty_state">
+                <div class="empty_state motion-reveal">
                     <i class="fa-solid fa-search" aria-hidden="true"></i>
                     <h3><?= __('explore_no_results_title') ?></h3>
                     <p><?= __('explore_no_results_desc') ?></p>

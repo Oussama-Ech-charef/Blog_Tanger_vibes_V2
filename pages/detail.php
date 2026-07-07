@@ -7,7 +7,7 @@ require_once '../includes/helpers.php';
  
  send_security_headers();
 
-// check post id
+// Check if post ID is provided
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: index.php');
     exit;
@@ -16,7 +16,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $post_id = $_GET['id'];
 
 
-// get post
+// Load post from database
 $stmt = $conn->prepare("
     select posts.*, categories.cat_name, users.user_name
     from posts
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// get approved comments for this post
+// Get approved comments for this post
 $comment_stmt = $conn->prepare("
     select id_comment, author_name, comment_text, created_at
     from comments
@@ -141,14 +141,14 @@ $comment_count = count($comments);
     <div class="detail_container" id="main_content">
 
         <!-- category -->
-        <div class="detail_category">
+        <div class="detail_category motion-reveal-left">
             <i class="fa-solid fa-layer-group" aria-hidden="true"></i> <?= __('detail_tanger_label') ?> <span class="cat_name"><?= htmlspecialchars($post['cat_name']); ?></span>
         </div>
 
-        <h1><?= htmlspecialchars($post['title']); ?></h1>
+        <h1 class="motion-reveal"><?= htmlspecialchars($post['title']); ?></h1>
 
         <!-- post info -->
-        <div class="icons">
+        <div class="icons motion-reveal">
             <span><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><?= date(__('date_format_detail'), strtotime($post['created_at'])); ?></span>
             <span><i class="fa-solid fa-circle-user" aria-hidden="true"></i><?= __('detail_by') ?> <?= htmlspecialchars($post['user_name'] ?? __('admin_label')); ?></span>
             
@@ -156,11 +156,11 @@ $comment_count = count($comments);
 
         <!-- image -->
         <?php if (!empty($post['image'])): ?>
-            <img src="../<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy">
+            <img src="../<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy" class="motion-reveal">
         <?php endif; ?>
 
         <!-- content -->
-        <div class="content">
+        <div class="content motion-reveal">
             <?= render_post_content($post['content']); ?>
         </div>
 
@@ -170,7 +170,7 @@ $comment_count = count($comments);
         $share_url = urlencode('https://tanger.lovestoblog.com/detail.php?id=' . $post['id_post']);
         $share_title = urlencode(htmlspecialchars_decode($post['title']) . ' - Tangier Vibes');
         ?>
-        <div class="social">
+        <div class="social motion-reveal">
             <i class="fas fa-share-alt" aria-hidden="true"></i> <?= __('detail_share') ?>:
             <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $share_url ?>" target="_blank" rel="noopener noreferrer"><?= __('share_facebook') ?></a> /
             <a href="https://twitter.com/intent/tweet?text=<?= $share_title ?>&url=<?= $share_url ?>" target="_blank" rel="noopener noreferrer"><?= __('share_twitter') ?></a> /
@@ -178,7 +178,7 @@ $comment_count = count($comments);
         </div>
 
         <!-- map design -->
-        <div class="map_box">
+        <div class="map_box motion-reveal">
             <iframe
                 src="https://www.openstreetmap.org/export/embed.html?bbox=-5.85,35.75,-5.82,35.77&layer=mapnik&marker=35.7595,-5.8368"
                 width="100%"
@@ -192,14 +192,14 @@ $comment_count = count($comments);
 
 
         <!-- comments -->
-        <div id="comments" class="comments_posts">
+        <div id="comments" class="comments_posts motion-reveal">
             <div class="comment_title">
                 <i class="fa-solid fa-comment-dots" aria-hidden="true"></i> <?= __('detail_comments_title') ?>
-                <span><?= $comment_count; ?></span>
+                <span data-counter><?= $comment_count; ?></span>
             </div>
         </div>
 
-        <div class="comments_list">
+        <div class="comments_list motion-reveal">
             <?php if (!empty($comments)): ?>
                 <?php foreach ($comments as $comment): ?>
                     <div class="comment_item">
@@ -219,7 +219,7 @@ $comment_count = count($comments);
             <?php render_notification($comment_error, 'error'); ?>
         <?php endif; ?>
 
-        <div class="comment_form">
+        <div class="comment_form motion-reveal">
             <h3 class="comment_title"><?= __('detail_comment_leave') ?></h3>
 
             <form action="" method="POST">

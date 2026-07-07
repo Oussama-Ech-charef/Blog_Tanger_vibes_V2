@@ -6,7 +6,7 @@ require_once '../includes/lang.php';
 
 send_security_headers();
 
-// stats
+// Load site statistics
 $pub_stmt = $conn->prepare("SELECT COUNT(*) FROM posts WHERE status = :pub_status");
 $pub_stmt->execute([':pub_status' => STATUS_PUBLISHED]);
 $published_count = (int)$pub_stmt->fetchColumn();
@@ -52,7 +52,7 @@ $user_count = (int)$user_stmt->fetchColumn();
 <main class="about_page" id="main_content">
 
     <!-- hero -->
-    <section class="about_head">
+    <section class="about_head motion-reveal">
         <span class="about_label">
             <i class="fa-solid fa-info-circle" aria-hidden="true"></i>
             <?= __('about_label') ?>
@@ -65,11 +65,11 @@ $user_count = (int)$user_stmt->fetchColumn();
 
     <!-- about -->
     <section class="about_section">
-        <h2 class="section_title"><?= __('about_section_title') ?></h2>
-        <p class="section_desc">
+        <h2 class="section_title motion-reveal"><?= __('about_section_title') ?></h2>
+        <p class="section_desc motion-reveal">
             <?= __('about_section_desc') ?>
         </p>
-        <div class="about_text">
+        <div class="about_text motion-reveal">
             <p>
                 <?= __('about_text_p1') ?>
             </p>
@@ -84,43 +84,43 @@ $user_count = (int)$user_stmt->fetchColumn();
 
     <!-- features -->
     <section class="about_section section_center">
-        <h2 class="section_title"><?= __('about_features_title') ?></h2>
-        <p class="section_desc">
+        <h2 class="section_title motion-reveal"><?= __('about_features_title') ?></h2>
+        <p class="section_desc motion-reveal">
             <?= __('about_features_desc') ?>
         </p>
 
         <div class="features_grid">
-            <div class="feature_card">
+            <div class="feature_card motion-reveal">
                 <div class="feature_icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_discover') ?></h3>
                 <p><?= __('about_feature_discover_desc') ?></p>
             </div>
 
-            <div class="feature_card">
+            <div class="feature_card motion-reveal">
                 <div class="feature_icon"><i class="fa-solid fa-landmark" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_culture') ?></h3>
                 <p><?= __('about_feature_culture_desc') ?></p>
             </div>
 
-            <div class="feature_card">
+            <div class="feature_card motion-reveal">
                 <div class="feature_icon"><i class="fa-solid fa-utensils" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_restaurants') ?></h3>
                 <p><?= __('about_feature_restaurants_desc') ?></p>
             </div>
 
-            <div class="feature_card">
+            <div class="feature_card motion-reveal">
                 <div class="feature_icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_history') ?></h3>
                 <p><?= __('about_feature_history_desc') ?></p>
             </div>
 
-            <div class="feature_card">
+            <div class="feature_card motion-reveal">
                 <div class="feature_icon"><i class="fa-solid fa-pen-fancy" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_share') ?></h3>
                 <p><?= __('about_feature_share_desc') ?></p>
             </div>
 
-            <div class="feature_card">
+            <div class="feature_card motion-reveal">
                 <div class="feature_icon"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
                 <h3><?= __('about_feature_community') ?></h3>
                 <p><?= __('about_feature_community_desc') ?></p>
@@ -130,13 +130,13 @@ $user_count = (int)$user_stmt->fetchColumn();
 
     <!-- why choose us -->
     <section class="about_section">
-        <h2 class="section_title"><?= __('about_why_title') ?></h2>
-        <p class="section_desc">
+        <h2 class="section_title motion-reveal"><?= __('about_why_title') ?></h2>
+        <p class="section_desc motion-reveal">
             <?= __('about_why_desc') ?>
         </p>
 
         <div class="why_grid">
-            <div class="why_item">
+            <div class="why_item motion-reveal">
                 <div class="why_icon"><i class="fa-solid fa-shield-check" aria-hidden="true"></i></div>
                 <div>
                     <h3><?= __('about_why_trusted') ?></h3>
@@ -144,7 +144,7 @@ $user_count = (int)$user_stmt->fetchColumn();
                 </div>
             </div>
 
-            <div class="why_item">
+            <div class="why_item motion-reveal">
                 <div class="why_icon"><i class="fa-solid fa-compass" aria-hidden="true"></i></div>
                 <div>
                     <h3><?= __('about_why_navigation') ?></h3>
@@ -152,7 +152,7 @@ $user_count = (int)$user_stmt->fetchColumn();
                 </div>
             </div>
 
-            <div class="why_item">
+            <div class="why_item motion-reveal">
                 <div class="why_icon"><i class="fa-solid fa-star" aria-hidden="true"></i></div>
                 <div>
                     <h3><?= __('about_why_local') ?></h3>
@@ -160,7 +160,7 @@ $user_count = (int)$user_stmt->fetchColumn();
                 </div>
             </div>
 
-            <div class="why_item">
+            <div class="why_item motion-reveal">
                 <div class="why_icon"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></div>
                 <div>
                     <h3><?= __('about_why_modern') ?></h3>
@@ -172,34 +172,34 @@ $user_count = (int)$user_stmt->fetchColumn();
 
     <!-- stats -->
     <section class="about_section section_center">
-        <h2 class="section_title"><?= __('about_stats_title') ?></h2>
-        <p class="section_desc">
+        <h2 class="section_title motion-reveal"><?= __('about_stats_title') ?></h2>
+        <p class="section_desc motion-reveal">
             <?= __('about_stats_desc') ?>
         </p>
 
         <div class="stats_grid">
-            <div class="stat_card">
+            <div class="stat_card motion-reveal">
                 <div class="stat_icon"><i class="fa-solid fa-newspaper" aria-hidden="true"></i></div>
-                <strong><?= $published_count; ?></strong>
+                <strong data-counter><?= $published_count; ?></strong>
                 <span><?= __('about_stats_posts') ?></span>
             </div>
 
-            <div class="stat_card">
+            <div class="stat_card motion-reveal">
                 <div class="stat_icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></div>
-                <strong><?= $category_count; ?></strong>
+                <strong data-counter><?= $category_count; ?></strong>
                 <span><?= __('about_stats_categories') ?></span>
             </div>
 
-            <div class="stat_card">
+            <div class="stat_card motion-reveal">
                 <div class="stat_icon"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
-                <strong><?= $user_count; ?></strong>
+                <strong data-counter><?= $user_count; ?></strong>
                 <span><?= __('about_stats_users') ?></span>
             </div>
         </div>
     </section>
 
     <!-- cta -->
-    <section class="cta_section">
+    <section class="cta_section motion-reveal">
         <h2><?= __('about_cta_title') ?></h2>
         <p><?= __('about_cta_desc') ?></p>
         <a href="explore.php" class="cta_btn">
