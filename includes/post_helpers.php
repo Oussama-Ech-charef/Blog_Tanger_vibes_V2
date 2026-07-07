@@ -3,12 +3,7 @@
 require_once __DIR__ . '/../config/connection.php';
 require_once __DIR__ . '/security.php';
 
-/**
- * @param string $title
- * @param int|string $cat_id
- * @param string $content
- * @return array
- */
+// Validate post input fields
 function validate_post_input($title, $cat_id, $content) {
     $errors = [];
     if (empty($title)) $errors[] = __('post_error_title_required');
@@ -17,10 +12,7 @@ function validate_post_input($title, $cat_id, $content) {
     return $errors;
 }
 
-/**
- * @param string|null $existing_path (unused — kept for backward compatibility)
- * @return array
- */
+// Process uploaded post image
 function process_post_image($existing_path = null) {
     $result = ['path' => null, 'errors' => []];
 
@@ -47,11 +39,7 @@ function process_post_image($existing_path = null) {
     return $result;
 }
 
-/**
- * @param string|null $current_path
- * @param bool $remove_requested
- * @return string|null
- */
+// Handle image removal request
 function handle_image_removal($current_path, $remove_requested) {
     if ($remove_requested) {
         return null;
@@ -59,17 +47,7 @@ function handle_image_removal($current_path, $remove_requested) {
     return $current_path;
 }
 
-/**
- * @param PDO $conn
- * @param int $cat_id
- * @param int $user_id
- * @param string $title
- * @param string|null $image
- * @param string $content
- * @param string $status
- * @param bool $is_admin
- * @return int
- */
+// Insert a new post into database
 function insert_post($conn, $cat_id, $user_id, $title, $image, $content, $status, $is_admin) {
     $s = $conn->prepare("INSERT INTO posts (id_category, id_user, title, image, content, status) VALUES (:c, :u, :t, :i, :co, :st)");
     $s->execute([':c' => (int)$cat_id, ':u' => (int)$user_id, ':t' => $title, ':i' => $image, ':co' => $content, ':st' => $status]);
@@ -86,19 +64,7 @@ function insert_post($conn, $cat_id, $user_id, $title, $image, $content, $status
     return $nid;
 }
 
-/**
- * @param PDO $conn
- * @param int $post_id
- * @param int $cat_id
- * @param string $title
- * @param string|null $image
- * @param string $content
- * @param string $status
- * @param bool $clear_reason
- * @param int $user_id
- * @param bool $is_admin
- * @return void
- */
+// Update an existing post
 function update_post($conn, $post_id, $cat_id, $title, $image, $content, $status, $clear_reason, $user_id, $is_admin) {
     $sql = "UPDATE posts SET id_category=:c, title=:t, image=:i, content=:co, status=:st";
     if ($clear_reason) {
@@ -117,24 +83,13 @@ function update_post($conn, $post_id, $cat_id, $title, $image, $content, $status
     $conn->prepare($sql)->execute($params);
 }
 
-/**
- * @param PDO $conn
- * @param string $type
- * @param string $description
- * @param int $user_id
- * @param int $post_id
- * @return void
- */
+// Log post-related activity
 function log_post_activity($conn, $type, $description, $user_id, $post_id) {
     $s = $conn->prepare("INSERT INTO activity_log (action_type, description, user_id, entity_type, entity_id) VALUES (:at, :d, :u, 'post', :e)");
     $s->execute([':at' => $type, ':d' => $description, ':u' => (int)$user_id, ':e' => (int)$post_id]);
 }
 
-/**
- * @param PDO $conn
- * @param array $criteria
- * @return array
- */
+// Fetch posts with filtering criteria
 function fetch_posts($conn, $criteria = []) {
     $defaults = [
         'where' => ['1=1'],
