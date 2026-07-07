@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var lastFocusedElement = null;
 
-    // open modal — triggered by any element with data-auth-toggle
+    // Open auth modal
     document.querySelectorAll('[data-auth-toggle]').forEach(function(el) {
         el.addEventListener('click', function(e) {
             e.preventDefault();
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // close modal
+    // Close modal
     function closeModal() {
         overlay.classList.remove('open');
         document.body.style.overflow = '';
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
     });
 
-    // tab switching
+    // Tab switching (login / register)
     tabs.forEach(function(tab) {
         tab.addEventListener('click', function() {
             tabs.forEach(function(t) {
