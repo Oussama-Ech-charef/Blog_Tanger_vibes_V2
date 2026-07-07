@@ -1,3 +1,4 @@
+// Rich text editor initialization
 (function () {
     var contentTextarea = document.getElementById('content');
     var editorSurface = document.getElementById('editorSurface');

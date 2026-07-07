@@ -1,10 +1,7 @@
-/* ============================================================
-   Tangier Vibes — Posts Page Dropdown & Reject Modal
-   ============================================================ */
-
+// Posts page dropdown and reject modal
 (function () {
     function init() {
-        /* ── Escape closes reject modal + dropdowns ──────────── */
+        // Escape closes reject modal and dropdowns
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 var modal = document.getElementById('rejectModal');
@@ -15,7 +12,7 @@
             }
         });
 
-        /* ── Open reject modal ───────────────────────────────── */
+        // Open reject modal
         document.querySelectorAll('.dropdown_reject').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var rejectPostId = document.getElementById('rejectPostId');
@@ -28,7 +25,7 @@
             });
         });
 
-        /* ── Close reject modal (Cancel button + backdrop) ───── */
+        // Close reject modal
         document.querySelectorAll('.modal_cancel').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var modal = document.getElementById('rejectModal');
@@ -45,7 +42,7 @@
             });
         }
 
-        /* ── Confirm dialogs (Approve / Delete) ────────────── */
+        // Confirm approve or delete
         document.querySelectorAll('.dropdown_approve').forEach(function (btn) {
             btn.addEventListener('click', function (e) {
                 if (!confirm(Lang.confirmApprove)) {

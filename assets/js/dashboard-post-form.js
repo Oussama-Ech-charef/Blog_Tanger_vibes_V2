@@ -13,7 +13,7 @@
 
     var currentFile = null;
 
-    /* ── Upload Preview ─────────────────────────────────── */
+    // Upload preview
 
     function showPreview(file) {
         if (!file) return;
@@ -96,7 +96,7 @@
         });
     }
 
-    /* ── Sidebar image upload sync ─────────────────────── */
+    // Sidebar image upload sync
 
     if (sidebarPlaceholder) {
         sidebarPlaceholder.addEventListener('click', function () {
@@ -104,7 +104,7 @@
         });
     }
 
-    /* ── Status Button Handling ────────────────────────── */
+    // Status button handling
 
     document.querySelectorAll('[data-set-status]').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
