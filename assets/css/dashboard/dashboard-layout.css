@@ -1,4 +1,4 @@
-/* ── Reset ────────────────────────────────────────────────── */
+/* Reset */
 .dashboard_body {
     margin: 0;
     padding: 0;
@@ -13,7 +13,7 @@
     box-sizing: border-box;
 }
 
-/* ── Layout ───────────────────────────────────────────────── */
+/* Layout */
 .dashboard_layout {
     display: flex;
     min-height: 100vh;
@@ -30,9 +30,11 @@
 .dashboard_content {
     padding: var(--db-content-padding);
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-/* ── Cards ────────────────────────────────────────────────── */
+/* Cards */
 .card {
     background: var(--db-card-bg);
     border: 1px solid var(--db-card-border);
@@ -82,7 +84,7 @@
     padding: 0;
 }
 
-/* ── Empty State ──────────────────────────────────────────── */
+/* Empty state */
 .empty_state {
     text-align: center;
     padding: 48px 20px;
@@ -111,7 +113,7 @@
     margin-right: auto;
 }
 
-/* ── Sidebar overlay (responsive) ─────────────────────────── */
+/* Sidebar overlay (responsive) */
 .sidebar_overlay {
     position: fixed;
     inset: 0;
@@ -127,7 +129,7 @@
     visibility: visible;
 }
 
-/* ── Responsive ───────────────────────────────────────────── */
+/* Responsive */
 @media (max-width: 900px) {
     .dashboard_main {
         margin-left: 0;

@@ -1,4 +1,4 @@
-/* ── CSS Variables ─────────────────────────────────────────── */
+/* CSS variables */
 :root {
     --db-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
@@ -59,7 +59,7 @@
     --db-transition: 0.2s ease;
 }
 
-/* ── Responsive variable overrides ─────────────────────────── */
+/* Responsive variable overrides */
 @media (max-width: 900px) {
     :root {
         --db-sidebar-width: 0px;

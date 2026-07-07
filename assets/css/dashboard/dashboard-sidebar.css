@@ -1,4 +1,4 @@
-/* ── Sidebar ──────────────────────────────────────────────── */
+/* Sidebar */
 .sidebar {
     position: fixed;
     top: 0;
@@ -106,7 +106,7 @@
     background: rgba(239, 68, 68, 0.1) !important;
 }
 
-/* ── Notification Badge (sidebar) ─────────────────────────── */
+/* Notification badge (sidebar) */
 .notification_badge {
     display: inline-flex;
     align-items: center;
@@ -130,7 +130,7 @@
     50% { box-shadow: 0 2px 12px rgba(239, 68, 68, 0.6); }
 }
 
-/* ── Responsive ───────────────────────────────────────────── */
+/* Responsive */
 @media (max-width: 900px) {
     .sidebar {
         transform: translateX(-100%);
