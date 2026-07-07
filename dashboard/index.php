@@ -1,11 +1,12 @@
 <?php
+// Dashboard overview
 require_once __DIR__ . '/init.php';
 $page_title = __('dashboard_overview_title');
 
 $uid = current_user_id();
 
 if ($is_admin):
-// Admin global statistics
+// Load global statistics for admin
 $status_stmt = $conn->prepare("
     SELECT COUNT(*) as total,
            SUM(status = :pub) as published,
@@ -30,7 +31,7 @@ $pc_stmt = $conn->prepare("SELECT COUNT(*) FROM posts WHERE status = :st");
 $pc_stmt->execute([':st' => STATUS_PENDING]);
 $pending_count = (int)$pc_stmt->fetchColumn();
 
-// Chart data
+// Load chart data for last 12 months
 $posts_chart = $conn->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM posts WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
 $comments_chart = $conn->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM comments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
 $users_chart = $conn->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
@@ -43,7 +44,7 @@ $cat_chart_stmt = $conn->prepare("
 $cat_chart_stmt->execute([':pub' => STATUS_PUBLISHED]);
 $category_chart = $cat_chart_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Format chart data — pad all 12 months with zeros so charts always have 12 bars/points
+// Fill 12 months with zeros so charts always show full year
 $pm_labels = []; $pm_data = [];
 $pm_map = [];
 foreach ($posts_chart as $r) { $pm_map[$r['month']] = (int)$r['count']; }
@@ -75,7 +76,7 @@ $cat_labels = []; $cat_data = []; $cat_colors = ['#0047AB','#10B981','#F59E0B','
 foreach ($category_chart as $i => $r) { $cat_labels[] = $r['cat_name']; $cat_data[] = (int)$r['count']; }
 
 else:
-// User personal statistics
+// Load personal statistics for non-admin user
 $status_stmt = $conn->prepare("
     SELECT COUNT(*) as total,
            SUM(status = :pub) as published,

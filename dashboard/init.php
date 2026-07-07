@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Load required dependencies
 require_once __DIR__ . '/../config/connection.php';
 require_once __DIR__ . '/../includes/security.php';
 require_once __DIR__ . '/../includes/lang.php';
@@ -13,20 +14,20 @@ require_once __DIR__ . '/../includes/helpers.php';
 check_session_timeout();
 send_security_headers();
 
-// Require any authenticated user
+// Require authenticated user
 if (!isset($_SESSION['id_user'])) {
-    header('Location: ../pages/login.php');
+    header('Location: ../pages/index.php?login=1');
     exit();
 }
 
-// Check account is still active
+// Check if account is still active
 $s = $conn->prepare("SELECT is_active FROM users WHERE id_user=:id");
 $s->execute([':id' => $_SESSION['id_user']]);
 $active = (int)$s->fetchColumn();
 if (!$active) {
     session_unset();
     session_destroy();
-    header('Location: ../pages/login.php');
+    header('Location: ../pages/index.php');
     exit();
 }
 
@@ -50,7 +51,7 @@ function require_admin(): void {
 
 function require_login(): void {
     if (!isset($_SESSION['id_user'])) {
-        header('Location: ../pages/login.php');
+        header('Location: ../pages/index.php?login=1');
         exit();
     }
 }

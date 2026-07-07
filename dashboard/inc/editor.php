@@ -1,6 +1,5 @@
 <?php
-// Reusable Rich Text Editor Component for Add and Edit Post forms
-// Expected variable: $editor_content (string)
+// Rich text editor component for add/edit post forms
 $editor_content = $editor_content ?? '';
 $editor_html = render_post_content($editor_content);
 ?>
