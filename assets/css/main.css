@@ -40,3 +40,249 @@ a {
 ul {
     list-style: none;
 }
+
+/* scroll reveal */
+.motion-reveal,
+.motion-reveal-left,
+.motion-reveal-right,
+.motion-reveal-scale {
+    opacity: 0;
+    transform: translateY(40px);
+    will-change: transform, opacity;
+}
+
+.motion-reveal-left {
+    transform: translateX(-40px) translateY(0);
+}
+
+.motion-reveal-right {
+    transform: translateX(40px) translateY(0);
+}
+
+.motion-reveal-scale {
+    transform: scale(0.95);
+}
+
+/* primary button hover enhancement */
+.hero_btns .btn_explor,
+.join_btn,
+.card_content .btn,
+.cta_btn,
+.contact_form button,
+.comment_form button {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.hero_btns .btn_explor::before,
+.join_btn::before,
+.card_content .btn::before,
+.cta_btn::before,
+.contact_form button::before,
+.comment_form button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(135deg, transparent 35%, rgba(60, 197, 242, 0.18) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.hero_btns .btn_explor:hover::before,
+.join_btn:hover::before,
+.card_content .btn:hover::before,
+.cta_btn:hover::before,
+.contact_form button:hover::before,
+.comment_form button:hover::before {
+    opacity: 1;
+}
+
+.hero_btns .btn_explor:hover,
+.join_btn:hover,
+.card_content .btn:hover,
+.cta_btn:hover,
+.contact_form button:hover,
+.comment_form button:hover {
+    box-shadow: 0 4px 15px rgba(15, 111, 152, 0.25);
+}
+
+/* image fallback placeholder — premium redesign */
+.img-placeholder {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    overflow: hidden;
+    background:
+        linear-gradient(145deg, #e8f4fb 0%, #f5faff 40%, #edf7fd 100%),
+        linear-gradient(rgba(15,111,152,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,111,152,0.03) 1px, transparent 1px);
+    background-size: auto, 40px 40px, 40px 40px;
+    box-sizing: border-box;
+    animation: img-placeholder-enter 0.5s ease both;
+}
+
+@keyframes img-placeholder-enter {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* decorative radial blobs */
+.img-placeholder::before {
+    content: '';
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(15,111,152,0.08) 0%, transparent 70%);
+    top: -80px;
+    right: -100px;
+    pointer-events: none;
+}
+
+.img-placeholder::after {
+    content: '';
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(94,212,248,0.07) 0%, transparent 70%);
+    bottom: -60px;
+    left: -80px;
+    pointer-events: none;
+}
+
+/* glassmorphism center card */
+.img-placeholder-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 24px;
+    max-width: 300px;
+    width: 80%;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(15,111,152,0.1);
+    border-radius: 22px;
+    box-shadow: 0 8px 32px rgba(15,111,152,0.08);
+    text-align: center;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.img-placeholder:hover .img-placeholder-card {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 44px rgba(15,111,152,0.14);
+}
+
+/* icon badge */
+.img-placeholder-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color_light) 0%, #fff 100%);
+    border: 1px solid rgba(15,111,152,0.12);
+    margin-bottom: 16px;
+    transition: transform 0.35s ease;
+}
+
+.img-placeholder:hover .img-placeholder-icon {
+    transform: translateY(-3px);
+}
+
+.img-placeholder-icon i {
+    font-size: 1.5rem;
+    color: var(--color_primary);
+    opacity: 0.5;
+    transition: transform 0.35s ease;
+}
+
+.img-placeholder:hover .img-placeholder-icon i {
+    transform: scale(1.12);
+}
+
+/* typography */
+.img-placeholder-title {
+    display: block;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color_dark);
+    margin-bottom: 4px;
+}
+
+.img-placeholder-desc {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--color_gray);
+    line-height: 1.5;
+}
+
+.img-placeholder-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color_gray);
+    opacity: 0.65;
+    margin-top: 8px;
+}
+
+/* inside post cards – simpler variant when space is tight */
+.card_place .img-placeholder {
+    min-height: auto;
+    background: linear-gradient(160deg, #dcecf5 0%, #eaf3f8 100%);
+    animation: img-placeholder-enter 0.5s ease both;
+}
+
+.card_place .img-placeholder::before,
+.card_place .img-placeholder::after {
+    opacity: 0.5;
+}
+
+.card_place .img-placeholder-card {
+    padding: 18px 14px;
+    max-width: 200px;
+    border-radius: 16px;
+}
+
+.card_place .img-placeholder-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 10px;
+}
+
+.card_place .img-placeholder-icon i {
+    font-size: 1.1rem;
+}
+
+.card_place .img-placeholder-title {
+    font-size: 0.85rem;
+}
+
+.card_place .img-placeholder-desc {
+    font-size: 0.72rem;
+}
+
+.card_place .img-placeholder-hint {
+    display: none;
+}
+
+/* detail page featured image — match original layout */
+.detail_container > .img-placeholder {
+    display: block;
+    width: 100%;
+    max-height: 55vh;
+    margin-bottom: 28px;
+    border-radius: 8px;
+}

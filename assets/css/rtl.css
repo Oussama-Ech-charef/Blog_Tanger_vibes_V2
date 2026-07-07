@@ -1,7 +1,7 @@
-/* ─── RTL Overrides ──────────────────────────────────────────────── */
+/* RTL overrides */
 /* Activated when <html dir="rtl"> is set (Arabic language selected) */
 
-/* ── Language dropdown RTL ──────────────────────────────────────────── */
+/* Language dropdown RTL */
 
 [dir="rtl"] .lang_menu {
     inset-inline-start: auto;
@@ -13,7 +13,7 @@
     text-align: right;
 }
 
-/* ── Header ──────────────────────────────────────────────────────── */
+/* Header */
 
 /* search input — swap padding so text doesn't hit the icon */
 [dir="rtl"] .search_desktop_form input {
@@ -38,7 +38,7 @@
     justify-content: flex-start;
 }
 
-/* ── Detail ──────────────────────────────────────────────────────── */
+/* Detail */
 
 /* comment count badge — spacing on the correct side */
 [dir="rtl"] .comment_title span {
@@ -46,7 +46,7 @@
     margin-right: 8px;
 }
 
-/* ── Dashboard ───────────────────────────────────────────────────── */
+/* Dashboard */
 
 /* table text — left-aligned by default, use start in RTL */
 [dir="rtl"] table {
@@ -73,21 +73,21 @@
     margin-left: 0;
 }
 
-/* ── Contact ─────────────────────────────────────────────────────── */
+/* Contact */
 
 /* FAQ button — left-aligned by default, use start in RTL */
 [dir="rtl"] .faq_question {
     text-align: right;
 }
 
-/* ── Auth ────────────────────────────────────────────────────────── */
+/* Auth */
 
 /* form options — keep natural RTL flow */
 [dir="rtl"] .options {
     flex-direction: row;
 }
 
-/* ── Directional icons — flip arrows in RTL ──────────────────────── */
+/* Directional icons — flip arrows in RTL */
 
 [dir="rtl"] .fa-arrow-right,
 [dir="rtl"] .fa-arrow-left,
@@ -100,7 +100,7 @@
     transform: scaleX(-1);
 }
 
-/* ── Arabic font tweak ───────────────────────────────────────────── */
+/* Arabic font tweak */
 
 [dir="rtl"] body,
 [dir="rtl"] input,
