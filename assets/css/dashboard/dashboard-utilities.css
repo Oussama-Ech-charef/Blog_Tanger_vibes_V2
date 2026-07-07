@@ -1,4 +1,4 @@
-/* ── Utility Classes ───────────────────────────────────────── */
+/* Utility classes */
 .ml_auto { margin-left: auto; }
 .date_cell { white-space: nowrap; color: var(--db-text-secondary); font-size: 13px; }
 .rejection_reason { color: var(--db-danger-text); font-size: 11px; }
@@ -17,7 +17,7 @@
 .view_link { color: var(--db-primary); font-weight: 500; text-decoration: none; }
 .view_link:hover { text-decoration: underline; }
 
-/* ── User Avatar ──────────────────────────────────────────── */
+/* User avatar */
 .user_avatar {
     width: 36px;
     height: 36px;
@@ -47,7 +47,7 @@
     background: #F59E0B;
 }
 
-/* ── Detail Label/Value (messages, settings) ──────────────── */
+/* Detail label/value (messages, settings) */
 .detail_section {
     margin-bottom: 24px;
 }
@@ -67,7 +67,7 @@
     line-height: 1.5;
 }
 
-/* ── Avatar Preview / Placeholder ─────────────────────────── */
+/* Avatar preview / placeholder */
 .avatar_preview {
     width: 80px;
     height: 80px;

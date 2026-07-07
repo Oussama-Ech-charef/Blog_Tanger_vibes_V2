@@ -1,4 +1,26 @@
-/* ── Tables ───────────────────────────────────────────────── */
+/* Tables */
+
+/* Posts table card — flex layout so it fills the dashboard content area */
+.card_posts_table {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: visible;
+}
+
+.card_posts_table .card_body_no_padding {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.card_posts_table .table_wrapper {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-height: 0;
+}
 .data_table {
     width: 100%;
     border-collapse: collapse;
@@ -61,7 +83,7 @@
     gap: 5px;
 }
 
-/* ── Table wrapper scrollbar ──────────────────────────────── */
+/* Table wrapper scrollbar */
 .table_wrapper {
     overflow-x: auto;
 }
@@ -79,7 +101,7 @@
     background: #F8FAFC;
 }
 
-/* ── Status Badges ────────────────────────────────────────── */
+/* Status badges */
 .status_badge {
     display: inline-flex;
     align-items: center;
@@ -189,7 +211,7 @@
     background: var(--db-danger);
 }
 
-/* ── Role Badges ──────────────────────────────────────────── */
+/* Role badges */
 .role_badge {
     display: inline-flex;
     align-items: center;
@@ -225,7 +247,7 @@
     color: #475569;
 }
 
-/* ── Unread row (messages) ────────────────────────────────── */
+/* Unread row (messages) */
 .data_table tr.unread td {
     background: var(--db-primary-light);
 }
