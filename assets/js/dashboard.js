@@ -56,7 +56,7 @@ window.positionDropdownMenu = function (btn, dropdown) {
     var menu = dropdown.querySelector('.action_dropdown_menu');
     if (!menu) return;
 
-    var card = dropdown.closest('.card_posts_table');
+    var card = dropdown.closest('.card_posts_table, .card_table');
     if (!card) return;
 
     var wrapper = card.querySelector('.table_wrapper');
