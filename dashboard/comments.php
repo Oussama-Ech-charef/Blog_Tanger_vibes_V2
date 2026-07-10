@@ -50,7 +50,7 @@ if (isset($_POST['bulk_delete']) && !empty($_POST['comment_ids'])) {
 $csrf = get_csrf_token();
 
 // Filter vars
-$per_page = 20;
+$per_page = isset($_GET['per_page']) ? max(4, min(50, (int)$_GET['per_page'])) : 20;
 $page = get_valid_page();
 $search = trim($_GET['q'] ?? '');
 $status_filter = $_GET['status'] ?? '';
@@ -148,7 +148,7 @@ $ds->execute();
 $comments = $ds->fetchAll(PDO::FETCH_ASSOC);
 
 // Build query params for pagination
-$query_params = [];
+$query_params = ['per_page' => $per_page];
 if (!empty($search)) $query_params['q'] = $search;
 if (!empty($status_filter)) $query_params['status'] = $status_filter;
 if (!empty($role_filter)) $query_params['role'] = $role_filter;
@@ -166,6 +166,7 @@ require_once __DIR__ . '/inc/header.php';
 <form method="GET" id="filterForm" class="filters_bar" style="flex-wrap:wrap;">
     <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
+        <input type="hidden" name="per_page" value="<?= $per_page ?>">
         <input type="text" name="q" placeholder="<?= __('comments_search_placeholder') ?>" value="<?=htmlspecialchars($search)?>" onchange="this.form.submit()">
     </div>
     <select name="status" class="filter_select" onchange="this.form.submit()">
@@ -212,7 +213,7 @@ require_once __DIR__ . '/inc/header.php';
     <?php endif; ?>
 </form>
 
-<div class="card">
+<div class="card card_posts_table">
     <div class="card_header">
         <h2><?= __('comments_table_title') ?></h2>
         <?php if (!empty($comments)): ?>
@@ -250,7 +251,7 @@ require_once __DIR__ . '/inc/header.php';
                             <td><span class="status_badge status_<?=$c['status']?>"><?=ucfirst(htmlspecialchars($c['status'] ?? STATUS_PENDING))?></span></td>
                             <td class="date_cell"><?=time_ago($c['created_at'])?></td>
                             <td>
-                                <div class="cell_actions cell_actions_right">
+                                <div class="cell_actions">
                                     <div class="action_dropdown">
                                         <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="<?= __('dashboard_aria_actions') ?>"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                         <div class="action_dropdown_menu">
@@ -293,7 +294,7 @@ require_once __DIR__ . '/inc/header.php';
             </table>
         </div>
     </div>
-    <?php render_dashboard_pagination('comments.php', $current_page, $total_pages, $query_params); ?>
+    <?php render_dashboard_pagination('comments.php', $current_page, $total_pages, $query_params, $per_page, $total_records); ?>
 </div>
 
 
