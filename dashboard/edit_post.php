@@ -9,11 +9,10 @@ $errors = [];
 $post_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($post_id <= 0) { header('Location: posts.php'); exit(); }
 
-// Admin sees any post, user sees only own
-$ownership_sql = $is_admin ? "id_post=:id" : "id_post=:id AND id_user=:uid";
-$s = $conn->prepare("SELECT * FROM posts WHERE $ownership_sql");
+// Everyone can only edit their own posts
+$s = $conn->prepare("SELECT * FROM posts WHERE id_post=:id AND id_user=:uid");
 $s->bindValue(':id', $post_id, PDO::PARAM_INT);
-if (!$is_admin) $s->bindValue(':uid', $uid, PDO::PARAM_INT);
+$s->bindValue(':uid', $uid, PDO::PARAM_INT);
 $s->execute();
 $post = $s->fetch(PDO::FETCH_ASSOC);
 if (!$post) { header('Location: posts.php'); exit(); }

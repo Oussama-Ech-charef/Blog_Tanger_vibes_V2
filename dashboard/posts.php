@@ -242,7 +242,7 @@ $qv_close_url = posts_redirect_url();
                                             </form>
                                             <button type="button" class="dropdown_item dropdown_reject" data-post-id="<?=$p['id_post']?>" data-post-title="<?=htmlspecialchars($p['title'], ENT_QUOTES)?>"><i class="fa-solid fa-ban" aria-hidden="true"></i> <?= __('posts_reject') ?></button>
                                             <?php endif; ?>
-                                            <?php if ($is_admin || (int)$p['id_user'] === $uid): ?>
+                                            <?php if ((int)$p['id_user'] === $uid): ?>
                                             <div class="dropdown_divider"></div>
                                             <a href="edit_post.php?id=<?=$p['id_post']?>" class="dropdown_item"><i class="fa-solid fa-pen" aria-hidden="true"></i> <?= __('posts_edit_post') ?></a>
                                             <?php endif; ?>
