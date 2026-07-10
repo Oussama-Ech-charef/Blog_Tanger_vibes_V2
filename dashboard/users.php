@@ -61,7 +61,7 @@ if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
 }
 
 // Filter vars
-$per_page = 20;
+$per_page = isset($_GET['per_page']) ? max(4, min(50, (int)$_GET['per_page'])) : 20;
 $page = get_valid_page();
 $search = trim($_GET['q'] ?? '');
 $role_filter = $_GET['role'] ?? '';
@@ -102,7 +102,7 @@ $ds->execute();
 $users = $ds->fetchAll(PDO::FETCH_ASSOC);
 
 // Query params for pagination
-$query_params = [];
+$query_params = ['per_page' => $per_page];
 if (!empty($search)) $query_params['q'] = $search;
 if (!empty($role_filter)) $query_params['role'] = $role_filter;
 if (!empty($status_filter)) $query_params['status'] = $status_filter;
@@ -115,6 +115,7 @@ require_once __DIR__ . '/inc/header.php';
 <form method="GET" id="filterForm" class="filters_bar">
     <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
+        <input type="hidden" name="per_page" value="<?= $per_page ?>">
         <input type="text" name="q" placeholder="<?= __('users_search_placeholder') ?>" value="<?=htmlspecialchars($search)?>" onchange="this.form.submit()">
     </div>
     <select name="role" class="filter_select" onchange="this.form.submit()">
@@ -133,7 +134,7 @@ require_once __DIR__ . '/inc/header.php';
     <?php endif; ?>
 </form>
 
-<div class="card">
+<div class="card card_posts_table">
     <div class="card_header"><h2><?= __('users_table_title') ?></h2></div>
     <div class="card_body_no_padding">
         <div class="table_wrapper">
@@ -151,44 +152,51 @@ require_once __DIR__ . '/inc/header.php';
                             <td class="date_cell"><?=date('M j, Y',strtotime($u['created_at']))?></td>
                             <td><div class="cell_actions">
                                 <?php if ((int)$u['id_user'] !== (int)$_SESSION['id_user']): ?>
-                                    <?php if ($u['role']==='admin'): ?>
-                                        <form method="POST" action="users.php" class="inline_form">
+                                <div class="action_dropdown">
+                                    <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="<?= __('dashboard_aria_actions') ?>"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                    <div class="action_dropdown_menu">
+                                        <?php if ($u['role']==='admin'): ?>
+                                        <form method="POST" action="users.php" class="dropdown_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="role" value="user">
                                             <input type="hidden" name="uid" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_secondary" onclick="return confirm(__('users_confirm_demote'))"><i class="fa-solid fa-user" aria-hidden="true"></i> <?= __('users_btn_demote') ?></button>
+                                            <button type="submit" class="dropdown_item" onclick="return confirm(__('users_confirm_demote'))"><i class="fa-solid fa-user" aria-hidden="true"></i> <?= __('users_btn_demote') ?></button>
                                         </form>
-                                    <?php else: ?>
-                                        <form method="POST" action="users.php" class="inline_form">
+                                        <?php else: ?>
+                                        <form method="POST" action="users.php" class="dropdown_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="role" value="admin">
                                             <input type="hidden" name="uid" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_success" onclick="return confirm(__('users_confirm_promote'))"><i class="fa-solid fa-shield" aria-hidden="true"></i> <?= __('users_btn_make_admin') ?></button>
+                                            <button type="submit" class="dropdown_item" onclick="return confirm(__('users_confirm_promote'))"><i class="fa-solid fa-shield" aria-hidden="true"></i> <?= __('users_btn_make_admin') ?></button>
                                         </form>
-                                    <?php endif; ?>
-                                    <?php if (!empty($u['is_active'])): ?>
-                                        <form method="POST" action="users.php" class="inline_form">
+                                        <?php endif; ?>
+                                        <div class="dropdown_divider"></div>
+                                        <?php if (!empty($u['is_active'])): ?>
+                                        <form method="POST" action="users.php" class="dropdown_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="deactivate" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_warning" onclick="return confirm(__('users_confirm_deactivate'))" aria-label="<?= __('dashboard_aria_deactivate_user') ?>"><i class="fa-solid fa-pause"></i></button>
+                                            <button type="submit" class="dropdown_item" onclick="return confirm(__('users_confirm_deactivate'))"><i class="fa-solid fa-pause dd_icon_warning" aria-hidden="true"></i> Deactivate</button>
                                         </form>
-                                    <?php else: ?>
-                                        <form method="POST" action="users.php" class="inline_form">
+                                        <?php else: ?>
+                                        <form method="POST" action="users.php" class="dropdown_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="activate" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="btn_small btn_success" onclick="return confirm(__('users_confirm_activate'))" aria-label="<?= __('dashboard_aria_activate_user') ?>"><i class="fa-solid fa-play"></i></button>
+                                            <button type="submit" class="dropdown_item" onclick="return confirm(__('users_confirm_activate'))"><i class="fa-solid fa-play dd_icon_success" aria-hidden="true"></i> Activate</button>
                                         </form>
-                                    <?php endif; ?>
-                                    <form method="POST" action="users.php" class="inline_form">
-                                        <input type="hidden" name="csrf_token" value="<?=$csrf?>">
-                                        <input type="hidden" name="delete" value="<?=$u['id_user']?>">
-                                        <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                        <button type="submit" class="btn_small btn_danger" onclick="return confirm(__('users_confirm_delete'))" aria-label="<?= __('dashboard_aria_delete_user') ?>"><i class="fa-solid fa-trash"></i></button>
-                                    </form>
+                                        <?php endif; ?>
+                                        <div class="dropdown_divider"></div>
+                                        <form method="POST" action="users.php" class="dropdown_form">
+                                            <input type="hidden" name="csrf_token" value="<?=$csrf?>">
+                                            <input type="hidden" name="delete" value="<?=$u['id_user']?>">
+                                            <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
+                                            <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(__('users_confirm_delete'))"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
                                 <?php else: ?>
                                     <span class="text_muted" style="font-size:12px;"><?= __('users_label_current_user') ?></span>
                                 <?php endif; ?>
@@ -202,7 +210,7 @@ require_once __DIR__ . '/inc/header.php';
             </table>
         </div>
     </div>
-    <?php render_dashboard_pagination('users.php', $current_page, $total_pages, $query_params); ?>
+    <?php render_dashboard_pagination('users.php', $current_page, $total_pages, $query_params, $per_page, $total_records); ?>
 </div>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
