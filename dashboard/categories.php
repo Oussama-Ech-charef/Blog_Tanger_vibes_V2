@@ -92,7 +92,7 @@ require_once __DIR__ . '/inc/header.php';
                                             <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
                                             <input type="hidden" name="delete_category" value="1">
                                             <input type="hidden" name="cat_id" value="<?=$c['id_category']?>">
-                                            <button type="submit" class="dropdown_item dropdown_danger"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
+                                            <button type="submit" class="dropdown_item dropdown_danger"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('categories_delete_btn') ?></button>
                                         </form>
                                     </div>
                                 </div></div></td>
