@@ -54,6 +54,9 @@ return [
     'detail_comment_error_name_length' => 'Le nom doit faire moins de 100 caractères.',
     'detail_comment_error_text_length' => 'Le commentaire doit faire moins de 1000 caractères.',
     'detail_comment_error_generic' => 'Une erreur est survenue. Veuillez réessayer.',
+    'detail_comment_error_login_required' => 'Connectez-vous pour commenter.',
+    'detail_comment_login_note' => 'Connectez-vous pour commenter.',
+    'detail_comment_signed_as' => 'Vous commentez en tant que %s',
 
     'about_label' => 'À propos de Tangier Vibes',
     'about_title' => 'Découvrez Tanger à travers des histoires, des lieux,<br>la culture et des expériences locales.',
@@ -486,6 +489,7 @@ return [
     'categories_empty_title' => 'Aucune catégorie',
     'categories_empty_desc' => 'Créez votre première catégorie ci-dessus.',
     'categories_delete_confirm' => 'Supprimer "%s" ?',
+    'categories_delete_btn' => 'Supprimer',
 
     // Users
     'users_management_title' => 'Gestion des utilisateurs',
@@ -520,6 +524,9 @@ return [
     'users_btn_demote' => 'Rétrograder',
     'users_btn_make_admin' => 'Nommer administrateur',
     'users_label_current_user' => 'Utilisateur actuel',
+    'users_btn_deactivate' => 'Désactiver',
+    'users_btn_activate' => 'Activer',
+    'users_btn_delete' => 'Supprimer',
     'users_empty_title' => 'Aucun utilisateur trouvé',
     'users_empty_desc' => 'Essayez d\'ajuster vos filtres.',
     'users_confirm_demote' => 'Rétrograder en utilisateur ?',

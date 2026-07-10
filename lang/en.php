@@ -54,6 +54,9 @@ return [
     'detail_comment_error_name_length' => 'Name must be under 100 characters.',
     'detail_comment_error_text_length' => 'Comment must be under 1000 characters.',
     'detail_comment_error_generic' => 'An error occurred. Please try again.',
+    'detail_comment_error_login_required' => 'Please sign in to post.',
+    'detail_comment_login_note' => 'Sign in to comment.',
+    'detail_comment_signed_as' => 'Commenting as %s',
 
     'about_label' => 'About Tangier Vibes',
     'about_title' => 'Discover Tangier through stories, places,<br>culture and local experiences.',
@@ -486,6 +489,7 @@ return [
     'categories_empty_title' => 'No categories',
     'categories_empty_desc' => 'Create your first category above.',
     'categories_delete_confirm' => 'Delete "%s"?',
+    'categories_delete_btn' => 'Delete',
 
     // Users
     'users_management_title' => 'User Management',
@@ -520,6 +524,9 @@ return [
     'users_btn_demote' => 'Demote',
     'users_btn_make_admin' => 'Make Admin',
     'users_label_current_user' => 'Current user',
+    'users_btn_deactivate' => 'Deactivate',
+    'users_btn_activate' => 'Activate',
+    'users_btn_delete' => 'Delete',
     'users_empty_title' => 'No users found',
     'users_empty_desc' => 'Try adjusting your filters.',
     'users_confirm_demote' => 'Demote to user?',
