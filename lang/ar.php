@@ -54,6 +54,9 @@ return [
     'detail_comment_error_name_length' => 'يجب أن يكون الاسم أقل من 100 حرف.',
     'detail_comment_error_text_length' => 'يجب أن يكون التعليق أقل من 1000 حرف.',
     'detail_comment_error_generic' => 'حدث خطأ. حاول مرة أخرى.',
+    'detail_comment_error_login_required' => 'سجل دخولك للنشر.',
+    'detail_comment_login_note' => 'سجل دخولك للتعليق.',
+    'detail_comment_signed_as' => 'تعلق باسم %s',
 
     'about_label' => 'حول Tangier Vibes',
     'about_title' => 'اكتشف طنجة من خلال القصص والأماكن<br>والثقافة والتجارب المحلية.',
@@ -486,6 +489,7 @@ return [
     'categories_empty_title' => 'لا توجد فئات',
     'categories_empty_desc' => 'أنشئ فئتك الأولى أعلاه.',
     'categories_delete_confirm' => 'حذف "%s"؟',
+    'categories_delete_btn' => 'حذف',
 
     // Users
     'users_management_title' => 'إدارة المستخدمين',
@@ -520,6 +524,9 @@ return [
     'users_btn_demote' => 'تخفيض',
     'users_btn_make_admin' => 'جعله مشرفاً',
     'users_label_current_user' => 'المستخدم الحالي',
+    'users_btn_deactivate' => 'تعطيل',
+    'users_btn_activate' => 'تفعيل',
+    'users_btn_delete' => 'حذف',
     'users_empty_title' => 'لا توجد نتائج',
     'users_empty_desc' => 'حاول تعديل عوامل التصفية.',
     'users_confirm_demote' => 'تخفيض إلى مستخدم؟',
