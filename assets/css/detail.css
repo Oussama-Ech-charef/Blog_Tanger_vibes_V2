@@ -166,7 +166,7 @@
 }
 
 .comment_form {
-    padding: 22px;
+    padding: 16px;
     border: 1px solid var(--color_border);
     border-radius: 8px;
     background-color: var(--color_light);
@@ -174,54 +174,50 @@
 
 .comment_form form {
     display: grid;
-    gap: 16px;
+    gap: 10px;
 }
 
-.form_name,
-.form_desc {
-    display: grid;
-    gap: 8px;
-}
-
-.comment_form label {
-    color: var(--color_dark);
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.comment_form input,
 .comment_form textarea {
     width: 100%;
     border: 1px solid var(--color_border);
     border-radius: 8px;
-    padding: 12px 14px;
+    padding: 10px 12px;
     color: var(--color_dark);
     font: inherit;
+    font-size: 14px;
     outline: none;
-}
-
-.comment_form textarea {
-    min-height: 130px;
     resize: vertical;
 }
 
-.comment_form input:focus,
 .comment_form textarea:focus {
     border-color: var(--color_primary);
     box-shadow: 0 0 0 3px rgba(15, 111, 152, 0.15);
 }
 
+.comment_footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.comment_user_note {
+    color: var(--color_gray);
+    font-size: 13px;
+}
+
 .comment_form button {
-    justify-self: start;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     border: 0;
     border-radius: 8px;
-    padding: 12px 18px;
+    padding: 10px 16px;
     background-color: var(--color_primary);
     color: var(--bg_color);
     font: inherit;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
     transition: 0.2s ease;

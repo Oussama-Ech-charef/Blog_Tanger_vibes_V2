@@ -44,20 +44,30 @@ if (isset($_SESSION['comment_added']) && $_SESSION['comment_added']) {
     unset($_SESSION['comment_added']);
 }
 
+if (isset($_SESSION['flash_error'])) {
+    $comment_error = $_SESSION['flash_error'];
+    unset($_SESSION['flash_error']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Guests must not be able to insert — reject early
+    if (!isset($_SESSION['id_user'])) {
+        $_SESSION['flash_error'] = __('detail_comment_error_login_required');
+        header('Location: detail.php?id=' . $post_id . '#comments');
+        exit;
+    }
+
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
         $comment_error = __('detail_comment_error_generic');
     }
 
-    $author_name = trim($_POST['name'] ?? '');
+    $author_name = $_SESSION['user_name'];
     $comment_text = trim($_POST['message'] ?? '');
 
     if (empty($comment_error)) {
-        if (empty($author_name) || empty($comment_text)) {
+        if (empty($comment_text)) {
             $comment_error = __('detail_comment_error_required');
-        } elseif (strlen($author_name) > 100) {
-            $comment_error = __('detail_comment_error_name_length');
         } elseif (strlen($comment_text) > 1000) {
             $comment_error = __('detail_comment_error_text_length');
         }
@@ -65,16 +75,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($comment_error)) {
         try {
-            $comment_user_id = isset($_SESSION['id_user']) ? (int)$_SESSION['id_user'] : null;
+            $comment_user_id = (int)$_SESSION['id_user'];
+            $comment_status = 'pending';
+            if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+                $comment_status = 'approved';
+            }
             $stmt = $conn->prepare("
                 insert into comments (id_post, id_user, author_name, comment_text, status)
-                values (:id_post, :id_user, :author_name, :comment_text, 'pending')
+                values (:id_post, :id_user, :author_name, :comment_text, :status)
             ");
             $stmt->execute([
                 ':id_post' => $post_id,
                 ':id_user' => $comment_user_id,
                 ':author_name' => $author_name,
-                ':comment_text' => $comment_text
+                ':comment_text' => $comment_text,
+                ':status' => $comment_status
             ]);
 
             // log activity
@@ -221,18 +236,17 @@ $comment_count = count($comments);
 
         <div class="comment_form motion-reveal">
             <h3 class="comment_title"><?= __('detail_comment_leave') ?></h3>
-
-            <form action="" method="POST">
+            <form action="" method="POST"<?= !isset($_SESSION['id_user']) ? ' data-guest-comment' : '' ?>>
                 <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                <div class="form_name">
-                    <label><?= __('detail_comment_name_label') ?> :</label>
-                    <input type="text" name="name" placeholder="<?= __('detail_comment_name_placeholder') ?>" required>
+                <textarea name="message" placeholder="<?= __('detail_comment_message_placeholder') ?>" rows="3"></textarea>
+                <div class="comment_footer">
+                    <button type="submit"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('detail_comment_btn') ?></button>
+                    <?php if (isset($_SESSION['id_user'])): ?>
+                        <span class="comment_user_note"><?= sprintf(__('detail_comment_signed_as'), htmlspecialchars($_SESSION['user_name'])) ?></span>
+                    <?php else: ?>
+                        <span class="comment_user_note"><?= __('detail_comment_login_note') ?></span>
+                    <?php endif; ?>
                 </div>
-                <div class="form_desc">
-                    <label><?= __('detail_comment_message_label') ?> :</label>
-                    <textarea name="message" placeholder="<?= __('detail_comment_message_placeholder') ?>" required></textarea>
-                </div>
-                <button type="submit"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('detail_comment_btn') ?></button>
             </form>
         </div>
 
@@ -248,6 +262,15 @@ $comment_count = count($comments);
 
     <?php require '../includes/footer.php'; ?>
     <script src="../assets/js/main.js"></script>
+    <script>
+    document.querySelectorAll('[data-guest-comment]').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var toggle = document.querySelector('[data-auth-toggle]');
+            if (toggle) toggle.click();
+        });
+    });
+    </script>
 </body>
 
 </html>
