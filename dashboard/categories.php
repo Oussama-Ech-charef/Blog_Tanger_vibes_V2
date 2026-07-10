@@ -70,7 +70,7 @@ require_once __DIR__ . '/inc/header.php';
         </div>
     </div>
 
-    <div class="card">
+    <div class="card card_table">
         <div class="card_header"><h2><i class="fa-solid fa-list icon_primary" aria-hidden="true"></i><?= sprintf(__('categories_list_heading'), count($categories)) ?></h2></div>
         <div class="card_body_no_padding">
             <div class="table_wrapper">
@@ -83,15 +83,19 @@ require_once __DIR__ . '/inc/header.php';
                                 <td><strong><?=htmlspecialchars($c['cat_name'])?></strong></td>
                                 <td><span class="fw_600"><?=(int)$c['post_count']?></span></td>
                                 <td class="date_cell"><?=date('M j, Y',strtotime($c['created_at']))?></td>
-                                <td><div class="cell_actions">
-                                    <button class="btn_small btn_secondary" onclick='editCat(<?=$c['id_category']?>,<?=json_encode($c['cat_name'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)?>)'><i class="fa-solid fa-pen" aria-hidden="true"></i> <?= __('categories_edit_btn') ?></button>
-                                    <form method="POST" action="categories.php" class="inline_form delete-cat-form" data-cat-name="<?=htmlspecialchars($c['cat_name'], ENT_QUOTES)?>">
-                                        <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
-                                        <input type="hidden" name="delete_category" value="1">
-                                        <input type="hidden" name="cat_id" value="<?=$c['id_category']?>">
-                                        <button type="submit" class="btn_small btn_danger" aria-label="<?= __('dashboard_aria_delete_category') ?>"><i class="fa-solid fa-trash"></i></button>
-                                    </form>
-                                </div></td>
+                                <td><div class="cell_actions"><div class="action_dropdown">
+                                    <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="<?= __('dashboard_aria_actions') ?>"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                    <div class="action_dropdown_menu">
+                                        <button type="button" class="dropdown_item" onclick='editCat(<?=$c['id_category']?>,<?=json_encode($c['cat_name'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)?>)'><i class="fa-solid fa-pen" aria-hidden="true"></i> <?= __('categories_edit_btn') ?></button>
+                                        <div class="dropdown_divider"></div>
+                                        <form method="POST" action="categories.php" class="dropdown_form delete-cat-form" data-cat-name="<?=htmlspecialchars($c['cat_name'], ENT_QUOTES)?>">
+                                            <input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
+                                            <input type="hidden" name="delete_category" value="1">
+                                            <input type="hidden" name="cat_id" value="<?=$c['id_category']?>">
+                                            <button type="submit" class="dropdown_item dropdown_danger"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>
+                                        </form>
+                                    </div>
+                                </div></div></td>
                             </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
