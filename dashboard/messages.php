@@ -42,7 +42,7 @@ if (isset($_GET['view']) && is_numeric($_GET['view'])) {
 }
 
 // Listing
-$per_page = 20;
+$per_page = isset($_GET['per_page']) ? max(4, min(50, (int)$_GET['per_page'])) : 20;
 $page = get_valid_page();
 $search = trim($_GET['q'] ?? '');
 $where = "1=1"; $params = [];
@@ -97,12 +97,12 @@ require_once __DIR__ . '/inc/header.php';
 <div class="filters_bar">
     <div class="search_input">
         <i class="fa-solid fa-search" aria-hidden="true"></i>
-        <form method="GET" id="sf"><input type="text" name="q" placeholder="<?= __('messages_search_placeholder') ?>" value="<?=htmlspecialchars($search)?>" onchange="document.getElementById('sf').submit()"></form>
+        <form method="GET" id="sf"><input type="hidden" name="per_page" value="<?= $per_page ?>"><input type="text" name="q" placeholder="<?= __('messages_search_placeholder') ?>" value="<?=htmlspecialchars($search)?>" onchange="document.getElementById('sf').submit()"></form>
     </div>
     <span style="font-size:14px;color:var(--db-text-secondary);font-weight:500;"><?= sprintf(__('messages_count'), $total_records) ?></span>
 </div>
 
-<div class="card">
+<div class="card card_posts_table">
     <div class="card_header"><h2><?= __('messages_table_title') ?></h2></div>
     <div class="card_body_no_padding">
         <div class="table_wrapper">
@@ -117,12 +117,19 @@ require_once __DIR__ . '/inc/header.php';
                             <td><a href="messages.php?view=<?=$m['id_message']?><?=!empty($search)?'&q='.urlencode($search):''?>" style="color:var(--db-text-primary);font-weight:500;"><?=htmlspecialchars(truncate_text($m['subject'],60))?><?php if(empty($m['is_read'])):?> <span class="unread_dot"></span><?php endif;?></a></td>
                             <td><span class="status_badge status_<?=empty($m['is_read'])?'pending':'approved'?>"><?=empty($m['is_read'])?__('messages_status_unread'):__('messages_status_read')?></span></td>
                             <td class="date_cell"><?=date('M j, Y',strtotime($m['created_at']))?></td>
-                            <td><div class="cell_actions"><a href="messages.php?view=<?=$m['id_message']?><?=!empty($search)?'&q='.urlencode($search):''?>" class="btn_small btn_secondary"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('messages_btn_read') ?></a><form method="POST" action="messages.php" class="inline_form">
-    <input type="hidden" name="csrf_token" value="<?=$csrf?>">
-    <input type="hidden" name="delete" value="<?=$m['id_message']?>">
-    <?php if (!empty($search)): ?><input type="hidden" name="q" value="<?=htmlspecialchars($search)?>"><?php endif; ?>
-    <button type="submit" class="btn_small btn_danger" onclick="return confirm(__('messages_confirm_delete'))" aria-label="<?= __('dashboard_aria_delete_message') ?>"><i class="fa-solid fa-trash"></i></button>
-</form></div></td>
+                            <td><div class="cell_actions"><div class="action_dropdown">
+    <button type="button" class="action_dropdown_btn" onclick="toggleDropdown(this)" aria-label="<?= __('dashboard_aria_actions') ?>"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i></button>
+    <div class="action_dropdown_menu">
+        <a href="messages.php?view=<?=$m['id_message']?><?=!empty($search)?'&q='.urlencode($search):''?>" class="dropdown_item"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('messages_btn_read') ?></a>
+        <div class="dropdown_divider"></div>
+        <form method="POST" action="messages.php" class="dropdown_form">
+            <input type="hidden" name="csrf_token" value="<?=$csrf?>">
+            <input type="hidden" name="delete" value="<?=$m['id_message']?>">
+            <?php if (!empty($search)): ?><input type="hidden" name="q" value="<?=htmlspecialchars($search)?>"><?php endif; ?>
+            <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(__('messages_confirm_delete'))"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('messages_btn_delete') ?></button>
+        </form>
+    </div>
+</div></div></td>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -132,8 +139,8 @@ require_once __DIR__ . '/inc/header.php';
             </table>
         </div>
     </div>
-    <?php $query_params = !empty($search) ? ['q' => $search] : []; ?>
-    <?php render_dashboard_pagination('messages.php', $current_page, $total_pages, $query_params); ?>
+    <?php $query_params = ['per_page' => $per_page]; if (!empty($search)) $query_params['q'] = $search; ?>
+    <?php render_dashboard_pagination('messages.php', $current_page, $total_pages, $query_params, $per_page, $total_records); ?>
 </div>
 <?php endif; ?>
 
