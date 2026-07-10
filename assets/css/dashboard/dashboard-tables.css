@@ -1,5 +1,10 @@
 /* Tables */
 
+/* Generic table card — same layout/overflow as posts table for dropdowns */
+.card_table {
+    overflow: visible;
+}
+
 /* Posts table card — flex layout so it fills the dashboard content area */
 .card_posts_table {
     display: flex;
