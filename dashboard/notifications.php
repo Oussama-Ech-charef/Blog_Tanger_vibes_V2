@@ -208,19 +208,17 @@ require_once __DIR__ . '/inc/header.php';
 ?>
 
 <div class="notif_page_header">
-    <div>
-        <h1 class="notif_page_title">
-            <i class="fa-solid fa-bell icon_primary" aria-hidden="true"></i> <?= __('notifications_title') ?>
-        </h1>
-        <p class="notif_page_subtitle">
-            <?= sprintf(__('notifications_subtitle'), $unread_count) ?>
-        </p>
-    </div>
+    <h1 class="notif_page_title">
+        <i class="fa-solid fa-bell" aria-hidden="true"></i> <?= __('notifications_title') ?>
+        <?php if ($unread_count > 0): ?>
+            <span class="notif_unread_badge"><?= $unread_count ?></span>
+        <?php endif; ?>
+    </h1>
     <?php if ($unread_count > 0): ?>
-    <form method="POST" action="notifications.php" class="inline_form">
+    <form method="POST" action="notifications.php" class="notif_mark_all_form">
         <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
-        <button type="submit" name="mark_all_read" class="btn btn_secondary btn_sm" style="display:inline-flex;align-items:center;gap:6px;">
+        <button type="submit" name="mark_all_read" class="btn btn_secondary btn_sm">
             <i class="fa-solid fa-check-double" aria-hidden="true"></i> <?= __('notifications_mark_all_read') ?>
         </button>
     </form>
@@ -252,17 +250,17 @@ require_once __DIR__ . '/inc/header.php';
     </select>
     <div class="notif_date_range" id="notifDateRange" style="display:<?=$date_filter==='custom'?'flex':'none'?>">
         <input type="date" name="date_from" value="<?= htmlspecialchars($date_from) ?>" onchange="this.form.submit()">
-        <span class="text_muted date_cell"><?= __('notifications_filter_to') ?></span>
+        <span class="notif_date_sep"><?= __('notifications_filter_to') ?></span>
         <input type="date" name="date_to" value="<?= htmlspecialchars($date_to) ?>" onchange="this.form.submit()">
     </div>
     <select name="user" class="filter_select" onchange="this.form.submit()">
         <option value=""><?= __('notifications_filter_all_users') ?></option>
         <?php foreach ($all_users as $u): ?>
-            <option value="<?=$u['id_user']?>" <?=$user_filter==$u['id_user']?'selected':''?>><?=htmlspecialchars($u['user_name'])?> (<?=ucfirst($u['role'])?>)</option>
+            <option value="<?=$u['id_user']?>" <?=$user_filter===$u['id_user']?'selected':''?>><?=htmlspecialchars($u['user_name'])?> (<?=ucfirst($u['role'])?>)</option>
         <?php endforeach; ?>
     </select>
     <?php if (!empty($search) || !empty($category_filter) || !empty($status_filter) || !empty($date_filter) || !empty($user_filter)): ?>
-    <a href="notifications.php" class="btn_small btn_secondary clear_filter_btn"><i class="fa-solid fa-times" aria-hidden="true"></i> <?= __('notifications_clear_filter') ?></a>
+    <a href="notifications.php" class="btn_sm btn_secondary"><i class="fa-solid fa-times" aria-hidden="true"></i> <?= __('notifications_clear_filter') ?></a>
     <?php endif; ?>
 </form>
 
@@ -286,25 +284,26 @@ require_once __DIR__ . '/inc/header.php';
                 $link = notification_link($n['action_type'], $n['entity_type'], $n['entity_id']);
             ?>
             <div class="notif_item<?= !$n['is_read'] ? ' unread' : '' ?>">
-                <div class="notif_icon_wrap" style="background:<?=$info['bg']?>;color:<?=$info['color']?>;">
+                <div class="notif_icon" style="background:<?=$info['bg']?>;color:<?=$info['color']?>;">
                     <i class="<?=$info['icon']?>" aria-hidden="true"></i>
                 </div>
                 <div class="notif_body">
-                    <p>
+                    <div class="notif_top">
                         <span class="notif_desc"><?= htmlspecialchars($n['description']) ?></span>
-                        <span class="notif_badge" style="background:<?=$info['bg']?>;color:<?=$info['color']?>;"><?= htmlspecialchars($info['label']) ?></span>
-                    </p>
-                    <p class="notif_meta">
+                        <span class="notif_type_badge" style="background:<?=$info['bg']?>;color:<?=$info['color']?>;"><?= htmlspecialchars($info['label']) ?></span>
+                    </div>
+                    <div class="notif_meta">
                         <?php if (!empty($n['user_name'])): ?>
-                            <i class="fa-solid fa-user" aria-hidden="true"></i> <?= htmlspecialchars($n['user_name']) ?> &middot;
+                            <span><i class="fa-solid fa-user" aria-hidden="true"></i> <?= htmlspecialchars($n['user_name']) ?></span>
+                            <span class="meta_dot">&middot;</span>
                         <?php endif; ?>
-                        <?= time_ago($n['created_at']) ?>
-                    </p>
+                        <span><?= time_ago($n['created_at']) ?></span>
+                    </div>
                 </div>
                 <div class="notif_actions">
                     <?php if ($link): ?>
-                    <a href="<?= $link ?>" class="btn_small btn_secondary clear_filter_btn">
-                        <i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('notifications_btn_view') ?>
+                    <a href="<?= $link ?>" class="notif_action_btn" aria-label="<?= __('notifications_btn_view') ?>">
+                        <i class="fa-solid fa-eye"></i>
                     </a>
                     <?php endif; ?>
                     <?php if (!$n['is_read']): ?>
@@ -312,7 +311,7 @@ require_once __DIR__ . '/inc/header.php';
                         <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                         <input type="hidden" name="read" value="<?= $n['id_activity'] ?>">
-                        <button type="submit" class="btn_small btn_secondary" style="border:none;cursor:pointer" aria-label="<?= __('dashboard_aria_mark_read') ?>">
+                        <button type="submit" class="notif_action_btn" aria-label="<?= __('dashboard_aria_mark_read') ?>">
                             <i class="fa-solid fa-check"></i>
                         </button>
                     </form>
@@ -325,9 +324,8 @@ require_once __DIR__ . '/inc/header.php';
             <?php endif; ?>
         <?php else: ?>
             <div class="notif_empty_state">
-                <i class="fa-solid fa-bell notif_empty_icon" aria-hidden="true"></i>
-                <h3 class="notif_empty_title"><?= __('notifications_empty_title') ?></h3>
-                <p class="notif_empty_desc"><?= __('notifications_empty_desc') ?></p>
+                <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                <h3><?= __('notifications_empty_title') ?></h3>
             </div>
         <?php endif; ?>
     </div>
