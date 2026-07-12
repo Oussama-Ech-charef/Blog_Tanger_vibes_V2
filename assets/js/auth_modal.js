@@ -70,6 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // form submission
     function submitForm(form, btn) {
         const formData = new FormData(form);
+        const redirectUrl = window.location.pathname + window.location.search + window.location.hash;
+        formData.set('redirect_url', redirectUrl);
 
         btn.classList.add('loading');
         btn.disabled = true;
