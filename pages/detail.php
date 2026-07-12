@@ -236,9 +236,9 @@ $comment_count = count($comments);
 
         <div class="comment_form motion-reveal">
             <h3 class="comment_title"><?= __('detail_comment_leave') ?></h3>
-            <form action="" method="POST"<?= !isset($_SESSION['id_user']) ? ' data-guest-comment' : '' ?>>
+            <form action="" method="POST" data-comment-form<?= !isset($_SESSION['id_user']) ? ' data-guest-comment' : '' ?>>
                 <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                <textarea name="message" placeholder="<?= __('detail_comment_message_placeholder') ?>" rows="3"></textarea>
+                <textarea name="message" placeholder="<?= __('detail_comment_message_placeholder') ?>" rows="3" data-comment-message></textarea>
                 <div class="comment_footer">
                     <button type="submit"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <?= __('detail_comment_btn') ?></button>
                     <?php if (isset($_SESSION['id_user'])): ?>
@@ -263,13 +263,32 @@ $comment_count = count($comments);
     <?php require '../includes/footer.php'; ?>
     <script src="../assets/js/main.js"></script>
     <script>
-    document.querySelectorAll('[data-guest-comment]').forEach(function(form) {
+    (function() {
+        var storageKey = 'pending_comment_<?= (int)$post_id ?>';
+        var textarea = document.querySelector('[data-comment-message]');
+        var form = document.querySelector('[data-comment-form]');
+        var commentSaved = <?= !empty($comment_success) ? 'true' : 'false' ?>;
+
+        if (commentSaved) {
+            sessionStorage.removeItem(storageKey);
+        } else if (textarea && !textarea.value) {
+            textarea.value = sessionStorage.getItem(storageKey) || '';
+        }
+
+        if (!form || !textarea) return;
+
         form.addEventListener('submit', function(e) {
+            if (!form.hasAttribute('data-guest-comment')) {
+                sessionStorage.setItem(storageKey, textarea.value);
+                return;
+            }
+
             e.preventDefault();
+            sessionStorage.setItem(storageKey, textarea.value);
             var toggle = document.querySelector('[data-auth-toggle]');
             if (toggle) toggle.click();
         });
-    });
+    })();
     </script>
 </body>
 
