@@ -10,6 +10,20 @@ require_once __DIR__ . '/lang.php';
 
 header('Content-Type: application/json');
 
+function auth_redirect_url() {
+    $default = '../pages/index.php';
+    $redirect = trim($_POST['redirect_url'] ?? '');
+
+    if ($redirect === '') return $default;
+    if (preg_match('/[\r\n]/', $redirect)) return $default;
+    if (strpos($redirect, '://') !== false || str_starts_with($redirect, '//')) return $default;
+    if ($redirect[0] === '/' || str_starts_with($redirect, '../pages/') || str_starts_with($redirect, 'pages/')) {
+        return $redirect;
+    }
+
+    return $default;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'error' => __('auth_method_not_allowed')]);
@@ -100,7 +114,7 @@ if ($action === 'login') {
     $_SESSION['role'] = $user['role'];
     $_SESSION['last_activity'] = time();
 
-    echo json_encode(['success' => true, 'redirect' => '../pages/index.php']);
+    echo json_encode(['success' => true, 'redirect' => auth_redirect_url()]);
     exit();
 }
 
@@ -162,7 +176,13 @@ if ($action === 'register') {
         error_log("Activity log error: " . $e->getMessage());
     }
 
-    echo json_encode(['success' => true, 'message' => __('login_success')]);
+    session_regenerate_id(true);
+    $_SESSION['id_user'] = $new_id;
+    $_SESSION['user_name'] = $name;
+    $_SESSION['role'] = 'user';
+    $_SESSION['last_activity'] = time();
+
+    echo json_encode(['success' => true, 'redirect' => auth_redirect_url()]);
     exit();
 }
 
