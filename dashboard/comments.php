@@ -241,7 +241,7 @@ require_once __DIR__ . '/inc/header.php';
                                     <div>
                                         <strong><?=htmlspecialchars($c['author_name'])?></strong>
                                         <?php if (!empty($c['author_role'])): ?>
-                                        <span class="role_badge <?=$c['author_role']?>"><?=ucfirst($c['author_role'])?></span>
+                                        <span class="role_badge <?=htmlspecialchars($c['author_role'])?>"><?=ucfirst(htmlspecialchars($c['author_role']))?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>

@@ -352,7 +352,7 @@ window.calculatePerPage = function (force) {
                             });
                         }
                     };
-                    xhr.send('ajax_notif_read=1');
+                    xhr.send('ajax_notif_read=1&csrf_token=' + encodeURIComponent(Lang.csrfToken));
                 }
             });
         }
