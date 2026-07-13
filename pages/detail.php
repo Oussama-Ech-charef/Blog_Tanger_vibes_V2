@@ -7,13 +7,13 @@ require_once '../includes/helpers.php';
  
  send_security_headers();
 
-// Check if post ID is provided
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+// Check if post ID is provided and numeric
+if (!isset($_GET['id']) || !ctype_digit((string)$_GET['id'])) {
     header('Location: index.php');
     exit;
 }
 
-$post_id = $_GET['id'];
+$post_id = (int)$_GET['id'];
 
 
 // Load post from database
@@ -59,18 +59,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
-        $comment_error = __('detail_comment_error_generic');
+        $_SESSION['flash_error'] = __('detail_comment_error_generic');
+        header('Location: detail.php?id=' . $post_id . '#comments');
+        exit;
+    }
+
+    // Rate limiting: max 5 comments per user per hour
+    if (isset($_SESSION['id_user'])) {
+        $cmt_check = $conn->prepare("SELECT COUNT(*) FROM comments WHERE id_user=:uid AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+        $cmt_check->execute([':uid' => $_SESSION['id_user']]);
+        if ((int)$cmt_check->fetchColumn() >= 5) {
+            $_SESSION['flash_error'] = __('detail_comment_error_rate_limit');
+            header('Location: detail.php?id=' . $post_id . '#comments');
+            exit;
+        }
     }
 
     $author_name = $_SESSION['user_name'];
     $comment_text = trim($_POST['message'] ?? '');
 
-    if (empty($comment_error)) {
-        if (empty($comment_text)) {
-            $comment_error = __('detail_comment_error_required');
-        } elseif (strlen($comment_text) > 1000) {
-            $comment_error = __('detail_comment_error_text_length');
-        }
+    if (empty($comment_text)) {
+        $_SESSION['flash_error'] = __('detail_comment_error_required');
+        header('Location: detail.php?id=' . $post_id . '#comments');
+        exit;
+    }
+
+    if (strlen($comment_text) > 1000) {
+        $_SESSION['flash_error'] = __('detail_comment_error_text_length');
+        header('Location: detail.php?id=' . $post_id . '#comments');
+        exit;
     }
 
     if (empty($comment_error)) {
