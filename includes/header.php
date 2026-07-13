@@ -69,7 +69,7 @@ if (isset($_SESSION['id_user'])) {
                         <span class="user_avatar large"><?= strtoupper(htmlspecialchars(substr($_SESSION['user_name'], 0, 1))) ?></span>
                         <div class="user_dropdown_identity">
                             <div class="user_dropdown_name"><?= htmlspecialchars($_SESSION['user_name']) ?></div>
-                            <div class="user_dropdown_role"><?= $_SESSION['role'] === 'admin' ? __('admin_label') : __('dashboard_label') ?></div>
+                            <div class="user_dropdown_role"><?= htmlspecialchars($_SESSION['role']) === 'admin' ? __('admin_label') : __('dashboard_label') ?></div>
                         </div>
                     </div>
                     <div class="user_dropdown_divider"></div>
@@ -176,7 +176,7 @@ if (isset($_SESSION['id_user'])) {
                 <span class="user_avatar large"><?= strtoupper(htmlspecialchars(substr($_SESSION['user_name'], 0, 1))) ?></span>
                 <div class="mobile_user_identity">
                     <span class="mobile_user_name"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
-                    <span class="mobile_user_role"><?= $_SESSION['role'] === 'admin' ? __('admin_label') : __('dashboard_label') ?></span>
+                    <span class="mobile_user_role"><?= htmlspecialchars($_SESSION['role']) === 'admin' ? __('admin_label') : __('dashboard_label') ?></span>
                 </div>
             </div>
             <div class="mobile_user_links">
