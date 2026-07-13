@@ -22,6 +22,15 @@ $db_name = getenv('DB_NAME') ?: 'tangier_blog';
 $username = getenv('DB_USER') ?: 'root';
 $password = getenv('DB_PASS') ?: '';
 
+$is_local = in_array($host, ['localhost', '127.0.0.1', '::1'], true);
+if ($password === '') {
+    error_log("SECURITY WARNING: Empty database password in use. Set DB_PASS in .env for production.");
+    if (!$is_local) {
+        http_response_code(500);
+        die("An unexpected error occurred. Please try again later.");
+    }
+}
+
 require_once __DIR__ . '/constants.php';
 
 try {
