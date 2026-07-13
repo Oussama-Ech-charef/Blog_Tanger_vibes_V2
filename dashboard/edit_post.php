@@ -101,7 +101,7 @@ require_once __DIR__ . '/inc/header.php';
                         <p><?= __('edit_post_desc') ?></p>
                     </div>
                     <div class="flex_row" style="gap:8px;">
-                        <span class="status_badge <?= $post['status'] ?>"><?= ucfirst(htmlspecialchars($post['status'])) ?></span>
+                        <span class="status_badge <?= htmlspecialchars($post['status']) ?>"><?= ucfirst(htmlspecialchars($post['status'])) ?></span>
                         <a href="preview.php?id=<?= $post_id ?>" class="btn btn_secondary btn_sm" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('edit_post_preview') ?></a>
                         <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <?= __('add_post_back') ?></a>
                     </div>

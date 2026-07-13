@@ -221,9 +221,9 @@ $qv_close_url = posts_redirect_url();
                             <td><?=htmlspecialchars($p['cat_name'])?></td>
                             <?php if ($is_admin): ?>
                             <td><?=htmlspecialchars($p['user_name'])?></td>
-                            <td><span class="role_badge role_<?=$p['author_role']?>"><?=ucfirst($p['author_role'])?></span></td>
+                            <td><span class="role_badge role_<?=htmlspecialchars($p['author_role'])?>"><?=ucfirst(htmlspecialchars($p['author_role']))?></span></td>
                             <?php endif; ?>
-                            <td><span class="status_badge <?=$p['status']?>"><?=ucfirst(htmlspecialchars($p['status']))?></span></td>
+                            <td><span class="status_badge <?=htmlspecialchars($p['status'])?>"><?=ucfirst(htmlspecialchars($p['status']))?></span></td>
                             <td class="date_cell"><?=date('M j, Y',strtotime($p['created_at']))?></td>
                             <td>
                                 <div class="cell_actions">
