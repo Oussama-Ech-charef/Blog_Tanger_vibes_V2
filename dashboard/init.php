@@ -1,10 +1,6 @@
 <?php
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Load required dependencies
+// Load required dependencies (security.php handles session start with secure params)
 require_once __DIR__ . '/../config/connection.php';
 require_once __DIR__ . '/../includes/security.php';
 require_once __DIR__ . '/../includes/lang.php';
