@@ -1,11 +1,7 @@
 <?php
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-require_once __DIR__ . '/../config/connection.php';
 require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../config/connection.php';
 require_once __DIR__ . '/lang.php';
 
 header('Content-Type: application/json');
@@ -57,11 +53,15 @@ if ($action === 'login') {
     $normalized_email = strtolower($email);
     $max_attempts = 5;
     $lockout_minutes = 10;
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $max_ip_attempts = 20;
 
     // clean up expired locks (locked_until in the past) — resets counter so a
     // single bad attempt after lock expiry doesn't re-lock the account
     $conn->prepare("delete from login_attempts where email = :email and locked_until is not null and locked_until <= now()")
          ->execute([':email' => $normalized_email]);
+    $conn->prepare("delete from login_attempts where email = :ip_prefix and locked_until is not null and locked_until <= now()")
+         ->execute([':ip_prefix' => 'ip:' . $ip]);
 
     // check if this email is currently locked — using MySQL NOW() so that
     // the comparison uses MySQL's timezone, avoiding PHP/MySQL timezone mismatch
@@ -71,13 +71,20 @@ if ($action === 'login') {
         echo json_encode(['success' => false, 'error' => __('login_error_rate_limit')]);
         exit();
     }
+    // IP-based check: prevent brute-force across different accounts
+    $ip_lock = $conn->prepare("select 1 from login_attempts where email = :ip and locked_until > now()");
+    $ip_lock->execute([':ip' => 'ip:' . $ip]);
+    if ($ip_lock->fetch()) {
+        echo json_encode(['success' => false, 'error' => __('login_error_rate_limit')]);
+        exit();
+    }
 
     $stmt = $conn->prepare("select * from users where email = :email");
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user || !password_verify($password, $user['password'])) {
-        // record failed attempt in the database
+        // record failed attempt in the database (per-email)
         $conn->prepare("
             insert into login_attempts (email, failed_attempts, last_attempt, locked_until)
             values (:email, 1, now(), null)
@@ -94,6 +101,23 @@ if ($action === 'login') {
             ':max' => $max_attempts,
             ':minutes' => $lockout_minutes,
         ]);
+        // record failed attempt per-IP (across all accounts)
+        $conn->prepare("
+            insert into login_attempts (email, failed_attempts, last_attempt, locked_until)
+            values (:ip, 1, now(), null)
+            on duplicate key update
+                failed_attempts = failed_attempts + 1,
+                last_attempt = now(),
+                locked_until = if(
+                    failed_attempts + 1 >= :max,
+                    date_add(now(), interval :minutes minute),
+                    locked_until
+                )
+        ")->execute([
+            ':ip' => 'ip:' . $ip,
+            ':max' => $max_ip_attempts,
+            ':minutes' => $lockout_minutes,
+        ]);
         echo json_encode(['success' => false, 'error' => __('login_error_credentials')]);
         exit();
     }
@@ -107,6 +131,8 @@ if ($action === 'login') {
     // clear rate limit on success
     $conn->prepare("delete from login_attempts where email = :email")
          ->execute([':email' => $normalized_email]);
+    $conn->prepare("delete from login_attempts where email = :ip")
+         ->execute([':ip' => 'ip:' . $ip]);
 
     session_regenerate_id(true);
     $_SESSION['id_user'] = $user['id_user'];
@@ -123,6 +149,16 @@ if ($action === 'register') {
     $csrf_token = $_POST['csrf_token'] ?? '';
     if (!validate_csrf_token($csrf_token)) {
         echo json_encode(['success' => false, 'error' => __('register_error_invalid')]);
+        exit();
+    }
+
+    // Rate limiting: max 3 registrations per IP per hour
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $ip_hash = 'reg_ip:' . crc32($ip);
+    $reg_check = $conn->prepare("SELECT COUNT(*) FROM activity_log WHERE action_type='user_registered' AND description LIKE :ip AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+    $reg_check->execute([':ip' => '%[' . $ip_hash . ']%']);
+    if ((int)$reg_check->fetchColumn() >= 3) {
+        echo json_encode(['success' => false, 'error' => __('register_error_rate_limit')]);
         exit();
     }
 
@@ -171,7 +207,7 @@ if ($action === 'register') {
     $new_id = $conn->lastInsertId();
     try {
         $log = $conn->prepare("insert into activity_log (action_type, description, user_id, entity_type, entity_id) values ('user_registered', :desc, :uid, 'user', :eid)");
-        $log->execute([':desc' => "New user registered: $name", ':uid' => $new_id, ':eid' => $new_id]);
+        $log->execute([':desc' => "New user registered: $name [$ip_hash]", ':uid' => $new_id, ':eid' => $new_id]);
     } catch (PDOException $e) {
         error_log("Activity log error: " . $e->getMessage());
     }
