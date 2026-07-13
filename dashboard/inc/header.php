@@ -5,6 +5,10 @@
     // AJAX: mark today's notifications as read (called from JS on dropdown open)
     if (isset($_POST['ajax_notif_read'])) {
         header('Content-Type: application/json');
+        if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'error' => 'invalid csrf']);
+            exit;
+        }
         try {
             $uid = current_user_id();
             if ($is_admin) {
@@ -158,21 +162,22 @@
     <link rel="stylesheet" href="../assets/css/rtl.css">
     <script>
 var Lang = {
-    confirmApprove: '<?= __('js_confirm_approve') ?>',
-    confirmDeletePost: '<?= __('js_confirm_delete_post') ?>',
-    confirmDeleteCat: '<?= __('categories_delete_confirm') ?>',
-    confirmBulkDelete: '<?= __('comments_confirm_bulk_delete') ?>',
-    confirmRejectComment: '<?= __('comments_confirm_reject') ?>',
-    confirmDeleteComment: '<?= __('comments_confirm_delete') ?>',
-    confirmDemote: '<?= __('users_confirm_demote') ?>',
-    confirmPromote: '<?= __('users_confirm_promote') ?>',
-    confirmDeactivate: '<?= __('users_confirm_deactivate') ?>',
-    confirmActivate: '<?= __('users_confirm_activate') ?>',
-    confirmDeleteUser: '<?= __('users_confirm_delete') ?>',
-    confirmDeleteMessage: '<?= __('messages_confirm_delete') ?>',
-    rejectModalTitle: '<?= __('js_reject_modal_title') ?>',
-    editorLinkUrl: '<?= __('editor_link_url') ?>',
-    editorImageUrl: '<?= __('editor_image_url') ?>',
+    csrfToken: <?= json_encode($csrf_token) ?>,
+    confirmApprove: <?= json_encode(__('js_confirm_approve')) ?>,
+    confirmDeletePost: <?= json_encode(__('js_confirm_delete_post')) ?>,
+    confirmDeleteCat: <?= json_encode(__('categories_delete_confirm')) ?>,
+    confirmBulkDelete: <?= json_encode(__('comments_confirm_bulk_delete')) ?>,
+    confirmRejectComment: <?= json_encode(__('comments_confirm_reject')) ?>,
+    confirmDeleteComment: <?= json_encode(__('comments_confirm_delete')) ?>,
+    confirmDemote: <?= json_encode(__('users_confirm_demote')) ?>,
+    confirmPromote: <?= json_encode(__('users_confirm_promote')) ?>,
+    confirmDeactivate: <?= json_encode(__('users_confirm_deactivate')) ?>,
+    confirmActivate: <?= json_encode(__('users_confirm_activate')) ?>,
+    confirmDeleteUser: <?= json_encode(__('users_confirm_delete')) ?>,
+    confirmDeleteMessage: <?= json_encode(__('messages_confirm_delete')) ?>,
+    rejectModalTitle: <?= json_encode(__('js_reject_modal_title')) ?>,
+    editorLinkUrl: <?= json_encode(__('editor_link_url')) ?>,
+    editorImageUrl: <?= json_encode(__('editor_image_url')) ?>,
 };
     </script>
 </head>
