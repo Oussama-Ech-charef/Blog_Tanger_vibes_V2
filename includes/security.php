@@ -1,9 +1,16 @@
 <?php
 
+// Session hardening before start
+ini_set('session.use_strict_mode', '1');
+ini_set('session.use_only_cookies', '1');
+
+
 // Start session with secure cookie settings
 if (session_status() === PHP_SESSION_NONE) {
+    $is_https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
     session_set_cookie_params([
         'httponly' => true,
+        'secure' => $is_https,
         'samesite' => 'Strict'
     ]);
     session_start();
@@ -50,12 +57,20 @@ function check_session_timeout() {
 
 // Send security headers before any output
 function send_security_headers() {
+    $is_https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+    $csp = "default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; frame-src https://www.openstreetmap.org; form-action 'self'; base-uri 'self'; object-src 'none';";
+    if ($is_https) {
+        $csp .= " upgrade-insecure-requests;";
+    }
     header("X-Frame-Options: DENY");
     header("X-Content-Type-Options: nosniff");
+    header("X-XSS-Protection: 0");
     header("Referrer-Policy: strict-origin-when-cross-origin");
     header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
-    header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; frame-src https://www.openstreetmap.org;");
-    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+    header("Cross-Origin-Resource-Policy: same-origin");
+    header("Cross-Origin-Opener-Policy: same-origin");
+    header("Content-Security-Policy: $csp");
+    if ($is_https) {
         header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
     }
 }
