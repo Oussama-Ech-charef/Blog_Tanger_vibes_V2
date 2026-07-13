@@ -1,6 +1,13 @@
 <?php
 
+// Only start session if security.php hasn't already started it with secure params
 if (session_status() === PHP_SESSION_NONE) {
+    $is_https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+    session_set_cookie_params([
+        'httponly' => true,
+        'secure' => $is_https,
+        'samesite' => 'Strict'
+    ]);
     session_start();
 }
 
@@ -13,9 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['lang']) && in_array($_G
     $uri = $_SERVER['REQUEST_URI'];
     $parsed = parse_url($uri);
     $redirect = $parsed['path'] ?? '/';
-    if ($redirect !== '' && $redirect[0] === '/' && strpos($redirect, '://') === false && strpos($redirect, '..') === false) {
-        // Safe internal path
-    } else {
+    if ($redirect === '' || $redirect[0] !== '/' || preg_match('/[\x00-\x1F\x7F\/]\.\./', $redirect) || preg_match('/[\x00-\x1F\x7F]/', $redirect)) {
         $redirect = '/';
     }
     $query = [];
