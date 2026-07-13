@@ -54,6 +54,7 @@ return [
     'detail_comment_error_name_length' => 'Name must be under 100 characters.',
     'detail_comment_error_text_length' => 'Comment must be under 1000 characters.',
     'detail_comment_error_generic' => 'An error occurred. Please try again.',
+    'detail_comment_error_rate_limit' => 'You are posting too frequently. Please wait before adding another comment.',
     'detail_comment_error_login_required' => 'Please sign in to post.',
     'detail_comment_login_note' => 'Sign in to comment.',
     'detail_comment_signed_as' => 'Commenting as %s',
@@ -120,6 +121,7 @@ return [
     'contact_error_invalid' => 'Invalid request. Please try again.',
     'contact_error_required' => 'All fields are required.',
     'contact_error_email' => 'Invalid email format.',
+    'contact_error_rate_limit' => 'Too many messages from this IP. Please try again later.',
     'contact_error_generic' => 'An unexpected error occurred. Please try again later.',
     'faq_title' => 'Frequently Asked Questions',
     'faq_desc' => 'Quick answers to common questions about Tangier Vibes.',
@@ -174,6 +176,7 @@ return [
     'register_error_email' => 'Invalid email format.',
     'register_error_password' => 'Password must be at least 6 characters.',
     'register_error_exists' => 'Email already exists.',
+    'register_error_rate_limit' => 'Too many registrations from this IP. Please try again later.',
     'register_error_invalid' => 'Invalid request. Please try again.',
 
     'dashboard_label' => 'Dashboard',

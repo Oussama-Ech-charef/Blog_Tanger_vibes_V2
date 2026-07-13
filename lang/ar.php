@@ -54,6 +54,7 @@ return [
     'detail_comment_error_name_length' => 'يجب أن يكون الاسم أقل من 100 حرف.',
     'detail_comment_error_text_length' => 'يجب أن يكون التعليق أقل من 1000 حرف.',
     'detail_comment_error_generic' => 'حدث خطأ. حاول مرة أخرى.',
+    'detail_comment_error_rate_limit' => 'أنت تنشر بشكل متكرر جداً. يرجى الانتظار قبل إضافة تعليق آخر.',
     'detail_comment_error_login_required' => 'سجل دخولك للنشر.',
     'detail_comment_login_note' => 'سجل دخولك للتعليق.',
     'detail_comment_signed_as' => 'تعلق باسم %s',
@@ -120,6 +121,7 @@ return [
     'contact_error_invalid' => 'طلب غير صالح. حاول مرة أخرى.',
     'contact_error_required' => 'جميع الحقول مطلوبة.',
     'contact_error_email' => 'تنسيق البريد الإلكتروني غير صالح.',
+    'contact_error_rate_limit' => 'عدد كبير جداً من الرسائل من عنوان IP هذا. يرجى المحاولة مرة أخرى لاحقاً.',
     'contact_error_generic' => 'حدث خطأ غير متوقع. حاول مرة أخرى لاحقاً.',
     'faq_title' => 'الأسئلة المتكررة',
     'faq_desc' => 'إجابات سريعة للأسئلة الشائعة حول Tangier Vibes.',
@@ -174,6 +176,7 @@ return [
     'register_error_email' => 'تنسيق البريد الإلكتروني غير صالح.',
     'register_error_password' => 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.',
     'register_error_exists' => 'البريد الإلكتروني موجود بالفعل.',
+    'register_error_rate_limit' => 'عدد كبير جداً من عمليات التسجيل من عنوان IP هذا. يرجى المحاولة مرة أخرى لاحقاً.',
     'register_error_invalid' => 'طلب غير صالح. حاول مرة أخرى.',
 
     'dashboard_label' => 'لوحة التحكم',

@@ -54,6 +54,7 @@ return [
     'detail_comment_error_name_length' => 'Le nom doit faire moins de 100 caractères.',
     'detail_comment_error_text_length' => 'Le commentaire doit faire moins de 1000 caractères.',
     'detail_comment_error_generic' => 'Une erreur est survenue. Veuillez réessayer.',
+    'detail_comment_error_rate_limit' => 'Vous postez trop fréquemment. Veuillez patienter avant d\'ajouter un autre commentaire.',
     'detail_comment_error_login_required' => 'Connectez-vous pour commenter.',
     'detail_comment_login_note' => 'Connectez-vous pour commenter.',
     'detail_comment_signed_as' => 'Vous commentez en tant que %s',
@@ -120,6 +121,7 @@ return [
     'contact_error_invalid' => 'Requête invalide. Veuillez réessayer.',
     'contact_error_required' => 'Tous les champs sont requis.',
     'contact_error_email' => 'Format d\'email invalide.',
+    'contact_error_rate_limit' => 'Trop de messages depuis cette IP. Veuillez réessayer plus tard.',
     'contact_error_generic' => 'Une erreur inattendue s\'est produite. Veuillez réessayer plus tard.',
     'faq_title' => 'Foire aux questions',
     'faq_desc' => 'Réponses rapides aux questions courantes sur Tangier Vibes.',
@@ -174,6 +176,7 @@ return [
     'register_error_email' => 'Format d\'email invalide.',
     'register_error_password' => 'Le mot de passe doit contenir au moins 6 caractères.',
     'register_error_exists' => 'Cet email existe déjà.',
+    'register_error_rate_limit' => 'Trop d\'inscriptions depuis cette IP. Veuillez réessayer plus tard.',
     'register_error_invalid' => 'Requête invalide. Veuillez réessayer.',
 
     'dashboard_label' => 'Tableau de bord',
