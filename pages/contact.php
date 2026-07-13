@@ -43,6 +43,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // Rate limiting: max 3 contact messages per email per hour, max 10 per IP per hour
+    $contact_ip_hash = 'contact_ip:' . crc32($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    if (empty($error) && !empty($form_email)) {
+        $msg_check = $conn->prepare("SELECT COUNT(*) FROM contact_messages WHERE email=:email AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+        $msg_check->execute([':email' => $form_email]);
+        if ((int)$msg_check->fetchColumn() >= 3) {
+            $error = __('contact_error_rate_limit');
+        }
+    }
+    if (empty($error)) {
+        $ip_check = $conn->prepare("SELECT COUNT(*) FROM activity_log WHERE action_type='message_received' AND description LIKE :ip AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+        $ip_check->execute([':ip' => '%[' . $contact_ip_hash . ']%']);
+        if ((int)$ip_check->fetchColumn() >= 10) {
+            $error = __('contact_error_rate_limit');
+        }
+    }
+
     if (empty($error)) {
         try {
             // Insert message into database
@@ -61,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $new_id = $conn->lastInsertId();
                 $log = $conn->prepare("INSERT INTO activity_log (action_type, description, user_id, entity_type, entity_id) VALUES ('message_received', :desc, null, 'message', :eid)");
-                $log->execute([':desc' => "New message from {$form_name}: {$form_subject}", ':eid' => $new_id]);
+                $log->execute([':desc' => "New message from {$form_name}: {$form_subject} [{$contact_ip_hash}]", ':eid' => $new_id]);
             } catch (PDOException $e) {
                 error_log("Activity log error: " . $e->getMessage());
             }
