@@ -27,9 +27,7 @@ $user_count = (int)$conn->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $new_users = (int)$conn->query("SELECT COUNT(*) FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")->fetchColumn();
 $message_count = (int)$conn->query("SELECT COUNT(*) FROM contact_messages")->fetchColumn();
 $unread_messages = (int)$conn->query("SELECT COUNT(*) FROM contact_messages WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetchColumn();
-$pc_stmt = $conn->prepare("SELECT COUNT(*) FROM posts WHERE status = :st");
-$pc_stmt->execute([':st' => STATUS_PENDING]);
-$pending_count = (int)$pc_stmt->fetchColumn();
+$pending_count = (int)$post_stats['pending'];
 
 // Load chart data for last 12 months
 $posts_chart = $conn->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM posts WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC")->fetchAll(PDO::FETCH_ASSOC);
