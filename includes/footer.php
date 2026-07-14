@@ -95,7 +95,6 @@ if (isset($conn)) {
 </footer>
 
 <?php require_once __DIR__ . '/auth_modal.php'; ?>
-<script src="../assets/js/image-fallback.js"></script>
 <script type="importmap">
 {
     "imports": {
@@ -103,5 +102,4 @@ if (isset($conn)) {
     }
 }
 </script>
-<script type="module" src="../assets/js/scroll-animations.js"></script>
-<script type="module" src="../assets/js/counters.js"></script>
+<script type="module" src="../<?= asset_version('assets/js/animations.min.js') ?>"></script>
