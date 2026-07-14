@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="../assets/css/auth_modal.css">
-
 <div class="auth_overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" data-unexpected-error="<?= __('auth_error_unexpected') ?>">
     <div class="auth_modal">
 
