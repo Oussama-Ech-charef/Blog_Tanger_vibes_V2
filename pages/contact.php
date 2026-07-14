@@ -7,6 +7,9 @@ require_once '../includes/helpers.php';
 
 send_security_headers();
 
+// Page cache for anonymous users
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && page_cache_try()) exit;
+
 $success = "";
 $error = "";
 
@@ -112,12 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/contact.css">
-    <link rel="stylesheet" href="../assets/css/components.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link rel="stylesheet" href="../<?= asset_version('assets/css/public.min.css') ?>">
 </head>
 <body>
 
@@ -277,7 +275,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 
 <?php require '../includes/footer.php'; ?>
-<script src="../assets/js/main.js"></script>
-<script src="../assets/js/contact.js"></script>
+<script src="../<?= asset_version('assets/js/public.min.js') ?>"></script>
 </body>
 </html>
