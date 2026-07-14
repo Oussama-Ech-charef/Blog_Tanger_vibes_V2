@@ -93,7 +93,7 @@ $total_pages = get_total_pages($total_records, $per_page);
 $current_page = min($page, $total_pages);
 $offset = get_offset($current_page, $per_page);
 
-$ds = $conn->prepare("SELECT *, (SELECT COUNT(*) FROM posts WHERE posts.id_user=users.id_user) as post_count FROM users WHERE $where ORDER BY created_at DESC LIMIT :lim OFFSET :off");
+$ds = $conn->prepare("SELECT u.*, COUNT(p.id_post) as post_count FROM users u LEFT JOIN posts p ON p.id_user = u.id_user WHERE $where GROUP BY u.id_user ORDER BY u.created_at DESC LIMIT :lim OFFSET :off");
 $int_params = [];
 foreach ($params as $k=>$v) $ds->bindValue($k, $v, in_array($k, $int_params) ? PDO::PARAM_INT : PDO::PARAM_STR);
 $ds->bindValue(':lim', $per_page, PDO::PARAM_INT);
