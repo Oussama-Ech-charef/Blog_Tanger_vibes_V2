@@ -7,6 +7,9 @@ require_once '../includes/helpers.php';
 
 send_security_headers();
 
+// Page cache for anonymous users
+if (page_cache_try()) exit;
+
 // Get latest published posts
 $stmt = $conn->prepare("
     SELECT posts.*, categories.cat_name, users.user_name
@@ -41,13 +44,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/cards.css">
-    <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/home.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/rtl.css">
-    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../<?= asset_version('assets/css/public.min.css') ?>">
 </head>
 <body>
 
@@ -58,7 +55,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <section class="hero_section">
             <picture>
                 <source srcset="../assets/images/home_1920.jpg 1920w, ../assets/images/home_1200.jpg 1200w, ../assets/images/home_768.jpg 768w, ../assets/images/home_480.jpg 480w" sizes="100vw" type="image/jpeg">
-                <img src="../assets/images/home.jpg" alt="Tangier Vibes" width="1920" height="1280" fetchpriority="high">
+                <img src="../assets/images/home_1920.jpg" alt="Tangier Vibes" width="1920" height="1280" fetchpriority="high">
             </picture>
             <div class="hero_shadow"></div>
 
@@ -101,7 +98,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </main>
 
 <?php require '../includes/footer.php'; ?>
-    <script src="../assets/js/main.js"></script>
+    <script src="../<?= asset_version('assets/js/public.min.js') ?>"></script>
 <?php if (isset($_GET['login'])): ?>
 <script>
 (function() {
