@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧭 Tangier Vibes
+# Tangier Vibes
 
 **A Tourism Blog & City Guide Platform for Tangier, Morocco**
 
@@ -37,7 +37,7 @@
 
 Tangier Vibes is a content-driven web platform for discovering and sharing places, culture, restaurants, beaches, hotels, and attractions in Tangier, Morocco. It features a full content management workflow with user-submitted posts, admin moderation, multi-language support (English, French, Arabic), and responsive design across desktop and mobile devices.
 
-Built with vanilla PHP and MySQL, the platform provides role-based access control, CSRF-protected forms, database-backed rate limiting, and a complete publish–review–reject lifecycle for content.
+Built with vanilla PHP and MySQL, the platform provides role-based access control, CSRF-protected forms, database-backed rate limiting, and a complete publish-review-reject lifecycle for content.
 
 ---
 
@@ -47,13 +47,13 @@ Built with vanilla PHP and MySQL, the platform provides role-based access contro
 |---|---|
 | **User Registration & Login** | Account creation with name, email, and hashed password; session-based authentication |
 | **Role Management** | Two roles (`user` / `admin`) with distinct permissions enforced server-side |
-| **Post Creation** | Form with title, category selection, rich content body, and image upload with MIME validation |
-| **Post Editing** | Pre-filled form allowing authors to modify their own posts |
+| **Post Creation** | Form with title, category selection, rich text editor, and image upload with MIME validation |
+| **Post Editing** | Pre-filled form with rich text editor allowing authors to modify their own posts |
 | **Post Deletion** | Owners can delete their posts; admins can delete any post |
-| **Publication Workflow** | Four-status lifecycle: `draft` → `pending` → `published` / `rejected` |
+| **Publication Workflow** | Four-status lifecycle: `draft` -> `pending` -> `published` / `rejected` |
 | **Admin Moderation** | Approve pending posts or reject with a required textual reason |
 | **Rejection Feedback** | Users view rejection reasons on the dashboard |
-| **Dashboard Analytics** | Stats cards (total, published, pending, draft, rejected) and full post management table |
+| **Dashboard Analytics** | Stats cards (total, published, pending, draft, rejected) and Chart.js charts |
 | **Category System** | Six predefined categories with filterable explore page |
 | **Search** | Keyword search across post titles and category names |
 | **Pagination** | Page-based navigation on the explore page (6 posts per page) |
@@ -62,8 +62,10 @@ Built with vanilla PHP and MySQL, the platform provides role-based access contro
 | **Multi-Language Support** | English, French, and Arabic with RTL layout support for Arabic |
 | **Image Upload** | MIME-type validation, extension whitelist, secure randomized filenames |
 | **Responsive Design** | Mobile hamburger menu, adaptive grid layout across all screen sizes |
-| **Google Maps** | Embedded map centered on Tangier on post detail pages |
+| **OpenStreetMap** | Embedded map centered on Tangier on post detail pages |
 | **FAQ Section** | Accordion-style frequently asked questions on the contact page |
+| **Rich Text Editor** | WYSIWYG toolbar (bold, italic, underline, lists, headings, links, images) |
+| **Profile & Password Change** | Dashboard settings: view profile info and update password |
 
 ---
 
@@ -90,7 +92,12 @@ Built with vanilla PHP and MySQL, the platform provides role-based access contro
 - View all users' posts in a unified dashboard
 - Delete any post regardless of ownership
 - Publish posts directly without moderation
-- View full analytics: total, published, pending, draft, and rejected post counts
+- View full analytics: charts for posts, comments, user registrations, and category distribution
+- Manage users (role/status changes)
+- Moderate comments (approve, reject, delete, bulk actions)
+- Manage categories (CRUD)
+- View contact messages inbox
+- View activity log with filters
 
 ---
 
@@ -100,7 +107,7 @@ Built with vanilla PHP and MySQL, the platform provides role-based access contro
 |---|---|
 | **Password Hashing** | `password_hash()` with `PASSWORD_DEFAULT` on registration; `password_verify()` on login |
 | **CSRF Protection** | Per-session tokens generated via `bin2hex(random_bytes(32))`; validated with `hash_equals()` on all state-changing actions |
-| **Prepared Statements** | All database queries use PDO prepared statements with named parameters — no raw SQL interpolation |
+| **Prepared Statements** | All database queries use PDO prepared statements with named parameters -- no raw SQL interpolation |
 | **Rate Limiting** | Database-backed login attempt tracking; 5 failed attempts triggers 10-minute lockout; survives browser restarts |
 | **Session Security** | `session_regenerate_id(true)` on login; 30-minute inactivity timeout; session cookie cleared on logout |
 | **XSS Prevention** | All user output escaped with `htmlspecialchars()` across every view |
@@ -121,9 +128,10 @@ Built with vanilla PHP and MySQL, the platform provides role-based access contro
 | **PDO** | Secure database access with prepared statements |
 | **HTML5** | Semantic page structure with Open Graph and Twitter Card meta tags |
 | **CSS3** | Custom properties, Flexbox, CSS Grid, responsive media queries |
-| **JavaScript** | Mobile menu, auth modal, AJAX login/register, image preview, FAQ accordion, comment popup |
+| **JavaScript** | Mobile menu, auth modal, AJAX login/register, image preview, FAQ accordion, comment popup, rich text editor |
+| **Chart.js** | Dashboard analytics charts |
 | **Font Awesome** | Icon library (free tier) across the interface |
-| **Google Maps Embed API** | Fixed embedded map centered on Tangier |
+| **OpenStreetMap Embed** | Fixed embedded map centered on Tangier |
 | **Google Fonts (Inter)** | Primary typography |
 
 ---
@@ -132,7 +140,7 @@ Built with vanilla PHP and MySQL, the platform provides role-based access contro
 
 The database `tangier_blog` contains nine tables:
 
-### `users` — Registered accounts
+### `users` -- Registered accounts
 
 | Column | Type | Notes |
 |---|---|---|
@@ -145,7 +153,7 @@ The database `tangier_blog` contains nine tables:
 | `is_active` | TINYINT(1) | Default 1 |
 | `created_at` | TIMESTAMP | Auto-generated |
 
-### `categories` — Post classification
+### `categories` -- Post classification
 
 | Column | Type | Notes |
 |---|---|---|
@@ -155,17 +163,17 @@ The database `tangier_blog` contains nine tables:
 
 Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Hotels & Riads, Nightlife.
 
-### `posts` — Blog content
+### `posts` -- Blog content
 
 | Column | Type | Notes |
 |---|---|---|
 | `id_post` | INT (PK) | Auto-increment |
-| `id_category` | INT (FK) | → `categories` (`ON DELETE CASCADE`) |
-| `id_user` | INT (FK) | → `users` (`ON DELETE SET NULL`) |
-| `id_approved_by` | INT (FK) | → `users`, nullable (`ON DELETE SET NULL`) |
+| `id_category` | INT (FK) | -> `categories` (`ON DELETE CASCADE`) |
+| `id_user` | INT (FK) | -> `users` (`ON DELETE SET NULL`) |
+| `id_approved_by` | INT (FK) | -> `users`, nullable (`ON DELETE SET NULL`) |
 | `title` | VARCHAR(255) | Post title |
 | `image` | VARCHAR(255) | File path, nullable |
-| `content` | TEXT | Post body |
+| `content` | TEXT | Post body (HTML from rich text editor) |
 | `status` | ENUM('draft','pending','published','rejected') | Publication state |
 | `rejection_reason` | TEXT | Admin feedback, nullable |
 | `approved_at` | TIMESTAMP | Nullable |
@@ -173,18 +181,19 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 | `created_at` | TIMESTAMP | Auto-generated |
 | `updated_at` | TIMESTAMP | Auto-updated |
 
-### `comments` — Post comments
+### `comments` -- Post comments
 
 | Column | Type | Notes |
 |---|---|---|
 | `id_comment` | INT (PK) | Auto-increment |
-| `id_post` | INT (FK) | → `posts` (`ON DELETE CASCADE`) |
+| `id_post` | INT (FK) | -> `posts` (`ON DELETE CASCADE`) |
+| `id_user` | INT (FK) | -> `users` (`ON DELETE SET NULL`), nullable |
 | `author_name` | VARCHAR(100) | Display name |
 | `comment_text` | TEXT | Comment body |
 | `status` | ENUM('approved','rejected','pending') | Default `pending` |
 | `created_at` | TIMESTAMP | Auto-generated |
 
-### `contact_messages` — Contact form submissions
+### `contact_messages` -- Contact form submissions
 
 | Column | Type | Notes |
 |---|---|---|
@@ -196,7 +205,7 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 | `is_read` | TINYINT(1) | Default 0 |
 | `created_at` | TIMESTAMP | Auto-generated |
 
-### `login_attempts` — Rate limiting
+### `login_attempts` -- Rate limiting
 
 | Column | Type | Notes |
 |---|---|---|
@@ -206,7 +215,7 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 | `locked_until` | DATETIME | Nullable; set after 5 failures |
 | `last_attempt` | TIMESTAMP | Auto-updated |
 
-### `settings` — Site-wide key-value configuration
+### `settings` -- Site-wide key-value configuration (reserved for future use, no seed data)
 
 | Column | Type | Notes |
 |---|---|---|
@@ -216,27 +225,25 @@ Default rows: Beaches, Food & Restaurants, Culture & History, Nature & Parks, Ho
 | `created_at` | TIMESTAMP | Auto-generated |
 | `updated_at` | TIMESTAMP | Auto-updated |
 
-Default rows: site_name, site_description, admin_email, posts_per_page, theme_color, logo_path.
-
-### `activity_log` — System activity feed
+### `activity_log` -- System activity feed
 
 | Column | Type | Notes |
 |---|---|---|
 | `id_activity` | INT (PK) | Auto-increment |
 | `action_type` | VARCHAR(50) | e.g. post_created, post_approved |
 | `description` | VARCHAR(500) | Human-readable activity text |
-| `user_id` | INT (FK) | → `users` (`ON DELETE SET NULL`), nullable |
+| `user_id` | INT (FK) | -> `users` (`ON DELETE SET NULL`), nullable |
 | `entity_type` | VARCHAR(50) | e.g. post, comment |
 | `entity_id` | INT | Nullable |
 | `is_read` | TINYINT(1) | Default 0 |
 | `created_at` | TIMESTAMP | Auto-generated |
 
-### `user_notifications` — Per-user notification system
+### `user_notifications` -- Per-user notification system (reserved for future use)
 
 | Column | Type | Notes |
 |---|---|---|
 | `id_notification` | INT (PK) | Auto-increment |
-| `id_user` | INT (FK) | → `users` (`ON DELETE CASCADE`) |
+| `id_user` | INT (FK) | -> `users` (`ON DELETE CASCADE`) |
 | `type` | VARCHAR(50) | Notification type |
 | `message` | VARCHAR(500) | Notification body |
 | `link` | VARCHAR(255) | Nullable |
@@ -249,97 +256,97 @@ Default rows: site_name, site_description, admin_email, posts_per_page, theme_co
 
 ```
 Blog_Tanger_vibes_V2/
-├── config/
-│   ├── connection.php              PDO database connection
-│   └── constants.php               Status constants (draft, pending, published, rejected)
-├── sql/
-│   └── script.sql                  Database schema + seed data
-├── lang/
-│   ├── en.php                      English translations (230+ keys)
-│   ├── fr.php                      French translations (230+ keys)
-│   └── ar.php                      Arabic translations (230+ keys, RTL)
-├── includes/
-│   ├── security.php                CSRF, session timeout, upload validation, security headers
-│   ├── lang.php                    Translation loader, language switcher
-│   ├── helpers.php                 Shared UI helpers (post cards, notifications, logo)
-│   ├── post_helpers.php            Post CRUD helpers (validation, image, insert, update)
-│   ├── header.php                  Responsive nav, search, auth links, language dropdown
-│   ├── footer.php                  Footer with dynamic categories
-│   ├── auth_modal.php              Login/register modal with AJAX + inline JS
-│   ├── pagination.php              Page-number pagination component
-│   └── ajax_auth.php               AJAX login/register endpoint + rate limiting
-├── pages/
-│   ├── index.php                   Homepage with hero + 3 latest posts
-│   ├── explore.php                 All published posts with search, filter, pagination
-│   ├── detail.php                  Post detail, comments, map, share links
-│   ├── about.php                   About page with live stats
-│   ├── contact.php                 Contact form, info cards, FAQ, map
-│   └── logout.php                  Session destroy + cookie cleanup
-├── dashboard/
-│   ├── init.php                    Session check, admin auth, DB + helpers
-│   ├── index.php                   Overview with stats cards + Chart.js charts
-│   ├── posts.php                   Posts management with approve/reject/delete
-│   ├── add_post.php                Create post form with image upload + editor
-│   ├── edit_post.php               Edit post form with pre-filled data
-│   ├── comments.php                Comment moderation (approve, reject, delete, bulk)
-│   ├── categories.php              CRUD for post categories
-│   ├── users.php                   User management with role/status changes
-│   ├── messages.php                Contact messages inbox
-│   ├── notifications.php           Activity log with filters
-│   ├── settings.php                Site settings, logo upload, password change
-│   └── inc/
-│       ├── header.php              Dashboard HTML head, sidebar, topbar
-│       ├── footer.php              Dashboard closing tags + dashboard.js
-│       └── editor.php              Rich text editor toolbar component
-├── assets/
-│   ├── css/
-│   │   ├── main.css                Global styles + CSS custom properties
-│   │   ├── header.css              Navigation, search, language switcher
-│   │   ├── footer.css              Footer layout
-│   │   ├── home.css                Hero + latest posts
-│   │   ├── cards.css               Post card component
-│   │   ├── explore.css             Explore page filters + grid
-│   │   ├── detail.css              Post detail + comments
-│   │   ├── about.css               About page layout
-│   │   ├── contact.css             Contact form + FAQ
-│   │   ├── auth_modal.css          Auth modal styles
-│   │   ├── components.css          Shared alerts, pagination, form focus
-│   │   └── rtl.css                 Right-to-left overrides
-│   │   └── dashboard/
-│   │       ├── dashboard-variables.css
-│   │       ├── dashboard-layout.css
-│   │       ├── dashboard-sidebar.css
-│   │       ├── dashboard-header.css
-│   │       ├── dashboard-buttons.css
-│   │       ├── dashboard-utilities.css
-│   │       ├── dashboard-overview.css
-│   │       ├── dashboard-tables.css
-│   │       ├── dashboard-forms.css
-│   │       ├── dashboard-modals.css
-│   │       ├── dashboard-pagination.css
-│   │       ├── dashboard-add-post.css
-│   │       ├── dashboard-editor.css
-│   │       └── dashboard-notifications.css
-│   ├── js/
-│   │   ├── main.js                 Mobile nav toggle, language dropdown
-│   │   ├── auth_modal.js           Auth modal logic, AJAX login/register
-│   │   ├── contact.js              FAQ accordion
-│   │   ├── dashboard.js            Dashboard sidebar toggle
-│   │   ├── dashboard-editor.js     Rich text editor logic
-│   │   ├── dashboard-post-form.js  Image preview + remove
-│   │   └── posts-dropdown.js       Post card dropdown menus
-│   ├── images/
-│   │   ├── logo.png                Site logo (fallback)
-│   │   ├── home.jpg                Hero background (fallback)
-│   │   ├── home_480.jpg            Responsive hero (480w)
-│   │   ├── home_768.jpg            Responsive hero (768w)
-│   │   ├── home_1200.jpg           Responsive hero (1200w)
-│   │   └── home_1920.jpg           Responsive hero (1920w)
-│   └── uploads/                    User-uploaded post images
-├── .env                            Database credentials (not committed)
-├── .htaccess                       URL rewrites
-├── .gitignore
-└── README.md
++-- config/
+|   +-- connection.php              PDO database connection
+|   +-- constants.php               Status constants (draft, pending, published, rejected)
++-- sql/
+|   +-- script.sql                  Database schema + seed data
++-- lang/
+|   +-- en.php                      English translations (230+ keys)
+|   +-- fr.php                      French translations (230+ keys)
+|   +-- ar.php                      Arabic translations (230+ keys, RTL)
++-- includes/
+|   +-- security.php                CSRF, session timeout, upload validation, security headers
+|   +-- lang.php                    Translation loader, language switcher
+|   +-- helpers.php                 Shared UI helpers (post cards, notifications, logo)
+|   +-- post_helpers.php            Post CRUD helpers (validation, image, insert, update)
+|   +-- header.php                  Responsive nav, search, auth links, language dropdown
+|   +-- footer.php                  Footer with dynamic categories
+|   +-- auth_modal.php              Login/register modal with AJAX + inline JS
+|   +-- pagination.php              Page-number pagination component
+|   +-- ajax_auth.php               AJAX login/register endpoint + rate limiting
++-- pages/
+|   +-- index.php                   Homepage with hero + 3 latest posts
+|   +-- explore.php                 All published posts with search, filter, pagination
+|   +-- detail.php                  Post detail, comments, map, share links
+|   +-- about.php                   About page with live stats
+|   +-- contact.php                 Contact form, info cards, FAQ, map
+|   +-- logout.php                  Session destroy + cookie cleanup
++-- dashboard/
+|   +-- init.php                    Session check, admin auth, DB + helpers
+|   +-- index.php                   Overview with stats cards + Chart.js charts
+|   +-- posts.php                   Posts management with approve/reject/delete
+|   +-- add_post.php                Create post form with image upload + editor
+|   +-- edit_post.php               Edit post form with pre-filled data
+|   +-- comments.php                Comment moderation (approve, reject, delete, bulk)
+|   +-- categories.php              CRUD for post categories
+|   +-- users.php                   User management with role/status changes
+|   +-- messages.php                Contact messages inbox
+|   +-- notifications.php           Activity log with filters
+|   +-- settings.php                Profile & password change
+|   +-- inc/
+|       +-- header.php              Dashboard HTML head, sidebar, topbar
+|       +-- footer.php              Dashboard closing tags + dashboard.js
+|       +-- editor.php              Rich text editor toolbar component
++-- assets/
+|   +-- css/
+|   |   +-- main.css                Global styles + CSS custom properties
+|   |   +-- header.css              Navigation, search, language switcher
+|   |   +-- footer.css              Footer layout
+|   |   +-- home.css                Hero + latest posts
+|   |   +-- cards.css               Post card component
+|   |   +-- explore.css             Explore page filters + grid
+|   |   +-- detail.css              Post detail + comments
+|   |   +-- about.css               About page layout
+|   |   +-- contact.css             Contact form + FAQ
+|   |   +-- auth_modal.css          Auth modal styles
+|   |   +-- components.css          Shared alerts, pagination, form focus
+|   |   +-- rtl.css                 Right-to-left overrides
+|   |   +-- dashboard/
+|   |       +-- dashboard-variables.css
+|   |       +-- dashboard-layout.css
+|   |       +-- dashboard-sidebar.css
+|   |       +-- dashboard-header.css
+|   |       +-- dashboard-buttons.css
+|   |       +-- dashboard-utilities.css
+|   |       +-- dashboard-overview.css
+|   |       +-- dashboard-tables.css
+|   |       +-- dashboard-forms.css
+|   |       +-- dashboard-modals.css
+|   |       +-- dashboard-pagination.css
+|   |       +-- dashboard-add-post.css
+|   |       +-- dashboard-editor.css
+|   |       +-- dashboard-notifications.css
+|   +-- js/
+|   |   +-- main.js                 Mobile nav toggle, language dropdown
+|   |   +-- auth_modal.js           Auth modal logic, AJAX login/register
+|   |   +-- contact.js              FAQ accordion
+|   |   +-- dashboard.js            Dashboard sidebar toggle, quick view, dropdowns
+|   |   +-- dashboard-editor.js     Rich text editor logic
+|   |   +-- dashboard-post-form.js  Image preview + remove
+|   |   +-- posts-dropdown.js       Post card dropdown menus
+|   +-- images/
+|   |   +-- logo.png                Site logo (fallback)
+|   |   +-- home.jpg                Hero background (fallback)
+|   |   +-- home_480.jpg            Responsive hero (480w)
+|   |   +-- home_768.jpg            Responsive hero (768w)
+|   |   +-- home_1200.jpg           Responsive hero (1200w)
+|   |   +-- home_1920.jpg           Responsive hero (1920w)
+|   +-- uploads/                    User-uploaded post images
++-- .env                            Database credentials (not committed)
++-- .htaccess                       URL rewrites
++-- .gitignore
++-- README.md
 ```
 
 ---
@@ -409,18 +416,15 @@ Blog_Tanger_vibes_V2/
 
 ## Future Enhancements
 
-- **User Profile Management** — Allow users to update their name, email, and password
-- **Password Reset** — Email-based recovery flow
-- **Rich Text Editor** — Replace plain textarea with a WYSIWYG editor
-- **Analytics Dashboard** — Charts for posting activity and category popularity
-- **Email Notifications** — Alerts when posts are approved or rejected
-- **Social Authentication** — Google and other OAuth providers
+- **Password Reset** -- Email-based recovery flow
+- **Email Notifications** -- Alerts when posts are approved or rejected
+- **Social Authentication** -- Google and other OAuth providers
 
 ---
 
 ## License
 
-© 2026 Oussama Ech-charef. All rights reserved.
+(c) 2026 Oussama Ech-charef. All rights reserved.
 
 ---
 
@@ -428,4 +432,4 @@ Blog_Tanger_vibes_V2/
 
 **Oussama Ech-charef**
 
-Tangier Vibes — A personal project built to explore PHP, MySQL, and full-stack web development.
+Tangier Vibes -- A personal project built to explore PHP, MySQL, and full-stack web development.
