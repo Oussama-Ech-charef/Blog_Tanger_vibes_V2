@@ -8,6 +8,9 @@ require_once '../includes/helpers.php';
 
 send_security_headers();
 
+// Page cache for anonymous users
+if (page_cache_try()) exit;
+
 $per_page = 6;
 $page = get_valid_page();
 $category_id = $_GET['category'] ?? null;
@@ -79,15 +82,19 @@ $cat_stmt = $conn->prepare("SELECT * FROM categories ORDER BY cat_name ASC");
 $cat_stmt->execute();
 $categories = $cat_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Data query
+// Data query with LIMIT pushdown
 $data_sql = "
-    SELECT posts.*, categories.cat_name, users.user_name
-    FROM posts
-    INNER JOIN categories ON posts.id_category = categories.id_category
-    INNER JOIN users ON posts.id_user = users.id_user
-    WHERE $where
-    ORDER BY posts.created_at DESC
-    LIMIT :lim OFFSET :off
+    SELECT p.*, c.cat_name, u.user_name
+    FROM (
+        SELECT id_post FROM posts
+        WHERE $where
+        ORDER BY created_at DESC
+        LIMIT :lim OFFSET :off
+    ) AS limited
+    INNER JOIN posts p ON p.id_post = limited.id_post
+    INNER JOIN categories c ON p.id_category = c.id_category
+    INNER JOIN users u ON p.id_user = u.id_user
+    ORDER BY p.created_at DESC
 ";
 $stmt = $conn->prepare($data_sql);
 
@@ -123,13 +130,7 @@ $has_filter = !empty($category_id);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/cards.css">
-    <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/explore.css">
-    <link rel="stylesheet" href="../assets/css/components.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link rel="stylesheet" href="../<?= asset_version('assets/css/public.min.css') ?>">
 </head>
 <body>
 
@@ -204,7 +205,7 @@ $has_filter = !empty($category_id);
 
     <?php require '../includes/footer.php'; ?>
 
-    <script src="../assets/js/main.js"></script>
+    <script src="../<?= asset_version('assets/js/public.min.js') ?>"></script>
 
 </body>
 </html>

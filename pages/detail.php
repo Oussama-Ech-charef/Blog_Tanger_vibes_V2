@@ -7,6 +7,9 @@ require_once '../includes/helpers.php';
  
  send_security_headers();
 
+// Page cache for anonymous users
+if (page_cache_try()) exit;
+
 // Check if post ID is provided and numeric
 if (!isset($_GET['id']) || !ctype_digit((string)$_GET['id'])) {
     header('Location: index.php');
@@ -117,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 error_log("Activity log error: " . $e->getMessage());
             }
 
+            if (class_exists('PageCache')) PageCache::flush();
             $_SESSION['comment_added'] = true;
             header("Location: detail.php?id=" . $post_id . "#comments");
             exit();
@@ -158,12 +162,7 @@ $comment_count = count($comments);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/detail.css">
-    <link rel="stylesheet" href="../assets/css/components.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/rtl.css">
+    <link rel="stylesheet" href="../<?= asset_version('assets/css/public.min.css') ?>">
 </head>
 <body>
 
@@ -188,7 +187,7 @@ $comment_count = count($comments);
 
         <!-- image -->
         <?php if (!empty($post['image'])): ?>
-            <img src="../<?= htmlspecialchars($post['image']); ?>" alt="<?= htmlspecialchars($post['title']); ?>" loading="lazy" class="motion-reveal">
+            <?= optimized_image('../' . htmlspecialchars($post['image']), htmlspecialchars($post['title']), 'motion-reveal', ['width' => 1200, 'height' => 675]) ?>
         <?php endif; ?>
 
         <!-- content -->
@@ -278,7 +277,7 @@ $comment_count = count($comments);
     <?php endif; ?>
 
     <?php require '../includes/footer.php'; ?>
-    <script src="../assets/js/main.js"></script>
+    <script src="../<?= asset_version('assets/js/public.min.js') ?>"></script>
     <script>
     (function() {
         var storageKey = 'pending_comment_<?= (int)$post_id ?>';
