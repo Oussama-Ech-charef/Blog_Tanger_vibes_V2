@@ -148,8 +148,9 @@ function render_errors($errors) {
 
 // Render a post card for the public pages
 function render_post_card($post, $btn_key = 'latest_read_more') {
+    $img_src = '../' . htmlspecialchars((string)($post['image'] ?? ''));
     $html = '<a href="detail.php?id=' . (int)$post['id_post'] . '" class="card_place motion-reveal motion-reveal-scale">';
-    $html .= '<img src="../' . htmlspecialchars((string)($post['image'] ?? '')) . '" alt="' . htmlspecialchars((string)($post['title'] ?? '')) . '" loading="lazy">';
+    $html .= !empty($post['image']) ? optimized_image($img_src, htmlspecialchars((string)($post['title'] ?? '')), '', ['width' => 400, 'height' => 300]) : '';
     $html .= '<div class="card_content">';
     $html .= '<span class="category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> ' . htmlspecialchars((string)($post['cat_name'] ?? '')) . '</span>';
     $html .= '<h3 class="title">' . htmlspecialchars((string)($post['title'] ?? '')) . '</h3>';
@@ -160,6 +161,54 @@ function render_post_card($post, $btn_key = 'latest_read_more') {
     $html .= '<span class="btn">' . $btn_text . ' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>';
     $html .= '</div></a>';
     return $html;
+}
+
+// Page cache helpers (public pages only)
+function page_cache_try(): bool {
+    require_once __DIR__ . '/Cache.php';
+    PageCache::init();
+    $cached = PageCache::get();
+    if ($cached !== null) {
+        echo $cached;
+        return true;
+    }
+    ob_start();
+    register_shutdown_function(function() {
+        $html = ob_get_contents();
+        if ($html !== false && strlen($html) > 500) {
+            PageCache::set($html);
+        }
+    });
+    return false;
+}
+
+// Render an optimized image with WebP support and lazy loading
+function optimized_image(string $src, string $alt = '', string $class = '', array $attrs = []): string {
+    $html = '<picture>';
+    $ext = strtolower(pathinfo($src, PATHINFO_EXTENSION));
+    if (in_array($ext, ['jpg', 'jpeg', 'png'])) {
+        $webp_src = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $src);
+        if (file_exists(__DIR__ . '/../' . ltrim($webp_src, '/'))) {
+            $html .= '<source srcset="' . htmlspecialchars($webp_src) . '" type="image/webp">';
+        }
+    }
+    $html .= '<source srcset="' . htmlspecialchars($src) . '" type="image/' . ($ext === 'png' ? 'png' : 'jpeg') . '">';
+    $html .= '<img src="' . htmlspecialchars($src) . '" alt="' . htmlspecialchars($alt) . '"';
+    if ($class) $html .= ' class="' . htmlspecialchars($class) . '"';
+    foreach ($attrs as $k => $v) $html .= ' ' . $k . '="' . htmlspecialchars((string)$v) . '"';
+    if (!isset($attrs['loading'])) $html .= ' loading="lazy"';
+    $html .= ' width="' . (isset($attrs['width']) ? (int)$attrs['width'] : 800) . '"';
+    $html .= ' height="' . (isset($attrs['height']) ? (int)$attrs['height'] : 600) . '"';
+    $html .= '>';
+    $html .= '</picture>';
+    return $html;
+}
+
+// Cache busting version for asset URLs
+function asset_version($path) {
+    $full = __DIR__ . '/../' . ltrim($path, '/');
+    $mtime = file_exists($full) ? filemtime($full) : 0;
+    return $path . '?v=' . $mtime;
 }
 
 // Render a search input field

@@ -61,6 +61,9 @@ function insert_post($conn, $cat_id, $user_id, $title, $image, $content, $status
         log_post_activity($conn, $action_type, "$action_desc: $title", $user_id, $nid);
     }
 
+    // Flush page cache
+    if (class_exists('PageCache')) PageCache::flush();
+
     return $nid;
 }
 
