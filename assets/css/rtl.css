@@ -108,3 +108,51 @@
 [dir="rtl"] button {
     font-family: 'Inter', 'Tajawal', sans-serif;
 }
+
+/* ===== Dashboard RTL Layout ===== */
+
+/* Main content offset: sidebar sits on the right in RTL */
+[dir="rtl"] .dashboard_main {
+    margin-left: 0;
+    margin-right: var(--db-sidebar-width);
+}
+
+/* Sidebar: pinned to the right edge */
+[dir="rtl"] .sidebar {
+    left: auto;
+    right: 0;
+}
+
+/* Sidebar notification badge: push to the left edge of its link */
+[dir="rtl"] .notification_badge {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Topbar notification bell badge: flip to the left side of the bell */
+[dir="rtl"] .notif_badge {
+    right: auto;
+    left: -4px;
+}
+
+/* Notification dropdown: open leftward from the bell */
+[dir="rtl"] .notif_dropdown {
+    right: auto;
+    left: 0;
+}
+
+/* Dropdown footer arrow hover: slide left in RTL (icon already flipped by scaleX) */
+[dir="rtl"] .notif_dropdown_footer:hover i {
+    transform: translateX(-3px);
+}
+
+/* Mobile: sidebar slides in from the right */
+@media (max-width: 900px) {
+    [dir="rtl"] .sidebar {
+        transform: translateX(100%);
+    }
+
+    [dir="rtl"] .sidebar.open {
+        transform: translateX(0);
+    }
+}
