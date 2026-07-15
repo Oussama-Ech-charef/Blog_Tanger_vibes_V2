@@ -87,5 +87,3 @@
 
     </div>
 </div>
-
-<script src="../assets/js/auth_modal.js"></script>
