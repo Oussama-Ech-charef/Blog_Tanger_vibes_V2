@@ -80,7 +80,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? __('dashboard_label')) ?> — Tangier Vibes Admin</title>
+    <title><?= htmlspecialchars($page_title ?? __('dashboard_label')) ?> — <?= $is_admin ? 'Tangier Vibes Admin' : 'Tangier Vibes' ?></title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -162,6 +162,14 @@ var Lang = {
                 <i class="fa-solid fa-plus" aria-hidden="true"></i>
                 <span><?= __('sidebar_add_post') ?></span>
             </a>
+            <a href="comments.php" class="sidebar_link <?= $sidebar_page === 'comments.php' ? 'active' : '' ?>">
+                <i class="fa-solid fa-comments" aria-hidden="true"></i>
+                <span><?= __('sidebar_comments') ?></span>
+            </a>
+            <a href="notifications.php" class="sidebar_link <?= $sidebar_page === 'notifications.php' ? 'active' : '' ?>">
+                <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                <span><?= __('sidebar_notifications') ?></span>
+            </a>
             <?php endif; ?>
             <a href="settings.php" class="sidebar_link <?= $sidebar_page === 'settings.php' ? 'active' : '' ?>">
                 <i class="fa-solid fa-gear" aria-hidden="true"></i>
@@ -199,6 +207,18 @@ var Lang = {
                 <a href="../pages/index.php" class="topbar_back">
                     <i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('topbar_view_site') ?>
                 </a>
+                <div class="lang_dropdown dashboard_lang_switcher">
+                    <button class="lang_trigger" aria-label="<?= __('lang_select_aria') ?>" data-lang-dropdown>
+                        <i class="fa-solid fa-globe lang_globe" aria-hidden="true"></i>
+                        <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
+                        <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
+                    </button>
+                    <div class="lang_menu">
+                        <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en"><?= __('lang_en') ?></a>
+                        <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr"><?= __('lang_fr') ?></a>
+                        <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar"><?= __('lang_ar') ?></a>
+                    </div>
+                </div>
                 <div class="notif_bell_wrap">
                     <button class="notif_bell_btn" id="notifBellBtn" aria-label="Toggle notifications">
                         <i class="fa-solid fa-bell" aria-hidden="true"></i>
