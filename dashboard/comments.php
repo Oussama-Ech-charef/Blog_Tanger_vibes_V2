@@ -1,50 +1,59 @@
 <?php
-// Comments moderation
+// Comments page — admin: full moderation, user: view-only on their own posts
 require_once __DIR__ . '/init.php';
-require_admin();
-$page_title = __('comments_moderation_title');
+$uid = current_user_id();
+
+if ($is_admin) {
+    $page_title = __('comments_moderation_title');
+} else {
+    $page_title = __('comments_my_title');
+}
+
 $message = ''; $message_type = '';
 
-// Approve comment
-if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
-    if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
-        try {
-            $conn->prepare("UPDATE comments SET status='approved' WHERE id_comment=:id")->execute([':id'=>(int)$_POST['approve']]);
-            $message = __('comments_approved'); $message_type = 'success';
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
-    } else { $message = __('posts_error_security'); $message_type = 'error'; }
-}
+// Admin-only moderation actions
+if ($is_admin) {
+    // Approve comment
+    if (isset($_POST['approve']) && is_numeric($_POST['approve'])) {
+        if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
+            try {
+                $conn->prepare("UPDATE comments SET status='approved' WHERE id_comment=:id")->execute([':id'=>(int)$_POST['approve']]);
+                $message = __('comments_approved'); $message_type = 'success';
+            } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
+        } else { $message = __('posts_error_security'); $message_type = 'error'; }
+    }
 
-// Reject comment
-if (isset($_POST['reject']) && is_numeric($_POST['reject'])) {
-    if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
-        try {
-            $conn->prepare("UPDATE comments SET status=:rej_status WHERE id_comment=:id")->execute([':rej_status' => STATUS_REJECTED, ':id'=>(int)$_POST['reject']]);
-            $message = __('comments_rejected'); $message_type = 'success';
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
-    } else { $message = __('posts_error_security'); $message_type = 'error'; }
-}
+    // Reject comment
+    if (isset($_POST['reject']) && is_numeric($_POST['reject'])) {
+        if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
+            try {
+                $conn->prepare("UPDATE comments SET status=:rej_status WHERE id_comment=:id")->execute([':rej_status' => STATUS_REJECTED, ':id'=>(int)$_POST['reject']]);
+                $message = __('comments_rejected'); $message_type = 'success';
+            } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
+        } else { $message = __('posts_error_security'); $message_type = 'error'; }
+    }
 
-// Delete comment
-if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
-    if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
-        try {
-            $conn->prepare("DELETE FROM comments WHERE id_comment=:id")->execute([':id'=>(int)$_POST['delete']]);
-            $message = __('comments_deleted'); $message_type = 'success';
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
-    } else { $message = __('posts_error_security'); $message_type = 'error'; }
-}
+    // Delete comment
+    if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
+        if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
+            try {
+                $conn->prepare("DELETE FROM comments WHERE id_comment=:id")->execute([':id'=>(int)$_POST['delete']]);
+                $message = __('comments_deleted'); $message_type = 'success';
+            } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
+        } else { $message = __('posts_error_security'); $message_type = 'error'; }
+    }
 
-// Bulk delete
-if (isset($_POST['bulk_delete']) && !empty($_POST['comment_ids'])) {
-    if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
-        $ids = array_map('intval', explode(',', $_POST['comment_ids']));
-        $phs = implode(',', array_fill(0, count($ids), '?'));
-        try {
-            $conn->prepare("DELETE FROM comments WHERE id_comment IN ($phs)")->execute($ids);
-            $message = sprintf(__('comments_bulk_deleted'), count($ids)); $message_type = 'success';
-        } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
-    } else { $message = __('posts_error_security'); $message_type = 'error'; }
+    // Bulk delete
+    if (isset($_POST['bulk_delete']) && !empty($_POST['comment_ids'])) {
+        if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
+            $ids = array_map('intval', explode(',', $_POST['comment_ids']));
+            $phs = implode(',', array_fill(0, count($ids), '?'));
+            try {
+                $conn->prepare("DELETE FROM comments WHERE id_comment IN ($phs)")->execute($ids);
+                $message = sprintf(__('comments_bulk_deleted'), count($ids)); $message_type = 'success';
+            } catch (PDOException $e) { error_log($e->getMessage()); $message = __('comments_error_generic'); $message_type = 'error'; }
+        } else { $message = __('posts_error_security'); $message_type = 'error'; }
+    }
 }
 
 $csrf = get_csrf_token();
@@ -61,9 +70,15 @@ $date_filter = $_GET['date'] ?? '';
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
-// Build WHERE clause 
+// Build WHERE clause
 $where_parts = ["1=1"];
 $params = [];
+
+if (!$is_admin) {
+    // User: only see comments on their own posts
+    $where_parts[] = "posts.id_user = :uid";
+    $params[':uid'] = $uid;
+}
 
 // Search — comment text, author name, post title
 if (!empty($search)) {
@@ -73,29 +88,37 @@ if (!empty($search)) {
     $params[':s3'] = '%'.$search.'%';
 }
 
-// Status filter
-if (!empty($status_filter) && in_array($status_filter, ['approved', STATUS_REJECTED, STATUS_PENDING, 'pending'])) {
-    if ($status_filter === 'pending') $status_filter = STATUS_PENDING;
-    $where_parts[] = "comments.status = :st";
-    $params[':st'] = $status_filter;
+// Status filter (admin only)
+if ($is_admin) {
+    if (!empty($status_filter) && in_array($status_filter, ['approved', STATUS_REJECTED, STATUS_PENDING, 'pending'])) {
+        if ($status_filter === 'pending') $status_filter = STATUS_PENDING;
+        $where_parts[] = "comments.status = :st";
+        $params[':st'] = $status_filter;
+    }
 }
 
-// Role filter (via id_user join to users)
-if (!empty($role_filter) && in_array($role_filter, ['admin', 'user'])) {
+// Role filter (admin only, via id_user join to users)
+if ($is_admin && !empty($role_filter) && in_array($role_filter, ['admin', 'user'])) {
     $where_parts[] = "u.role = :rl";
     $params[':rl'] = $role_filter;
 }
 
-// User filter (match via id_user)
-if (!empty($user_filter) && is_numeric($user_filter)) {
-    $where_parts[] = "comments.id_user = :uid";
-    $params[':uid'] = (int)$user_filter;
+// User filter (admin only)
+if ($is_admin && !empty($user_filter) && is_numeric($user_filter)) {
+    $where_parts[] = "comments.id_user = :uidf";
+    $params[':uidf'] = (int)$user_filter;
 }
 
 // Post filter
 if (!empty($post_filter) && is_numeric($post_filter)) {
     $where_parts[] = "comments.id_post = :pid";
     $params[':pid'] = (int)$post_filter;
+
+    // If user, also ensure the post belongs to them
+    if (!$is_admin) {
+        $where_parts[] = "posts.id_user = :uid2";
+        $params[':uid2'] = $uid;
+    }
 }
 
 // Date filter
@@ -125,8 +148,12 @@ if ($date_filter === 'today') {
 $where = implode(' AND ', $where_parts);
 
 // Load filter dropdown data
-$users_for_filter = $conn->query("SELECT id_user, user_name, role FROM users WHERE is_active=1 ORDER BY user_name ASC")->fetchAll(PDO::FETCH_ASSOC);
-$posts_for_filter = $conn->query("SELECT DISTINCT p.id_post, p.title FROM posts p INNER JOIN comments c ON c.id_post = p.id_post ORDER BY p.title ASC")->fetchAll(PDO::FETCH_ASSOC);
+$users_for_filter = [];
+$posts_for_filter = [];
+if ($is_admin) {
+    $users_for_filter = $conn->query("SELECT id_user, user_name, role FROM users WHERE is_active=1 ORDER BY user_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $posts_for_filter = $conn->query("SELECT DISTINCT p.id_post, p.title FROM posts p INNER JOIN comments c ON c.id_post = p.id_post ORDER BY p.title ASC")->fetchAll(PDO::FETCH_ASSOC);
+}
 
 // Count matching comments
 $cs = $conn->prepare("SELECT COUNT(*) FROM comments LEFT JOIN posts ON comments.id_post=posts.id_post LEFT JOIN users u ON comments.id_user = u.id_user WHERE $where");
@@ -138,7 +165,7 @@ $offset = get_offset($current_page, $per_page);
 
 // Fetch comments for current page
 $ds = $conn->prepare("SELECT comments.*, posts.title as post_title, posts.id_post, u.role as author_role, u.user_name as author_user_name FROM comments LEFT JOIN posts ON comments.id_post=posts.id_post LEFT JOIN users u ON comments.id_user = u.id_user WHERE $where ORDER BY comments.created_at DESC LIMIT :lim OFFSET :off");
-$int_params = [':pid'];
+$int_params = [':pid', ':uid', ':uid2'];
 foreach ($params as $k => $v) {
     $ds->bindValue($k, $v, in_array($k, $int_params) ? PDO::PARAM_INT : PDO::PARAM_STR);
 }
@@ -169,6 +196,7 @@ require_once __DIR__ . '/inc/header.php';
         <input type="hidden" name="per_page" value="<?= $per_page ?>">
         <input type="text" name="q" placeholder="<?= __('comments_search_placeholder') ?>" value="<?=htmlspecialchars($search)?>" onchange="this.form.submit()">
     </div>
+    <?php if ($is_admin): ?>
     <select name="status" class="filter_select" onchange="this.form.submit()">
         <option value=""><?= __('comments_filter_all_status') ?></option>
         <option value="approved" <?=$status_filter==='approved'?'selected':''?>><?= __('comments_filter_approved') ?></option>
@@ -186,9 +214,18 @@ require_once __DIR__ . '/inc/header.php';
             <option value="<?=$u['id_user']?>" <?=$user_filter==$u['id_user']?'selected':''?>><?=htmlspecialchars($u['user_name'])?></option>
         <?php endforeach; ?>
     </select>
+    <?php endif; ?>
     <select name="post" class="filter_select" onchange="this.form.submit()">
         <option value=""><?= __('comments_filter_all_posts') ?></option>
-        <?php foreach ($posts_for_filter as $p): ?>
+        <?php
+        if ($is_admin) {
+            $pfl = $conn->query("SELECT DISTINCT p.id_post, p.title FROM posts p INNER JOIN comments c ON c.id_post = p.id_post ORDER BY p.title ASC")->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $pfl = $conn->prepare("SELECT DISTINCT p.id_post, p.title FROM posts p INNER JOIN comments c ON c.id_post = p.id_post WHERE p.id_user = :uid ORDER BY p.title ASC");
+            $pfl->execute([':uid' => $uid]);
+            $pfl = $pfl->fetchAll(PDO::FETCH_ASSOC);
+        }
+        foreach ($pfl as $p): ?>
             <option value="<?=$p['id_post']?>" <?=$post_filter==$p['id_post']?'selected':''?>><?=htmlspecialchars(truncate_text($p['title'], 40))?></option>
         <?php endforeach; ?>
     </select>
@@ -215,8 +252,8 @@ require_once __DIR__ . '/inc/header.php';
 
 <div class="card card_posts_table">
     <div class="card_header">
-        <h2><?= __('comments_table_title') ?></h2>
-        <?php if (!empty($comments)): ?>
+        <h2><?= $is_admin ? __('comments_table_title') : __('comments_my_title') ?></h2>
+        <?php if ($is_admin && !empty($comments)): ?>
         <form method="POST" onsubmit="return confirm(__('comments_confirm_bulk_delete'))">
             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
@@ -229,12 +266,14 @@ require_once __DIR__ . '/inc/header.php';
     <div class="card_body_no_padding">
         <div class="table_wrapper">
             <table class="data_table">
-                <thead><tr><th style="width:36px;"><input type="checkbox" id="selectAll" onchange="document.querySelectorAll('.cb').forEach(c=>c.checked=this.checked);toggleBulk()"></th><th><?= __('comments_th_author') ?></th><th><?= __('comments_th_comment') ?></th><th><?= __('comments_th_post') ?></th><th><?= __('comments_th_status') ?></th><th><?= __('comments_th_date') ?></th><th><?= __('comments_th_actions') ?></th></tr></thead>
+                <thead><tr><?php if ($is_admin): ?><th style="width:36px;"><input type="checkbox" id="selectAll" onchange="document.querySelectorAll('.cb').forEach(c=>c.checked=this.checked);toggleBulk()"></th><?php endif; ?><th><?= __('comments_th_author') ?></th><th><?= __('comments_th_comment') ?></th><th><?= __('comments_th_post') ?></th><th><?= __('comments_th_status') ?></th><th><?= __('comments_th_date') ?></th><?php if ($is_admin): ?><th><?= __('comments_th_actions') ?></th><?php endif; ?></tr></thead>
                 <tbody>
                     <?php if (!empty($comments)): ?>
                         <?php foreach ($comments as $c): ?>
                         <tr>
+                            <?php if ($is_admin): ?>
                             <td><input type="checkbox" class="cb" value="<?=$c['id_comment']?>" onchange="toggleBulk()"></td>
+                            <?php endif; ?>
                             <td>
                                 <div class="flex_center">
                                     <span class="user_avatar <?=avatar_color($c['author_name'])?>"><?=avatar_initials($c['author_name'])?></span>
@@ -250,6 +289,7 @@ require_once __DIR__ . '/inc/header.php';
                             <td><?php if($c['post_title']):?><a href="../pages/detail.php?id=<?=$c['id_post']?>" target="_blank" rel="noopener" class="view_link"><?=htmlspecialchars(truncate_text($c['post_title'],40))?></a><?php else:?><span class="text_muted"><?= __('comments_deleted_post') ?></span><?php endif;?></td>
                             <td><span class="status_badge status_<?=$c['status']?>"><?=ucfirst(htmlspecialchars($c['status'] ?? STATUS_PENDING))?></span></td>
                             <td class="date_cell"><?=time_ago($c['created_at'])?></td>
+                            <?php if ($is_admin): ?>
                             <td>
                                 <div class="cell_actions">
                                     <div class="action_dropdown">
@@ -285,10 +325,11 @@ require_once __DIR__ . '/inc/header.php';
                                     </div>
                                 </div>
                             </td>
+                            <?php endif; ?>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr><td colspan="7"><div class="empty_state"><i class="fa-solid fa-comments"></i><h3><?= __('comments_empty_title') ?></h3><p><?= __('comments_empty_desc') ?></p></div></td></tr>
+                        <tr><td colspan="<?= $is_admin ? 7 : 5 ?>"><div class="empty_state"><i class="fa-solid fa-comments"></i><h3><?= __('comments_empty_title') ?></h3><p><?= __('comments_empty_desc') ?></p></div></td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -296,6 +337,5 @@ require_once __DIR__ . '/inc/header.php';
     </div>
     <?php render_dashboard_pagination('comments.php', $current_page, $total_pages, $query_params, $per_page, $total_records); ?>
 </div>
-
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
