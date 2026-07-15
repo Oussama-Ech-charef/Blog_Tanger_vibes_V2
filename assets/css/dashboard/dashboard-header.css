@@ -283,6 +283,60 @@
     background: var(--db-primary-light);
 }
 
+/* Dashboard language switcher */
+.dashboard_lang_switcher .lang_trigger {
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--db-card-border);
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: var(--db-text-primary);
+    font-family: var(--db-font);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard_lang_switcher .lang_trigger:hover {
+    border-color: var(--db-primary);
+    background: var(--db-primary-light);
+}
+
+.dashboard_lang_switcher .lang_globe {
+    color: var(--db-primary);
+    font-size: 14px;
+}
+
+.dashboard_lang_switcher .lang_chevron {
+    font-size: 10px;
+    color: var(--db-text-muted);
+}
+
+.dashboard_lang_switcher .lang_menu {
+    top: calc(100% + 8px);
+    border-color: rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+}
+
+.dashboard_lang_switcher .lang_option {
+    font-size: 13px;
+    padding: 8px 12px;
+    color: var(--db-text-primary);
+}
+
+.dashboard_lang_switcher .lang_option:hover {
+    background: var(--db-primary-light);
+    color: var(--db-primary);
+}
+
+.dashboard_lang_switcher .lang_option.active {
+    background: var(--db-primary-light);
+    color: var(--db-primary);
+    font-weight: 700;
+}
+
 /* Mobile menu button */
 .mobile_menu_btn {
     display: none;
