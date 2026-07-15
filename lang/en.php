@@ -308,6 +308,7 @@ return [
     'stat_pending_review' => 'Pending Review',
     'stat_rejected' => 'Rejected',
     'stat_draft' => 'Drafts',
+    'stat_comments_on_posts' => 'Comments on my posts',
     'stat_comments' => 'Comments',
     'stat_users' => 'Users',
     'stat_messages' => 'Messages',
@@ -317,13 +318,17 @@ return [
     'stat_all_clear' => 'All clear',
     'stat_new_users_month' => '%d new this month',
     'stat_recent_messages' => '%d recent',
-    'chart_posts_month' => 'Posts per Month',
-    'chart_comments_month' => 'Comments per Month',
-    'chart_user_registrations' => 'User Registrations',
-    'chart_content_category' => 'Content by Category',
-    'chart_label_posts' => 'Posts',
-    'chart_label_comments' => 'Comments',
-    'chart_label_users' => 'Users',
+    'chart_posts_month' => 'Posts Created per Month',
+    'chart_comments_month' => 'Comments Received per Month',
+    'chart_user_registrations' => 'User Registrations per Month',
+    'chart_content_category' => 'Published Posts by Category',
+    'chart_my_posts_month' => 'My Posts Created per Month',
+    'chart_my_comments_month' => 'Comments on My Posts per Month',
+    'chart_my_posts_status' => 'My Posts by Status',
+    'chart_my_posts_category' => 'My Posts by Category',
+    'chart_label_posts' => 'Posts created',
+    'chart_label_comments' => 'Comments received',
+    'chart_label_users' => 'New users',
     'notif_pending_review' => '%d post(s) pending review.',
     'recent_posts_title' => 'Recent Posts',
 
@@ -420,6 +425,7 @@ return [
 
     // Comments
     'comments_moderation_title' => 'Comments Moderation',
+    'comments_my_title' => 'Comments on My Posts',
     'comments_approved' => 'Comment approved.',
     'comments_rejected' => 'Comment rejected.',
     'comments_deleted' => 'Comment deleted.',
@@ -570,6 +576,7 @@ return [
 
     // Notifications
     'notifications_title' => 'Notifications',
+    'notifications_my_title' => 'My Notifications',
     'notifications_subtitle' => '%d unread notification(s)',
     'notifications_mark_all_read' => 'Mark All as Read',
     'notifications_search_placeholder' => 'Search notifications...',

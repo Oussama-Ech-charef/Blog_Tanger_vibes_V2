@@ -308,6 +308,7 @@ return [
     'stat_pending_review' => 'En attente',
     'stat_rejected' => 'Rejeté',
     'stat_draft' => 'Brouillons',
+    'stat_comments_on_posts' => 'Commentaires sur mes articles',
     'stat_comments' => 'Commentaires',
     'stat_users' => 'Utilisateurs',
     'stat_messages' => 'Messages',
@@ -317,13 +318,17 @@ return [
     'stat_all_clear' => 'Tout est clair',
     'stat_new_users_month' => '%d nouveau(x) ce mois-ci',
     'stat_recent_messages' => '%d récent(s)',
-    'chart_posts_month' => 'Articles par mois',
-    'chart_comments_month' => 'Commentaires par mois',
-    'chart_user_registrations' => 'Inscriptions d\'utilisateurs',
-    'chart_content_category' => 'Contenu par catégorie',
-    'chart_label_posts' => 'Articles',
-    'chart_label_comments' => 'Commentaires',
-    'chart_label_users' => 'Utilisateurs',
+    'chart_posts_month' => 'Articles créés par mois',
+    'chart_comments_month' => 'Commentaires reçus par mois',
+    'chart_user_registrations' => 'Inscriptions d\'utilisateurs par mois',
+    'chart_content_category' => 'Articles publiés par catégorie',
+    'chart_my_posts_month' => 'Mes articles créés par mois',
+    'chart_my_comments_month' => 'Commentaires sur mes articles par mois',
+    'chart_my_posts_status' => 'Mes articles par statut',
+    'chart_my_posts_category' => 'Mes articles par catégorie',
+    'chart_label_posts' => 'Articles créés',
+    'chart_label_comments' => 'Commentaires reçus',
+    'chart_label_users' => 'Nouveaux utilisateurs',
     'notif_pending_review' => '%d article(s) en attente de révision.',
     'recent_posts_title' => 'Articles récents',
 
@@ -420,6 +425,7 @@ return [
 
     // Comments
     'comments_moderation_title' => 'Modération des commentaires',
+    'comments_my_title' => 'Commentaires sur mes articles',
     'comments_approved' => 'Commentaire approuvé.',
     'comments_rejected' => 'Commentaire rejeté.',
     'comments_deleted' => 'Commentaire supprimé.',
@@ -570,6 +576,7 @@ return [
 
     // Notifications
     'notifications_title' => 'Notifications',
+    'notifications_my_title' => 'Mes notifications',
     'notifications_subtitle' => '%d notification(s) non lue(s)',
     'notifications_mark_all_read' => 'Tout marquer comme lu',
     'notifications_search_placeholder' => 'Rechercher des notifications...',

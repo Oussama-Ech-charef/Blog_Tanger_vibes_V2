@@ -308,6 +308,7 @@ return [
     'stat_pending_review' => 'قيد المراجعة',
     'stat_rejected' => 'مرفوض',
     'stat_draft' => 'مسودات',
+    'stat_comments_on_posts' => 'التعليقات على مقالاتي',
     'stat_comments' => 'التعليقات',
     'stat_users' => 'المستخدمون',
     'stat_messages' => 'الرسائل',
@@ -317,13 +318,17 @@ return [
     'stat_all_clear' => 'كل شيء على ما يرام',
     'stat_new_users_month' => '%d جديد هذا الشهر',
     'stat_recent_messages' => '%d حديثة',
-    'chart_posts_month' => 'المقالات شهرياً',
-    'chart_comments_month' => 'التعليقات شهرياً',
-    'chart_user_registrations' => 'تسجيلات المستخدمين',
-    'chart_content_category' => 'المحتوى حسب الفئة',
-    'chart_label_posts' => 'المقالات',
-    'chart_label_comments' => 'التعليقات',
-    'chart_label_users' => 'المستخدمين',
+    'chart_posts_month' => 'المقالات المنشأة شهرياً',
+    'chart_comments_month' => 'التعليقات المستلمة شهرياً',
+    'chart_user_registrations' => 'تسجيلات المستخدمين شهرياً',
+    'chart_content_category' => 'المقالات المنشورة حسب الفئة',
+    'chart_my_posts_month' => 'مقالاتي المنشأة شهرياً',
+    'chart_my_comments_month' => 'التعليقات على مقالاتي شهرياً',
+    'chart_my_posts_status' => 'مقالاتي حسب الحالة',
+    'chart_my_posts_category' => 'مقالاتي حسب الفئة',
+    'chart_label_posts' => 'المقالات المنشأة',
+    'chart_label_comments' => 'التعليقات المستلمة',
+    'chart_label_users' => 'المستخدمين الجدد',
     'notif_pending_review' => '%d مقال (مقالات) قيد المراجعة.',
     'recent_posts_title' => 'أحدث المقالات',
 
@@ -420,6 +425,7 @@ return [
 
     // Comments
     'comments_moderation_title' => 'إدارة التعليقات',
+    'comments_my_title' => 'التعليقات على مقالاتي',
     'comments_approved' => 'تمت الموافقة على التعليق.',
     'comments_rejected' => 'تم رفض التعليق.',
     'comments_deleted' => 'تم حذف التعليق.',
@@ -570,6 +576,7 @@ return [
 
     // Notifications
     'notifications_title' => 'الإشعارات',
+    'notifications_my_title' => 'إشعاراتي',
     'notifications_subtitle' => '%d إشعار غير مقروء',
     'notifications_mark_all_read' => 'تحديد الكل كمقروء',
     'notifications_search_placeholder' => 'ابحث في الإشعارات...',
