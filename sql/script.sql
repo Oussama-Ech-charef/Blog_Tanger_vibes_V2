@@ -16,7 +16,11 @@ CREATE TABLE IF NOT EXISTS users (
     is_active     TINYINT(1) NOT NULL DEFAULT 1,
     created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    UNIQUE KEY uk_users_email (email)
+    UNIQUE KEY uk_users_email (email),
+
+    INDEX idx_users_role (role),
+    INDEX idx_users_active_name (is_active, user_name),
+    INDEX idx_users_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Categories table: post categories and topics
@@ -30,8 +34,10 @@ CREATE TABLE IF NOT EXISTS categories (
 
 -- Posts table: blog entries created by users
 -- Index notes:
---   - FULLTEXT search omitted: app uses LIKE-based search, not MATCH...AGAINST
---   - Single-column idx_posts_id_user omitted: covered by composite idx_posts_user_status
+--   - idx_posts_user_status covers idx_posts_id_user queries.
+--   - idx_posts_status_created covers status ORDER BY created_at queries.
+--   - ft_posts_search (FULLTEXT) is included for future MATCH...AGAINST support;
+--     current app search uses LIKE which does not benefit from FULLTEXT.
 CREATE TABLE IF NOT EXISTS posts (
     id_post           INT AUTO_INCREMENT PRIMARY KEY,
     id_category       INT NOT NULL,
@@ -50,6 +56,10 @@ CREATE TABLE IF NOT EXISTS posts (
     INDEX idx_posts_status (status),
     INDEX idx_posts_created_at (created_at),
     INDEX idx_posts_user_status (id_user, status),
+    INDEX idx_posts_category (id_category),
+    INDEX idx_posts_approver (id_approved_by),
+    INDEX idx_posts_status_created (status, created_at),
+    FULLTEXT INDEX ft_posts_search (title, content),
 
     CONSTRAINT fk_posts_category
         FOREIGN KEY (id_category) REFERENCES categories(id_category)
@@ -77,6 +87,8 @@ CREATE TABLE IF NOT EXISTS comments (
     INDEX idx_comments_created_at (created_at),
     INDEX idx_comments_post_status (id_post, status),
     INDEX idx_comments_user (id_user),
+    INDEX idx_comments_post_status_created (id_post, status, created_at),
+    INDEX idx_comments_user_created (id_user, created_at),
 
     CONSTRAINT fk_comments_post
         FOREIGN KEY (id_post) REFERENCES posts(id_post)
@@ -97,7 +109,9 @@ CREATE TABLE IF NOT EXISTS contact_messages (
     is_read       TINYINT(1) NOT NULL DEFAULT 0,
     created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    INDEX idx_contact_created_at (created_at)
+    INDEX idx_contact_created_at (created_at),
+    INDEX idx_contact_email_date (email, created_at),
+    INDEX idx_contact_read_date (is_read, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Login attempts table: database-backed rate limiting for failed logins
@@ -137,6 +151,9 @@ CREATE TABLE IF NOT EXISTS activity_log (
     INDEX idx_activity_created_at (created_at),
     INDEX idx_activity_action_type (action_type),
     INDEX idx_activity_is_read (is_read),
+    INDEX idx_activity_read_action_date (is_read, action_type, created_at),
+    INDEX idx_activity_entity (entity_type, entity_id),
+    INDEX idx_activity_action_date (action_type, created_at),
 
     CONSTRAINT fk_activity_user
         FOREIGN KEY (user_id) REFERENCES users(id_user)
