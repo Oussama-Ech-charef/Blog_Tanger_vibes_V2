@@ -163,22 +163,10 @@ function render_post_card($post, $btn_key = 'latest_read_more') {
     return $html;
 }
 
-// Page cache helpers (public pages only)
+// Page cache helpers (public pages only) — DISABLED: CSRF tokens in auth modal
+// are per-session and cannot be safely cached. Re-enable after implementing
+// CSRF-safe fragment loading (see includes/ajax_csrf.php).
 function page_cache_try(): bool {
-    require_once __DIR__ . '/Cache.php';
-    PageCache::init();
-    $cached = PageCache::get();
-    if ($cached !== null) {
-        echo $cached;
-        return true;
-    }
-    ob_start();
-    register_shutdown_function(function() {
-        $html = ob_get_contents();
-        if ($html !== false && strlen($html) > 500) {
-            PageCache::set($html);
-        }
-    });
     return false;
 }
 
