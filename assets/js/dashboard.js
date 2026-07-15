@@ -357,6 +357,21 @@ window.calculatePerPage = function (force) {
             });
         }
 
+        // Language dropdown toggle
+        document.querySelectorAll('[data-lang-dropdown]').forEach(function (trigger) {
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var dropdown = trigger.closest('.lang_dropdown');
+                var isOpen = dropdown.classList.contains('open');
+                document.querySelectorAll('.lang_dropdown.open').forEach(function (d) {
+                    d.classList.remove('open');
+                });
+                if (!isOpen) {
+                    dropdown.classList.add('open');
+                }
+            });
+        });
+
         // Close notification dropdown on outside click
         document.addEventListener('click', function (e) {
             var wrap = document.querySelector('.notif_bell_wrap');
@@ -372,6 +387,11 @@ window.calculatePerPage = function (force) {
         document.addEventListener('click', function (e) {
             if (!e.target.closest('.action_dropdown')) {
                 window.closeAllDropdowns();
+            }
+            if (!e.target.closest('.lang_dropdown')) {
+                document.querySelectorAll('.lang_dropdown.open').forEach(function (d) {
+                    d.classList.remove('open');
+                });
             }
         });
 
