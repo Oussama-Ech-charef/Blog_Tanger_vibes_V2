@@ -1,13 +1,24 @@
 <?php
 // Notifications page
 require_once __DIR__ . '/init.php';
-require_admin();
-$page_title = __('notifications_title');
+$uid = current_user_id();
+
+if ($is_admin) {
+    $page_title = __('notifications_title');
+} else {
+    $page_title = __('notifications_my_title');
+    // For non-admin, restrict the page
+}
 
 // Mark single notification as read
 if (isset($_POST['read']) && is_numeric($_POST['read'])) {
     if (validate_csrf_token($_POST['csrf_token'] ?? '')) {
-        $conn->prepare("UPDATE activity_log SET is_read=1 WHERE id_activity=:id")->execute([':id'=>(int)$_POST['read']]);
+        $nid = (int)$_POST['read'];
+        if ($is_admin) {
+            $conn->prepare("UPDATE activity_log SET is_read=1 WHERE id_activity=:id")->execute([':id'=>$nid]);
+        } else {
+            $conn->prepare("UPDATE activity_log al SET al.is_read=1 WHERE al.id_activity=:id AND ((al.action_type IN ('post_approved','post_rejected','post_deleted') AND al.entity_type='post' AND EXISTS(SELECT 1 FROM posts p WHERE p.id_post=al.entity_id AND p.id_user=:uid)) OR (al.action_type='comment_added' AND al.entity_type='comment' AND EXISTS(SELECT 1 FROM comments c JOIN posts p ON c.id_post=p.id_post WHERE c.id_comment=al.entity_id AND p.id_user=:uid2)))")->execute([':id'=>$nid,':uid'=>$uid,':uid2'=>$uid]);
+        }
     }
     $q = $_GET;
     unset($q['read']);
@@ -17,38 +28,45 @@ if (isset($_POST['read']) && is_numeric($_POST['read'])) {
 
 // Mark all as read
 if (isset($_POST['mark_all_read']) && validate_csrf_token($_POST['csrf_token'] ?? '')) {
-    $conn->prepare("UPDATE activity_log SET is_read=1 WHERE action_type NOT IN ('draft_saved') AND (user_id IS NULL OR user_id IN (SELECT id_user FROM users WHERE role='user'))")->execute();
+    if ($is_admin) {
+        $conn->prepare("UPDATE activity_log SET is_read=1 WHERE action_type NOT IN ('draft_saved') AND (user_id IS NULL OR user_id IN (SELECT id_user FROM users WHERE role='user'))")->execute();
+    } else {
+        $conn->prepare("UPDATE activity_log al SET al.is_read=1 WHERE al.action_type NOT IN ('draft_saved') AND al.user_id!=:uid AND ((al.action_type IN ('post_approved','post_rejected','post_deleted') AND al.entity_type='post' AND EXISTS(SELECT 1 FROM posts p WHERE p.id_post=al.entity_id AND p.id_user=:uid2)) OR (al.action_type='comment_added' AND al.entity_type='comment' AND EXISTS(SELECT 1 FROM comments c JOIN posts p ON c.id_post=p.id_post WHERE c.id_comment=al.entity_id AND p.id_user=:uid3)))")->execute([':uid'=>$uid,':uid2'=>$uid,':uid3'=>$uid]);
+    }
     $q = $_GET;
     unset($q['mark_all_read']);
     header('Location: notifications.php?' . http_build_query($q));
     exit();
 }
 
-// Category mapping
-$category_options = [
-    ''                => __('notif_category_all'),
-    'posts'           => __('notif_category_posts'),
-    'comments'        => __('notif_category_comments'),
-    'users'           => __('notif_category_users'),
-    'categories'      => __('notif_category_categories'),
-    'contact_messages'=> __('notif_category_contact'),
-    'approvals'       => __('notif_category_approvals'),
-    'rejections'      => __('notif_category_rejections'),
-    'system'          => __('notif_category_system'),
-    'security'        => __('notif_category_security'),
-];
-
-$category_action_map = [
-    'posts'           => ['post_created', 'post_submitted'],
-    'comments'        => ['comment_added'],
-    'users'           => ['user_registered'],
-    'categories'      => [],
-    'contact_messages'=> ['message_received'],
-    'approvals'       => ['post_approved'],
-    'rejections'      => ['post_rejected'],
-    'system'          => ['post_updated', 'post_deleted'],
-    'security'        => [],
-];
+// Category mapping (admin only)
+$category_options = [];
+$category_action_map = [];
+if ($is_admin) {
+    $category_options = [
+        ''                => __('notif_category_all'),
+        'posts'           => __('notif_category_posts'),
+        'comments'        => __('notif_category_comments'),
+        'users'           => __('notif_category_users'),
+        'categories'      => __('notif_category_categories'),
+        'contact_messages'=> __('notif_category_contact'),
+        'approvals'       => __('notif_category_approvals'),
+        'rejections'      => __('notif_category_rejections'),
+        'system'          => __('notif_category_system'),
+        'security'        => __('notif_category_security'),
+    ];
+    $category_action_map = [
+        'posts'           => ['post_created', 'post_submitted'],
+        'comments'        => ['comment_added'],
+        'users'           => ['user_registered'],
+        'categories'      => [],
+        'contact_messages'=> ['message_received'],
+        'approvals'       => ['post_approved'],
+        'rejections'      => ['post_rejected'],
+        'system'          => ['post_updated', 'post_deleted'],
+        'security'        => [],
+    ];
+}
 
 // Action type display info
 $type_info = [
@@ -105,24 +123,43 @@ $user_filter = $_GET['user'] ?? '';
 $per_page = 25;
 $page = get_valid_page();
 
-// Load users for filter
-$all_users = $conn->query("SELECT id_user, user_name, role FROM users WHERE is_active=1 ORDER BY user_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+// Load users for filter (admin only)
+$all_users = [];
+if ($is_admin) {
+    $all_users = $conn->query("SELECT id_user, user_name, role FROM users WHERE is_active=1 ORDER BY user_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+}
 
-// Build WHERE clause 
+// Build WHERE clause
 $where_parts = ["al.action_type != ?"];
 $params = ['draft_saved'];
-$where_parts[] = "(al.user_id IS NULL OR al.user_id IN (SELECT id_user FROM users WHERE role='user'))";
 
-// Category filter
-if (!empty($category_filter) && isset($category_action_map[$category_filter])) {
-    $types = $category_action_map[$category_filter];
-    if (!empty($types)) {
-        $placeholders = implode(',', array_fill(0, count($types), '?'));
-        $where_parts[] = "al.action_type IN ($placeholders)";
-        $params = array_merge($params, $types);
-    } else {
-        $where_parts[] = "1=0";
+if ($is_admin) {
+    $where_parts[] = "(al.user_id IS NULL OR al.user_id IN (SELECT id_user FROM users WHERE role='user'))";
+
+    // Category filter
+    if (!empty($category_filter) && isset($category_action_map[$category_filter])) {
+        $types = $category_action_map[$category_filter];
+        if (!empty($types)) {
+            $placeholders = implode(',', array_fill(0, count($types), '?'));
+            $where_parts[] = "al.action_type IN ($placeholders)";
+            $params = array_merge($params, $types);
+        } else {
+            $where_parts[] = "1=0";
+        }
     }
+
+    // User filter
+    if (!empty($user_filter) && is_numeric($user_filter)) {
+        $where_parts[] = "al.user_id = ?";
+        $params[] = (int)$user_filter;
+    }
+} else {
+    // User scoped: only see notifications about their own posts
+    $where_parts[] = "al.user_id != ?";
+    $params[] = $uid;
+    $where_parts[] = "((al.action_type IN ('post_approved','post_rejected','post_deleted') AND al.entity_type='post' AND EXISTS(SELECT 1 FROM posts p WHERE p.id_post=al.entity_id AND p.id_user=?)) OR (al.action_type='comment_added' AND al.entity_type='comment' AND EXISTS(SELECT 1 FROM comments c JOIN posts p ON c.id_post=p.id_post WHERE c.id_comment=al.entity_id AND p.id_user=?)))";
+    $params[] = $uid;
+    $params[] = $uid;
 }
 
 // Status filter
@@ -150,12 +187,6 @@ if ($date_filter === 'today') {
         $where_parts[] = "al.created_at <= ?";
         $params[] = $date_to . ' 23:59:59';
     }
-}
-
-// User filter
-if (!empty($user_filter) && is_numeric($user_filter)) {
-    $where_parts[] = "al.user_id = ?";
-    $params[] = (int)$user_filter;
 }
 
 // Search
@@ -190,8 +221,12 @@ $ds->execute();
 $notifications = $ds->fetchAll(PDO::FETCH_ASSOC);
 
 // Count unread for header
-$unread_stmt = $conn->prepare("SELECT COUNT(*) FROM activity_log WHERE is_read=0 AND action_type NOT IN ('draft_saved') AND (user_id IS NULL OR user_id IN (SELECT id_user FROM users WHERE role='user'))");
-$unread_stmt->execute();
+$unread_stmt = $conn->prepare("SELECT COUNT(*) FROM activity_log WHERE is_read=0 AND action_type NOT IN ('draft_saved')" . ($is_admin ? " AND (user_id IS NULL OR user_id IN (SELECT id_user FROM users WHERE role='user'))" : " AND user_id!=? AND ((action_type IN ('post_approved','post_rejected','post_deleted') AND entity_type='post' AND EXISTS(SELECT 1 FROM posts p WHERE p.id_post=entity_id AND p.id_user=?)) OR (action_type='comment_added' AND entity_type='comment' AND EXISTS(SELECT 1 FROM comments c JOIN posts p ON c.id_post=p.id_post WHERE c.id_comment=entity_id AND p.id_user=?)))"));
+if ($is_admin) {
+    $unread_stmt->execute();
+} else {
+    $unread_stmt->execute([$uid, $uid, $uid]);
+}
 $unread_count = (int)$unread_stmt->fetchColumn();
 
 // Build query params for pagination
@@ -209,7 +244,7 @@ require_once __DIR__ . '/inc/header.php';
 
 <div class="notif_page_header">
     <h1 class="notif_page_title">
-        <i class="fa-solid fa-bell" aria-hidden="true"></i> <?= __('notifications_title') ?>
+        <i class="fa-solid fa-bell" aria-hidden="true"></i> <?= $is_admin ? __('notifications_title') : __('notifications_my_title') ?>
         <?php if ($unread_count > 0): ?>
             <span class="notif_unread_badge"><?= $unread_count ?></span>
         <?php endif; ?>
@@ -230,11 +265,13 @@ require_once __DIR__ . '/inc/header.php';
         <i class="fa-solid fa-search" aria-hidden="true"></i>
         <input type="text" name="q" placeholder="<?= __('notifications_search_placeholder') ?>" value="<?= htmlspecialchars($search) ?>" onchange="this.form.submit()">
     </div>
+    <?php if ($is_admin): ?>
     <select name="category" class="filter_select" onchange="this.form.submit()">
         <?php foreach ($category_options as $val => $label): ?>
             <option value="<?=$val?>" <?=$category_filter===$val?'selected':''?>><?=htmlspecialchars($label)?></option>
         <?php endforeach; ?>
     </select>
+    <?php endif; ?>
     <select name="status" class="filter_select" onchange="this.form.submit()">
         <option value=""><?= __('notifications_filter_all') ?></option>
         <option value="unread" <?=$status_filter==='unread'?'selected':''?>><?= __('notifications_filter_unread') ?></option>
@@ -253,12 +290,14 @@ require_once __DIR__ . '/inc/header.php';
         <span class="notif_date_sep"><?= __('notifications_filter_to') ?></span>
         <input type="date" name="date_to" value="<?= htmlspecialchars($date_to) ?>" onchange="this.form.submit()">
     </div>
+    <?php if ($is_admin): ?>
     <select name="user" class="filter_select" onchange="this.form.submit()">
         <option value=""><?= __('notifications_filter_all_users') ?></option>
         <?php foreach ($all_users as $u): ?>
             <option value="<?=$u['id_user']?>" <?=$user_filter===$u['id_user']?'selected':''?>><?=htmlspecialchars($u['user_name'])?> (<?=ucfirst($u['role'])?>)</option>
         <?php endforeach; ?>
     </select>
+    <?php endif; ?>
     <?php if (!empty($search) || !empty($category_filter) || !empty($status_filter) || !empty($date_filter) || !empty($user_filter)): ?>
     <a href="notifications.php" class="btn_sm btn_secondary"><i class="fa-solid fa-times" aria-hidden="true"></i> <?= __('notifications_clear_filter') ?></a>
     <?php endif; ?>
