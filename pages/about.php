@@ -3,6 +3,7 @@
 require_once '../config/connection.php';
 require_once '../includes/security.php';
 require_once '../includes/lang.php';
+require_once '../includes/helpers.php';
 
 send_security_headers();
 
