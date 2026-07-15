@@ -94,6 +94,43 @@ $post_stats = $status_stmt->fetch(PDO::FETCH_ASSOC);
 $recent_posts = $conn->prepare("SELECT id_post, title, status, created_at FROM posts WHERE id_user = :uid ORDER BY created_at DESC LIMIT 5");
 $recent_posts->execute([':uid' => $uid]);
 $recent_posts = $recent_posts->fetchAll(PDO::FETCH_ASSOC);
+
+// User chart data: my posts per month (last 12 months)
+$up_stmt = $conn->prepare("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM posts WHERE id_user = :uid AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC");
+$up_stmt->execute([':uid' => $uid]);
+$user_posts_chart = $up_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$upm_labels = []; $upm_data = [];
+$upm_map = [];
+foreach ($user_posts_chart as $r) { $upm_map[$r['month']] = (int)$r['count']; }
+for ($i = 11; $i >= 0; $i--) {
+    $m = date('Y-m', strtotime("-$i months"));
+    $upm_labels[] = date('M', strtotime($m . '-01'));
+    $upm_data[] = $upm_map[$m] ?? 0;
+}
+
+// User chart data: comments on my posts per month (last 12 months)
+$uc_stmt2 = $conn->prepare("SELECT DATE_FORMAT(c.created_at, '%Y-%m') as month, COUNT(*) as count FROM comments c INNER JOIN posts p ON c.id_post = p.id_post WHERE p.id_user = :uid AND c.created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC");
+$uc_stmt2->execute([':uid' => $uid]);
+$user_comments_chart = $uc_stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+$ucm_labels = []; $ucm_data = [];
+$ucm_map = [];
+foreach ($user_comments_chart as $r) { $ucm_map[$r['month']] = (int)$r['count']; }
+for ($i = 11; $i >= 0; $i--) {
+    $m = date('Y-m', strtotime("-$i months"));
+    $ucm_labels[] = date('M', strtotime($m . '-01'));
+    $ucm_data[] = $ucm_map[$m] ?? 0;
+}
+
+// User chart data: posts by category
+$ucat_stmt = $conn->prepare("SELECT c.cat_name, COUNT(p.id_post) as count FROM categories c LEFT JOIN posts p ON p.id_category = c.id_category AND p.id_user = :uid GROUP BY c.id_category, c.cat_name ORDER BY count DESC");
+$ucat_stmt->execute([':uid' => $uid]);
+$user_cat_chart = $ucat_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$ucat_labels = []; $ucat_data = [];
+$ucat_colors = ['#0047AB','#10B981','#F59E0B','#EF4444','#7C3AED','#EC4899'];
+foreach ($user_cat_chart as $r) { $ucat_labels[] = $r['cat_name']; $ucat_data[] = (int)$r['count']; }
 endif;
 
 require_once __DIR__ . '/inc/header.php';
@@ -184,7 +221,49 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<?php else: ?>
+<?php else:
+// User-scoped: also count comments on their posts
+$uc_stmt = $conn->prepare("SELECT COUNT(*) FROM comments c INNER JOIN posts p ON c.id_post=p.id_post WHERE p.id_user=:uid");
+$uc_stmt->execute([':uid'=>$uid]);
+$user_comment_count = (int)$uc_stmt->fetchColumn();
+
+// User chart data: my posts per month (last 12 months)
+$up_stmt = $conn->prepare("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM posts WHERE id_user = :uid AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC");
+$up_stmt->execute([':uid' => $uid]);
+$user_posts_chart = $up_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$upm_labels = []; $upm_data = [];
+$upm_map = [];
+foreach ($user_posts_chart as $r) { $upm_map[$r['month']] = (int)$r['count']; }
+for ($i = 11; $i >= 0; $i--) {
+    $m = date('Y-m', strtotime("-$i months"));
+    $upm_labels[] = date('M', strtotime($m . '-01'));
+    $upm_data[] = $upm_map[$m] ?? 0;
+}
+
+// User chart data: comments on my posts per month (last 12 months)
+$uc_stmt2 = $conn->prepare("SELECT DATE_FORMAT(c.created_at, '%Y-%m') as month, COUNT(*) as count FROM comments c INNER JOIN posts p ON c.id_post = p.id_post WHERE p.id_user = :uid AND c.created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY month ORDER BY month ASC");
+$uc_stmt2->execute([':uid' => $uid]);
+$user_comments_chart = $uc_stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+$ucm_labels = []; $ucm_data = [];
+$ucm_map = [];
+foreach ($user_comments_chart as $r) { $ucm_map[$r['month']] = (int)$r['count']; }
+for ($i = 11; $i >= 0; $i--) {
+    $m = date('Y-m', strtotime("-$i months"));
+    $ucm_labels[] = date('M', strtotime($m . '-01'));
+    $ucm_data[] = $ucm_map[$m] ?? 0;
+}
+
+// User chart data: posts by category
+$ucat_stmt = $conn->prepare("SELECT c.cat_name, COUNT(p.id_post) as count FROM categories c LEFT JOIN posts p ON p.id_category = c.id_category AND p.id_user = :uid GROUP BY c.id_category, c.cat_name ORDER BY count DESC");
+$ucat_stmt->execute([':uid' => $uid]);
+$user_cat_chart = $ucat_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$ucat_labels = []; $ucat_data = [];
+$ucat_colors = ['#0047AB','#10B981','#F59E0B','#EF4444','#7C3AED','#EC4899'];
+foreach ($user_cat_chart as $r) { $ucat_labels[] = $r['cat_name']; $ucat_data[] = (int)$r['count']; }
+?>
 <section class="stats_grid">
     <div class="stat_card">
         <div class="stat_card_header"><span class="stat_card_icon blue"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span></div>
@@ -211,6 +290,11 @@ document.addEventListener('DOMContentLoaded', function () {
         <p class="stat_card_label"><?= __('stat_rejected') ?></p>
         <p class="stat_card_value"><?= (int)$post_stats['rejected'] ?></p>
     </div>
+    <div class="stat_card">
+        <div class="stat_card_header"><span class="stat_card_icon blue"><i class="fa-solid fa-comments" aria-hidden="true"></i></span></div>
+        <p class="stat_card_label"><?= __('stat_comments_on_posts') ?></p>
+        <p class="stat_card_value"><?= $user_comment_count ?></p>
+    </div>
 </section>
 
 <?php if (!empty($recent_posts)): ?>
@@ -235,6 +319,53 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
 </section>
 <?php endif; ?>
+
+<section class="chart_grid">
+    <div class="chart_container"><h3><?= __('chart_my_posts_month') ?></h3><canvas id="userPostsChart"></canvas></div>
+    <div class="chart_container"><h3><?= __('chart_my_comments_month') ?></h3><canvas id="userCommentsChart"></canvas></div>
+    <div class="chart_container"><h3><?= __('chart_my_posts_status') ?></h3><canvas id="userStatusChart"></canvas></div>
+    <div class="chart_container"><h3><?= __('chart_my_posts_category') ?></h3><canvas id="userCategoryChart"></canvas></div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#64748B';
+
+    new Chart(document.getElementById('userPostsChart'), {
+        type: 'bar',
+        data: { labels: <?= json_encode($upm_labels) ?>, datasets: [{ label: '<?= __('chart_label_posts') ?>', data: <?= json_encode($upm_data) ?>, backgroundColor: 'rgba(0,71,171,0.15)', borderColor: '#0047AB', borderWidth: 2, borderRadius: 6, borderSkipped: false }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } } }
+    });
+
+    new Chart(document.getElementById('userCommentsChart'), {
+        type: 'bar',
+        data: { labels: <?= json_encode($ucm_labels) ?>, datasets: [{ label: '<?= __('chart_label_comments') ?>', data: <?= json_encode($ucm_data) ?>, backgroundColor: 'rgba(16,185,129,0.15)', borderColor: '#10B981', borderWidth: 2, borderRadius: 6, borderSkipped: false }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } } }
+    });
+
+    new Chart(document.getElementById('userStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: [<?= '"' . __('stat_published') . '","' . __('stat_pending_review') . '","' . __('stat_draft') . '","' . __('stat_rejected') . '"' ?>],
+            datasets: [{
+                data: [<?= (int)$post_stats['published'] ?>, <?= (int)$post_stats['pending'] ?>, <?= (int)$post_stats['draft'] ?>, <?= (int)$post_stats['rejected'] ?>],
+                backgroundColor: ['#10B981', '#F59E0B', '#7C3AED', '#EF4444'],
+                borderWidth: 0
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true } } }, cutout: '65%' }
+    });
+
+    new Chart(document.getElementById('userCategoryChart'), {
+        type: 'doughnut',
+        data: { labels: <?= json_encode($ucat_labels) ?>, datasets: [{ data: <?= json_encode($ucat_data) ?>, backgroundColor: <?= json_encode(array_slice($ucat_colors, 0, max(1, count($ucat_labels)))) ?>, borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true } } }, cutout: '65%' }
+    });
+});
+</script>
 <?php endif; ?>
 
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
