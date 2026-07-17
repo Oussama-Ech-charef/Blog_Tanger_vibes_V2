@@ -280,14 +280,14 @@ require_once __DIR__ . '/inc/header.php';
                                     <div>
                                         <strong><?=htmlspecialchars($c['author_name'])?></strong>
                                         <?php if (!empty($c['author_role'])): ?>
-                                        <span class="role_badge <?=htmlspecialchars($c['author_role'])?>"><?=ucfirst(htmlspecialchars($c['author_role']))?></span>
+                                        <span class="role_badge <?=htmlspecialchars($c['author_role'])?>"><?=translate_role($c['author_role'])?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
                             </td>
                             <td style="max-width:300px;"><span class="text_clamp_2"><?=htmlspecialchars($c['comment_text'])?></span></td>
                             <td><?php if($c['post_title']):?><a href="../pages/detail.php?id=<?=$c['id_post']?>" target="_blank" rel="noopener" class="view_link"><?=htmlspecialchars(truncate_text($c['post_title'],40))?></a><?php else:?><span class="text_muted"><?= __('comments_deleted_post') ?></span><?php endif;?></td>
-                            <td><span class="status_badge status_<?=$c['status']?>"><?=ucfirst(htmlspecialchars($c['status'] ?? STATUS_PENDING))?></span></td>
+                            <td><span class="status_badge status_<?=$c['status']?>"><?=translate_status($c['status'] ?? STATUS_PENDING)?></span></td>
                             <td class="date_cell"><?=time_ago($c['created_at'])?></td>
                             <?php if ($is_admin): ?>
                             <td>
