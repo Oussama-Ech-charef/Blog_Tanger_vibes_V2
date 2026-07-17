@@ -214,7 +214,7 @@ window.calculatePerPage = function (force) {
         // Delete confirmation modals
         document.querySelectorAll('[data-confirm]').forEach(function (el) {
             el.addEventListener('click', function (e) {
-                const message = el.getAttribute('data-confirm') || 'Are you sure?';
+                const message = el.getAttribute('data-confirm') || (Lang && Lang.confirmDefault ? Lang.confirmDefault : 'Are you sure?');
                 if (!confirm(message)) {
                     e.preventDefault();
                 }
