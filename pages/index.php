@@ -55,7 +55,7 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <section class="hero_section">
             <picture>
                 <source srcset="../assets/images/home_1920.jpg 1920w, ../assets/images/home_1200.jpg 1200w, ../assets/images/home_768.jpg 768w, ../assets/images/home_480.jpg 480w" sizes="100vw" type="image/jpeg">
-                <img src="../assets/images/home_1920.jpg" alt="Tangier Vibes" width="1920" height="1280" fetchpriority="high">
+                <img src="../assets/images/home_1920.jpg" alt="<?= __('site_name') ?>" width="1920" height="1280" fetchpriority="high">
             </picture>
             <div class="hero_shadow"></div>
 

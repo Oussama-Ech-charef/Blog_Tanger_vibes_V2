@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     allowfullscreen=""
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
-                    title="Tangier location map">
+                    title="<?= __('contact_map_title') ?>">
                 </iframe>
             </div>
         </div>
