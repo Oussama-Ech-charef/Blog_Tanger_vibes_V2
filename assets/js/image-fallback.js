@@ -24,15 +24,15 @@
 
         var title = document.createElement("span");
         title.className = "img-placeholder-title";
-        title.textContent = "Image Unavailable";
+        title.textContent = (typeof Lang !== 'undefined' && Lang.imgUnavailableTitle) ? Lang.imgUnavailableTitle : "Image Unavailable";
 
         var desc = document.createElement("span");
         desc.className = "img-placeholder-desc";
-        desc.textContent = "This image is currently unavailable.";
+        desc.textContent = (typeof Lang !== 'undefined' && Lang.imgUnavailableDesc) ? Lang.imgUnavailableDesc : "This image is currently unavailable.";
 
         var hint = document.createElement("span");
         hint.className = "img-placeholder-hint";
-        hint.textContent = "Please check again later.";
+        hint.textContent = (typeof Lang !== 'undefined' && Lang.imgUnavailableHint) ? Lang.imgUnavailableHint : "Please check again later.";
 
         iconWrap.appendChild(icon);
         card.appendChild(iconWrap);
