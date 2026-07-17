@@ -146,7 +146,7 @@ require_once __DIR__ . '/inc/header.php';
                         <tr>
                             <td><div class="flex_center" style="gap:10px;"><span class="user_avatar <?=avatar_color($u['user_name'])?>"><?=avatar_initials($u['user_name'])?></span><div><strong><?=htmlspecialchars($u['user_name'])?></strong><?php if((int)$u['id_user']===(int)$_SESSION['id_user']):?><br><span style="font-size:11px;color:var(--db-primary);font-weight:600;"><?= __('users_label_you') ?></span><?php endif;?></div></div></td>
                             <td><span class="date_cell" style="color:var(--db-text-secondary);"><?=htmlspecialchars($u['email'])?></span></td>
-                            <td><span class="role_badge <?=$u['role']?>"><?=ucfirst(htmlspecialchars($u['role']))?></span></td>
+                            <td><span class="role_badge <?=$u['role']?>"><?=translate_role($u['role'])?></span></td>
                             <td><span class="status_badge status_<?=!empty($u['is_active'])?'approved':'rejected'?>"><?=!empty($u['is_active'])?__('users_status_active'):__('users_status_inactive')?></span></td>
                             <td><span class="fw_600"><?=(int)$u['post_count']?></span></td>
                             <td class="date_cell"><?=date('M j, Y',strtotime($u['created_at']))?></td>
