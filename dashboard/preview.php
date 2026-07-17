@@ -34,7 +34,7 @@ require_once __DIR__ . '/inc/header.php';
         <?php endif; ?>
         <div class="quickview_meta" style="margin-bottom:20px;">
             <span class="quickview_meta_item"><i class="fa-solid fa-tag"></i> <?= htmlspecialchars($post['cat_name']) ?></span>
-            <span class="quickview_meta_item"><i class="fa-solid fa-circle"></i> <span class="status_badge <?= $post['status'] ?>"><?= ucfirst(htmlspecialchars($post['status'])) ?></span></span>
+            <span class="quickview_meta_item"><i class="fa-solid fa-circle"></i> <span class="status_badge <?= $post['status'] ?>"><?= translate_status($post['status']) ?></span></span>
             <span class="quickview_meta_item"><i class="fa-solid fa-user"></i> <?= htmlspecialchars($post['user_name']) ?></span>
             <span class="quickview_meta_item"><i class="fa-solid fa-calendar"></i> <?= date('M j, Y', strtotime($post['created_at'])) ?></span>
         </div>

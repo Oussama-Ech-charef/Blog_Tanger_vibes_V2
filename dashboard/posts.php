@@ -181,7 +181,7 @@ $qv_close_url = posts_redirect_url();
             <?php endif; ?>
             <div class="quickview_meta">
                 <span class="quickview_meta_item"><i class="fa-solid fa-tag"></i> <?= htmlspecialchars($qv['cat_name']) ?></span>
-                <span class="quickview_meta_item"><i class="fa-solid fa-circle"></i> <?= ucfirst(htmlspecialchars($qv['status'])) ?></span>
+                <span class="quickview_meta_item"><i class="fa-solid fa-circle"></i> <?= translate_status($qv['status']) ?></span>
                 <span class="quickview_meta_item"><i class="fa-solid fa-user"></i> <?= htmlspecialchars($qv['user_name']) ?></span>
                 <span class="quickview_meta_item"><i class="fa-solid fa-calendar"></i> <?= date('M j, Y', strtotime($qv['created_at'])) ?></span>
             </div>
@@ -221,9 +221,9 @@ $qv_close_url = posts_redirect_url();
                             <td><?=htmlspecialchars($p['cat_name'])?></td>
                             <?php if ($is_admin): ?>
                             <td><?=htmlspecialchars($p['user_name'])?></td>
-                            <td><span class="role_badge role_<?=htmlspecialchars($p['author_role'])?>"><?=ucfirst(htmlspecialchars($p['author_role']))?></span></td>
+                            <td><span class="role_badge role_<?=htmlspecialchars($p['author_role'])?>"><?=translate_role($p['author_role'])?></span></td>
                             <?php endif; ?>
-                            <td><span class="status_badge <?=htmlspecialchars($p['status'])?>"><?=ucfirst(htmlspecialchars($p['status']))?></span></td>
+                            <td><span class="status_badge <?=htmlspecialchars($p['status'])?>"><?=translate_status($p['status'])?></span></td>
                             <td class="date_cell"><?=date('M j, Y',strtotime($p['created_at']))?></td>
                             <td>
                                 <div class="cell_actions">
