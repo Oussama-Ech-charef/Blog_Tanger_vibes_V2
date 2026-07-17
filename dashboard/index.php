@@ -308,7 +308,7 @@ foreach ($user_cat_chart as $r) { $ucat_labels[] = $r['cat_name']; $ucat_data[] 
                     <?php foreach ($recent_posts as $rp): ?>
                     <tr>
                         <td><a href="edit_post.php?id=<?= $rp['id_post'] ?>" style="color:var(--db-primary);font-weight:500;"><?= htmlspecialchars($rp['title']) ?></a></td>
-                        <td><span class="status_badge <?= $rp['status'] ?>"><?= ucfirst(htmlspecialchars($rp['status'])) ?></span></td>
+                        <td><span class="status_badge <?= $rp['status'] ?>"><?= translate_status($rp['status']) ?></span></td>
                         <td class="date_cell"><?= date('M j, Y', strtotime($rp['created_at'])) ?></td>
                         <td><a href="preview.php?id=<?= $rp['id_post'] ?>" class="btn_small btn_secondary"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('posts_view_post') ?></a></td>
                     </tr>

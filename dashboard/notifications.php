@@ -294,7 +294,7 @@ require_once __DIR__ . '/inc/header.php';
     <select name="user" class="filter_select" onchange="this.form.submit()">
         <option value=""><?= __('notifications_filter_all_users') ?></option>
         <?php foreach ($all_users as $u): ?>
-            <option value="<?=$u['id_user']?>" <?=$user_filter===$u['id_user']?'selected':''?>><?=htmlspecialchars($u['user_name'])?> (<?=ucfirst($u['role'])?>)</option>
+            <option value="<?=$u['id_user']?>" <?=$user_filter===$u['id_user']?'selected':''?>><?=htmlspecialchars($u['user_name'])?> (<?=translate_role($u['role'])?>)</option>
         <?php endforeach; ?>
     </select>
     <?php endif; ?>
