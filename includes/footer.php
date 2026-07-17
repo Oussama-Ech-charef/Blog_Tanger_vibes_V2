@@ -24,7 +24,7 @@ if (isset($conn)) {
         <!-- brand -->
         <div class="footer_brand">
             <a href="../pages/index.php" class="logo">
-                <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img logo_header">
+                <img src="../assets/images/logo.png" alt="<?= __('site_logo_alt') ?>" class="logo_img logo_header">
             </a>
             <p class="footer_desc">
                 <?= __('footer_desc') ?>
@@ -95,6 +95,15 @@ if (isset($conn)) {
 </footer>
 
 <?php require_once __DIR__ . '/auth_modal.php'; ?>
+<script>
+var Lang = {
+    imgUnavailableTitle: <?= json_encode(__('img_unavailable_title')) ?>,
+    imgUnavailableDesc: <?= json_encode(__('img_unavailable_desc')) ?>,
+    imgUnavailableHint: <?= json_encode(__('img_unavailable_hint')) ?>,
+    authCreatedFallback: <?= json_encode(__('auth_js_created_fallback')) ?>,
+    authErrorFallback: <?= json_encode(__('auth_js_error_fallback')) ?>,
+};
+</script>
 <script type="importmap">
 {
     "imports": {

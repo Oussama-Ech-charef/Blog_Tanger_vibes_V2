@@ -34,7 +34,7 @@ if (isset($_SESSION['id_user'])) {
     <div class="header_nav_desktop">
 
         <a href="../pages/index.php" class="logo">
-            <img src="../assets/images/logo.png" alt="Tangier Vibes Logo" class="logo_img logo_header">
+            <img src="../assets/images/logo.png" alt="<?= __('site_logo_alt') ?>" class="logo_img logo_header">
         </a>
 
         <ul class="nav_links desktop">
