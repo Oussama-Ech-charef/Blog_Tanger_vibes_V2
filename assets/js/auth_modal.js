@@ -89,12 +89,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.redirect) {
                     window.location.href = data.redirect;
                 } else {
-                    showNotification(data.message || 'Account created. Please sign in.', 'success');
+                    showNotification(data.message || (typeof Lang !== 'undefined' && Lang.authCreatedFallback ? Lang.authCreatedFallback : 'Account created. Please sign in.'), 'success');
                     document.querySelector('[data-tab="login"]').click();
                     registerForm.reset();
                 }
             } else {
-                showNotification(data.error || 'An error occurred.', 'error');
+                showNotification(data.error || (typeof Lang !== 'undefined' && Lang.authErrorFallback ? Lang.authErrorFallback : 'An error occurred.'), 'error');
             }
         })
         .catch(function() {

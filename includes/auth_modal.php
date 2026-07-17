@@ -6,7 +6,7 @@
         <!-- header -->
         <div class="auth_modal_header">
             <div class="auth_modal_logo">
-                <img src="../assets/images/logo.png" alt="Tangier Vibes">
+                <img src="../assets/images/logo.png" alt="<?= __('site_name') ?>">
             </div>
             <h2 id="authModalTitle"><?= __('auth_modal_title') ?></h2>
             <p><?= __('auth_modal_subtitle') ?></p>
