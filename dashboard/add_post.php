@@ -71,7 +71,7 @@ require_once __DIR__ . '/inc/header.php';
                                 <span class="upload_hint"><?= __('add_post_upload_hint') ?></span>
                             </div>
                             <div class="upload_preview" id="uploadPreview" style="display:none;">
-                                <img id="previewImage" src="" alt="Cover image preview">
+                                <img id="previewImage" src="" alt="<?= __('cover_image_preview_alt') ?>">
                                 <div class="upload_info">
                                     <span id="imageInfo"></span>
                                     <button type="button" class="upload_remove" id="uploadRemove">
@@ -178,7 +178,7 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                     <div class="add_post_card_body">
                         <div class="add_post_image_area">
-                            <img class="add_post_image_preview" id="sidebarPreview" src="" alt="Featured image preview">
+                            <img class="add_post_image_preview" id="sidebarPreview" src="" alt="<?= __('featured_image_preview_alt') ?>">
                             <div class="add_post_image_placeholder" id="sidebarPlaceholder">
                                 <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
                                 <span><?= __('add_post_upload_image') ?></span>

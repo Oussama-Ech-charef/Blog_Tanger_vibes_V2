@@ -101,7 +101,7 @@ require_once __DIR__ . '/inc/header.php';
                         <p><?= __('edit_post_desc') ?></p>
                     </div>
                     <div class="flex_row" style="gap:8px;">
-                        <span class="status_badge <?= htmlspecialchars($post['status']) ?>"><?= ucfirst(htmlspecialchars($post['status'])) ?></span>
+                        <span class="status_badge <?= htmlspecialchars($post['status']) ?>"><?= translate_status($post['status']) ?></span>
                         <a href="preview.php?id=<?= $post_id ?>" class="btn btn_secondary btn_sm" target="_blank" rel="noopener"><i class="fa-solid fa-eye" aria-hidden="true"></i> <?= __('edit_post_preview') ?></a>
                         <a href="posts.php" class="btn btn_secondary btn_sm"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> <?= __('add_post_back') ?></a>
                     </div>
@@ -117,7 +117,7 @@ require_once __DIR__ . '/inc/header.php';
                                 <span class="upload_hint"><?= __('add_post_upload_hint') ?></span>
                             </div>
                             <div class="upload_preview" id="uploadPreview"<?= $has_image ? '' : ' style="display:none;"' ?>>
-                                <img id="previewImage" src="<?= $has_image ? '../' . htmlspecialchars($post['image']) : '' ?>" alt="Cover image preview">
+                                <img id="previewImage" src="<?= $has_image ? '../' . htmlspecialchars($post['image']) : '' ?>" alt="<?= __('cover_image_preview_alt') ?>">
                                 <div class="upload_info">
                                     <span id="imageInfo"><?= $has_image ? htmlspecialchars(basename($post['image'])) : '' ?></span>
                                     <button type="button" class="upload_remove" id="uploadRemove">
@@ -224,7 +224,7 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                     <div class="add_post_card_body">
                         <div class="add_post_image_area">
-                            <img class="add_post_image_preview<?= $has_image ? ' show' : '' ?>" id="sidebarPreview" src="<?= $has_image ? '../' . htmlspecialchars($post['image']) : '' ?>" alt="Featured image preview">
+                            <img class="add_post_image_preview<?= $has_image ? ' show' : '' ?>" id="sidebarPreview" src="<?= $has_image ? '../' . htmlspecialchars($post['image']) : '' ?>" alt="<?= __('featured_image_preview_alt') ?>">
                             <div class="add_post_image_placeholder" id="sidebarPlaceholder"<?= $has_image ? ' style="display:none;"' : '' ?>>
                                 <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
                                 <span><?= __('add_post_upload_image') ?></span>
