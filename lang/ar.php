@@ -688,4 +688,42 @@ return [
 
     // Site name for reuse
     'site_name' => 'Tangier Vibes',
+
+    // Status labels (for badge display)
+    'status_published' => 'منشور',
+    'status_pending' => 'قيد الانتظار',
+    'status_rejected' => 'مرفوض',
+    'status_draft' => 'مسودة',
+    'status_approved' => 'مقبول',
+
+    // Role labels
+    'role_admin' => 'مشرف',
+    'role_user' => 'مستخدم',
+
+    // Notifications dropdown (dashboard header)
+    'notif_dropdown_title' => 'اليوم',
+    'notif_dropdown_empty' => 'لا توجد إشعارات اليوم.',
+    'notif_dropdown_view_all' => 'عرض جميع الإشعارات',
+    'topbar_notif_aria' => 'فتح الإشعارات',
+
+    // Image fallback
+    'img_unavailable_title' => 'الصورة غير متوفرة',
+    'img_unavailable_desc' => 'هذه الصورة غير متوفرة حالياً.',
+    'img_unavailable_hint' => 'يرجى المحاولة مرة أخرى لاحقاً.',
+
+    // 403 Forbidden page
+    'forbidden_title' => '403 ممنوع',
+
+    // JS confirm default fallback
+    'js_confirm_default' => 'هل أنت متأكد؟',
+
+    // JS auth fallback messages
+    'auth_js_created_fallback' => 'تم إنشاء الحساب. يرجى تسجيل الدخول.',
+    'auth_js_error_fallback' => 'حدث خطأ.',
+
+    // Image alt text
+    'site_logo_alt' => 'شعار Tangier Vibes',
+    'contact_map_title' => 'خريطة موقع طنجة',
+    'cover_image_preview_alt' => 'معاينة صورة الغلاف',
+    'featured_image_preview_alt' => 'معاينة الصورة المميزة',
 ];

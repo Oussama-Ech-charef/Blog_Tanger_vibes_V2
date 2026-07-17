@@ -688,4 +688,42 @@ return [
 
     // Site name for reuse
     'site_name' => 'Tangier Vibes',
+
+    // Status labels (for badge display)
+    'status_published' => 'Publié',
+    'status_pending' => 'En attente',
+    'status_rejected' => 'Rejeté',
+    'status_draft' => 'Brouillon',
+    'status_approved' => 'Approuvé',
+
+    // Role labels
+    'role_admin' => 'Administrateur',
+    'role_user' => 'Utilisateur',
+
+    // Notifications dropdown (dashboard header)
+    'notif_dropdown_title' => "Aujourd'hui",
+    'notif_dropdown_empty' => 'Aucune notification aujourd\'hui.',
+    'notif_dropdown_view_all' => 'Voir toutes les notifications',
+    'topbar_notif_aria' => 'Ouvrir les notifications',
+
+    // Image fallback
+    'img_unavailable_title' => 'Image indisponible',
+    'img_unavailable_desc' => 'Cette image est actuellement indisponible.',
+    'img_unavailable_hint' => 'Veuillez réessayer plus tard.',
+
+    // 403 Forbidden page
+    'forbidden_title' => '403 Interdit',
+
+    // JS confirm default fallback
+    'js_confirm_default' => 'Êtes-vous sûr ?',
+
+    // JS auth fallback messages
+    'auth_js_created_fallback' => 'Compte créé. Veuillez vous connecter.',
+    'auth_js_error_fallback' => 'Une erreur est survenue.',
+
+    // Image alt text
+    'site_logo_alt' => 'Logo Tangier Vibes',
+    'contact_map_title' => 'Carte de localisation de Tanger',
+    'cover_image_preview_alt' => 'Aperçu de l\'image de couverture',
+    'featured_image_preview_alt' => 'Aperçu de l\'image à la une',
 ];

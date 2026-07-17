@@ -688,4 +688,42 @@ return [
 
     // Site name for reuse
     'site_name' => 'Tangier Vibes',
+
+    // Status labels (for badge display)
+    'status_published' => 'Published',
+    'status_pending' => 'Pending',
+    'status_rejected' => 'Rejected',
+    'status_draft' => 'Draft',
+    'status_approved' => 'Approved',
+
+    // Role labels
+    'role_admin' => 'Admin',
+    'role_user' => 'User',
+
+    // Notifications dropdown (dashboard header)
+    'notif_dropdown_title' => 'Today',
+    'notif_dropdown_empty' => 'No notifications today.',
+    'notif_dropdown_view_all' => 'View all notifications',
+    'topbar_notif_aria' => 'Toggle notifications',
+
+    // Image fallback
+    'img_unavailable_title' => 'Image Unavailable',
+    'img_unavailable_desc' => 'This image is currently unavailable.',
+    'img_unavailable_hint' => 'Please check again later.',
+
+    // 403 Forbidden page
+    'forbidden_title' => '403 Forbidden',
+
+    // JS confirm default fallback
+    'js_confirm_default' => 'Are you sure?',
+
+    // JS auth fallback messages
+    'auth_js_created_fallback' => 'Account created. Please sign in.',
+    'auth_js_error_fallback' => 'An error occurred.',
+
+    // Image alt text
+    'site_logo_alt' => 'Tangier Vibes Logo',
+    'contact_map_title' => 'Tangier location map',
+    'cover_image_preview_alt' => 'Cover image preview',
+    'featured_image_preview_alt' => 'Featured image preview',
 ];
