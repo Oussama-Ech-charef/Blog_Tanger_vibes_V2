@@ -148,9 +148,18 @@ function render_errors($errors) {
 
 // Render a post card for the public pages
 function render_post_card($post, $btn_key = 'latest_read_more') {
-    $img_src = '../' . htmlspecialchars((string)($post['image'] ?? ''));
     $html = '<a href="detail.php?id=' . (int)$post['id_post'] . '" class="card_place motion-reveal motion-reveal-scale">';
-    $html .= !empty($post['image']) ? optimized_image($img_src, htmlspecialchars((string)($post['title'] ?? '')), '', ['width' => 400, 'height' => 300]) : '';
+    if (!empty($post['image'])) {
+        $img_src = '../' . htmlspecialchars((string)$post['image']);
+        $html .= optimized_image($img_src, htmlspecialchars((string)($post['title'] ?? '')), '', ['width' => 400, 'height' => 300]);
+    } else {
+        $alt = htmlspecialchars((string)($post['title'] ?? __('site_name')));
+        $html .= '<div class="img-placeholder" role="img" aria-label="' . $alt . '">';
+        $html .= '<div class="img-placeholder-card">';
+        $html .= '<div class="img-placeholder-icon"><i class="fa-solid fa-image" aria-hidden="true"></i></div>';
+        $html .= '<span class="img-placeholder-title">' . $alt . '</span>';
+        $html .= '</div></div>';
+    }
     $html .= '<div class="card_content">';
     $html .= '<span class="category"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> ' . htmlspecialchars((string)($post['cat_name'] ?? '')) . '</span>';
     $html .= '<h3 class="title">' . htmlspecialchars((string)($post['title'] ?? '')) . '</h3>';
@@ -249,6 +258,27 @@ function render_date_range_filter($id, $date_from = '', $date_to = '', $selected
     $html .= '<input type="date" name="' . htmlspecialchars($param_to) . '" value="' . htmlspecialchars($date_to) . '">';
     $html .= '</div>';
     return $html;
+}
+
+// Translate database status value to user-facing label
+function translate_status(string $status): string {
+    $map = [
+        'published' => __('status_published'),
+        'pending'   => __('status_pending'),
+        'rejected'  => __('status_rejected'),
+        'draft'     => __('status_draft'),
+        'approved'  => __('status_approved'),
+    ];
+    return $map[$status] ?? ucfirst($status);
+}
+
+// Translate database role value to user-facing label
+function translate_role(string $role): string {
+    $map = [
+        'admin' => __('role_admin'),
+        'user'  => __('role_user'),
+    ];
+    return $map[$role] ?? ucfirst($role);
 }
 
 // Execute a DB action with CSRF validation
