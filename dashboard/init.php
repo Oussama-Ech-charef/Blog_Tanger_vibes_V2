@@ -37,9 +37,9 @@ function current_user_id(): int {
 function require_admin(): void {
     if (($_SESSION['role'] ?? '') !== 'admin') {
         http_response_code(403);
-        $GLOBALS['page_title'] = '403 Forbidden';
+        $GLOBALS['page_title'] = __('forbidden_title');
         require __DIR__ . '/inc/header.php';
-        echo '<div style="text-align:center;padding:80px 20px;"><h1>403 Forbidden</h1><p>' . __('dashboard_forbidden') . '</p><a href="index.php" class="btn btn_primary" style="display:inline-block;margin-top:16px;">' . __('sidebar_overview') . '</a></div>';
+        echo '<div style="text-align:center;padding:80px 20px;"><h1>' . __('forbidden_title') . '</h1><p>' . __('dashboard_forbidden') . '</p><a href="index.php" class="btn btn_primary" style="display:inline-block;margin-top:16px;">' . __('sidebar_overview') . '</a></div>';
         require __DIR__ . '/inc/footer.php';
         exit();
     }

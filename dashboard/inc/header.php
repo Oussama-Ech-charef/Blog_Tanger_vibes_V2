@@ -37,15 +37,15 @@
     ];
 
     $notif_type_labels = [
-        'post_created'     => 'New post',
-        'post_submitted'   => 'Post submitted',
-        'post_approved'    => 'Post approved',
-        'post_rejected'    => 'Post rejected',
-        'post_updated'     => 'Post updated',
-        'post_deleted'     => 'Post deleted',
-        'comment_added'    => 'New comment',
-        'user_registered'  => 'New user',
-        'message_received' => 'New message',
+        'post_created'     => __('notif_type_post_created'),
+        'post_submitted'   => __('notif_type_post_submitted'),
+        'post_approved'    => __('notif_type_post_approved'),
+        'post_rejected'    => __('notif_type_post_rejected'),
+        'post_updated'     => __('notif_type_post_updated'),
+        'post_deleted'     => __('notif_type_post_deleted'),
+        'comment_added'    => __('notif_type_comment_added'),
+        'user_registered'  => __('notif_type_user_registered'),
+        'message_received' => __('notif_type_message_received'),
     ];
 
     // Today's notification count (for the badge)
@@ -80,7 +80,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? __('dashboard_label')) ?> — <?= $is_admin ? 'Tangier Vibes Admin' : 'Tangier Vibes' ?></title>
+    <title><?= htmlspecialchars($page_title ?? __('dashboard_label')) ?> — <?= __('site_name') ?><?= $is_admin ? ' ' . __('admin_label') : '' ?></title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -106,6 +106,7 @@ var Lang = {
     rejectModalTitle: <?= json_encode(__('js_reject_modal_title')) ?>,
     editorLinkUrl: <?= json_encode(__('editor_link_url')) ?>,
     editorImageUrl: <?= json_encode(__('editor_image_url')) ?>,
+    confirmDefault: <?= json_encode(__('js_confirm_default')) ?>,
 };
     </script>
 </head>
@@ -118,8 +119,8 @@ var Lang = {
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar_logo">
-            <img src="../assets/images/logo.png" alt="Tangier Vibes">
-            <span>Tangier Vibes</span>
+            <img src="../assets/images/logo.png" alt="<?= __('site_name') ?>">
+            <span><?= __('site_name') ?></span>
         </div>
 
         <nav class="sidebar_nav">
@@ -220,7 +221,7 @@ var Lang = {
                     </div>
                 </div>
                 <div class="notif_bell_wrap">
-                    <button class="notif_bell_btn" id="notifBellBtn" aria-label="Toggle notifications">
+                    <button class="notif_bell_btn" id="notifBellBtn" aria-label="<?= __('topbar_notif_aria') ?>">
                         <i class="fa-solid fa-bell" aria-hidden="true"></i>
                         <?php if ($unread_today > 0): ?>
                         <span class="notif_badge"><?= $unread_today ?></span>
@@ -228,13 +229,13 @@ var Lang = {
                     </button>
                     <div class="notif_dropdown" id="notifDropdown">
                         <div class="notif_dropdown_header">
-                            <span class="notif_dropdown_title">Today</span>
+                            <span class="notif_dropdown_title"><?= __('notif_dropdown_title') ?></span>
                         </div>
                         <div class="notif_dropdown_body">
                             <?php if (!empty($today_notifs)): ?>
                                 <?php foreach ($today_notifs as $n): ?>
                                 <?php $ti = $notif_type_info[$n['action_type']] ?? ['icon' => 'fa-solid fa-bell', 'color' => '#64748B', 'bg' => '#F1F5F9']; ?>
-                                <?php $tl = $notif_type_labels[$n['action_type']] ?? 'Notification'; ?>
+                                <?php $tl = $notif_type_labels[$n['action_type']] ?? __('notifications_title'); ?>
                                 <div class="notif_dropdown_item <?= !$n['is_read'] ? 'unread' : '' ?>" data-id="<?= $n['id_activity'] ?>">
                                     <span class="notif_dd_icon" style="background: <?= $ti['bg'] ?>">
                                         <i class="<?= $ti['icon'] ?>" style="color: <?= $ti['color'] ?>"></i>
@@ -252,12 +253,12 @@ var Lang = {
                             <?php else: ?>
                             <div class="notif_dropdown_empty">
                                 <i class="fa-solid fa-bell-slash"></i>
-                                <p>No notifications today.</p>
+                                <p><?= __('notif_dropdown_empty') ?></p>
                             </div>
                             <?php endif; ?>
                         </div>
                         <a href="notifications.php" class="notif_dropdown_footer">
-                            View all notifications
+                            <?= __('notif_dropdown_view_all') ?>
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
