@@ -21,22 +21,7 @@
     padding-left: 4px;
 }
 
-/* mobile menu — slide from left instead of right */
-[dir="rtl"] .header_nav_mobile {
-    right: auto;
-    left: -100%;
-    transition: left 0.3s ease;
-}
-
-[dir="rtl"] .header_nav_mobile.open {
-    left: 0;
-    right: auto;
-}
-
-/* close button — align to the right in RTL */
-[dir="rtl"] .mobile_menu_header {
-    justify-content: flex-start;
-}
+/* mobile menu — handled by inset-inline-end in header.css */
 
 /* Detail */
 
