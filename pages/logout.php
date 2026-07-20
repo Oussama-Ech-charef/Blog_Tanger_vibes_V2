@@ -16,6 +16,9 @@ if (!validate_csrf_token($csrf_token)) {
     exit();
 }
 
+// Preserve language preference before clearing session
+$saved_lang = $_SESSION['lang'] ?? null;
+
 // Clear session
 session_unset();
 
@@ -28,6 +31,12 @@ if (ini_get("session.use_cookies")) {
         $params["path"], $params["domain"],
         $params["secure"], $params["httponly"]
     );
+}
+
+// Start a fresh session to restore language preference
+session_start();
+if ($saved_lang) {
+    $_SESSION['lang'] = $saved_lang;
 }
 
 // go home
