@@ -219,6 +219,4 @@ require_once __DIR__ . '/inc/header.php';
     </div>
 </div>
 
-<script src="../assets/js/dashboard-post-form.js"></script>
-<script src="../assets/js/dashboard-editor.js"></script>
 <?php require_once __DIR__ . '/inc/footer.php'; ?>
