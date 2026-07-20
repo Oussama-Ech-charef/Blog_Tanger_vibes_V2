@@ -86,7 +86,7 @@ require_once __DIR__ . '/inc/header.php';
                     <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                     <input type="hidden" name="delete" value="<?=$view_message['id_message']?>">
                     <?php if (!empty($search)): ?><input type="hidden" name="q" value="<?=htmlspecialchars($search)?>"><?php endif; ?>
-                    <button type="submit" class="btn btn_danger" onclick="return confirm(__('messages_confirm_delete'))"><i class="fa-solid fa-trash"></i> <?= __('messages_btn_delete') ?></button>
+                    <button type="submit" class="btn btn_danger" onclick="return confirm(<?= json_encode(__('messages_confirm_delete'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-trash"></i> <?= __('messages_btn_delete') ?></button>
                 </form>
             </div>
         </div>
@@ -126,7 +126,7 @@ require_once __DIR__ . '/inc/header.php';
             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
             <input type="hidden" name="delete" value="<?=$m['id_message']?>">
             <?php if (!empty($search)): ?><input type="hidden" name="q" value="<?=htmlspecialchars($search)?>"><?php endif; ?>
-            <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(__('messages_confirm_delete'))"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('messages_btn_delete') ?></button>
+            <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(<?= json_encode(__('messages_confirm_delete'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('messages_btn_delete') ?></button>
         </form>
     </div>
 </div></div></td>
