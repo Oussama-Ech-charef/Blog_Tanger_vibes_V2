@@ -161,7 +161,7 @@ require_once __DIR__ . '/inc/header.php';
                                             <input type="hidden" name="role" value="user">
                                             <input type="hidden" name="uid" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="dropdown_item" onclick="return confirm(__('users_confirm_demote'))"><i class="fa-solid fa-user" aria-hidden="true"></i> <?= __('users_btn_demote') ?></button>
+                                            <button type="submit" class="dropdown_item" onclick="return confirm(<?= json_encode(__('users_confirm_demote'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-user" aria-hidden="true"></i> <?= __('users_btn_demote') ?></button>
                                         </form>
                                         <?php else: ?>
                                         <form method="POST" action="users.php" class="dropdown_form">
@@ -169,7 +169,7 @@ require_once __DIR__ . '/inc/header.php';
                                             <input type="hidden" name="role" value="admin">
                                             <input type="hidden" name="uid" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="dropdown_item" onclick="return confirm(__('users_confirm_promote'))"><i class="fa-solid fa-shield" aria-hidden="true"></i> <?= __('users_btn_make_admin') ?></button>
+                                            <button type="submit" class="dropdown_item" onclick="return confirm(<?= json_encode(__('users_confirm_promote'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-shield" aria-hidden="true"></i> <?= __('users_btn_make_admin') ?></button>
                                         </form>
                                         <?php endif; ?>
                                         <div class="dropdown_divider"></div>
@@ -178,14 +178,14 @@ require_once __DIR__ . '/inc/header.php';
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="deactivate" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="dropdown_item" onclick="return confirm(__('users_confirm_deactivate'))"><i class="fa-solid fa-pause dd_icon_warning" aria-hidden="true"></i> <?= __('users_btn_deactivate') ?></button>
+                                            <button type="submit" class="dropdown_item" onclick="return confirm(<?= json_encode(__('users_confirm_deactivate'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-pause dd_icon_warning" aria-hidden="true"></i> <?= __('users_btn_deactivate') ?></button>
                                         </form>
                                         <?php else: ?>
                                         <form method="POST" action="users.php" class="dropdown_form">
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="activate" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="dropdown_item" onclick="return confirm(__('users_confirm_activate'))"><i class="fa-solid fa-play dd_icon_success" aria-hidden="true"></i> <?= __('users_btn_activate') ?></button>
+                                            <button type="submit" class="dropdown_item" onclick="return confirm(<?= json_encode(__('users_confirm_activate'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-play dd_icon_success" aria-hidden="true"></i> <?= __('users_btn_activate') ?></button>
                                         </form>
                                         <?php endif; ?>
                                         <div class="dropdown_divider"></div>
@@ -193,7 +193,7 @@ require_once __DIR__ . '/inc/header.php';
                                             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                             <input type="hidden" name="delete" value="<?=$u['id_user']?>">
                                             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                            <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(__('users_confirm_delete'))"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('users_btn_delete') ?></button>
+                                            <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(<?= json_encode(__('users_confirm_delete'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('users_btn_delete') ?></button>
                                         </form>
                                     </div>
                                 </div>
