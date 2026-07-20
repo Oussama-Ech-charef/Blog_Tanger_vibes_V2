@@ -327,7 +327,6 @@ foreach ($user_cat_chart as $r) { $ucat_labels[] = $r['cat_name']; $ucat_data[] 
     <div class="chart_container"><h3><?= __('chart_my_posts_category') ?></h3><canvas id="userCategoryChart"></canvas></div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
