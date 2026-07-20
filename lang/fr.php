@@ -13,7 +13,7 @@ return [
 
     'search_placeholder' => 'Rechercher...',
 
-    'hero_label' => 'BIENVENUE À VOTRE PORTE VERS L\'AFRIQUE',
+    'hero_label' => 'BIENVENUE SUR VOTRE PASSERELLE VERS L\'AFRIQUE',
     'hero_title' => 'Vivez la Magie<br> de <span class="hero_highlight">Tanger</span>',
     'hero_desc' => 'Découvrez des plages cachées, des cafés légendaires, des<br>restaurants exquis et des monuments historiques dans la Perle du Nord.',
     'hero_btn' => 'Commencer l\'exploration',
@@ -48,7 +48,7 @@ return [
     'detail_comment_message_label' => 'Votre message',
     'detail_comment_message_placeholder' => 'Partagez votre ambiance...',
     'detail_comment_btn' => 'Publier le commentaire',
-    'detail_comments_empty' => 'Aucun commentaire pour le moment. Soyez le premier à partager vos pensées !',
+    'detail_comments_empty' => 'Aucun commentaire pour le moment. Soyez le premier à partager votre avis !',
     'detail_comment_success' => 'Votre commentaire a été soumis et est en attente de modération.',
     'detail_comment_error_required' => 'Le nom et le commentaire sont requis.',
     'detail_comment_error_name_length' => 'Le nom doit faire moins de 100 caractères.',
