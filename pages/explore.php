@@ -71,8 +71,9 @@ $current_page = min($page, $total_pages);
 
 // Redirect if page was invalid
 if ($current_page !== $page) {
-    $redirect_params['page'] = $current_page;
-    header('Location: explore.php?' . http_build_query($redirect_params));
+    $qp = $query_params;
+    $qp['page'] = $current_page;
+    header('Location: explore.php?' . http_build_query($qp));
     exit();
 }
 
