@@ -254,7 +254,7 @@ require_once __DIR__ . '/inc/header.php';
     <div class="card_header">
         <h2><?= $is_admin ? __('comments_table_title') : __('comments_my_title') ?></h2>
         <?php if ($is_admin && !empty($comments)): ?>
-        <form method="POST" onsubmit="return confirm(__('comments_confirm_bulk_delete'))">
+        <form method="POST" onsubmit="return confirm(<?= json_encode(__('comments_confirm_bulk_delete'), JSON_HEX_APOS) ?>)">
             <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
             <input type="hidden" name="csrf_token" value="<?=$csrf?>">
             <input type="hidden" name="bulk_delete" value="1">
@@ -311,7 +311,7 @@ require_once __DIR__ . '/inc/header.php';
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                                 <input type="hidden" name="reject" value="<?=$c['id_comment']?>">
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                                <button type="submit" class="dropdown_item" onclick="return confirm(__('comments_confirm_reject'))"><i class="fa-solid fa-ban" aria-hidden="true"></i> <?= __('comments_reject_comment') ?></button>
+                                                <button type="submit" class="dropdown_item" onclick="return confirm(<?= json_encode(__('comments_confirm_reject'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-ban" aria-hidden="true"></i> <?= __('comments_reject_comment') ?></button>
                                             </form>
                                             <?php endif; ?>
                                             <div class="dropdown_divider"></div>
@@ -319,7 +319,7 @@ require_once __DIR__ . '/inc/header.php';
                                                 <input type="hidden" name="csrf_token" value="<?=$csrf?>">
                                                 <input type="hidden" name="delete" value="<?=$c['id_comment']?>">
                                                 <?php foreach ($query_params as $qk=>$qv): ?><input type="hidden" name="<?=htmlspecialchars($qk)?>" value="<?=htmlspecialchars($qv)?>"><?php endforeach; ?>
-                                                <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(__('comments_confirm_delete'))"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('comments_delete_comment') ?></button>
+                                                <button type="submit" class="dropdown_item dropdown_danger" onclick="return confirm(<?= json_encode(__('comments_confirm_delete'), JSON_HEX_APOS) ?>)"><i class="fa-solid fa-trash" aria-hidden="true"></i> <?= __('comments_delete_comment') ?></button>
                                             </form>
                                         </div>
                                     </div>
