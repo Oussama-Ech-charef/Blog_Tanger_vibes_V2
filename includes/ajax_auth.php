@@ -53,8 +53,10 @@ if ($action === 'login') {
     $normalized_email = strtolower($email);
     $max_attempts = 5;
     $lockout_minutes = 10;
+    $lockout_datetime = date('Y-m-d H:i:s', strtotime("+{$lockout_minutes} minutes"));
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     $max_ip_attempts = 20;
+    $ip_lockout_datetime = date('Y-m-d H:i:s', strtotime("+{$lockout_minutes} minutes"));
 
     // clean up expired locks (locked_until in the past) — resets counter so a
     // single bad attempt after lock expiry doesn't re-lock the account
@@ -93,13 +95,13 @@ if ($action === 'login') {
                 last_attempt = now(),
                 locked_until = if(
                     failed_attempts + 1 >= :max,
-                    date_add(now(), interval :minutes minute),
+                    :locked_until,
                     locked_until
                 )
         ")->execute([
             ':email' => $normalized_email,
             ':max' => $max_attempts,
-            ':minutes' => $lockout_minutes,
+            ':locked_until' => $lockout_datetime,
         ]);
         // record failed attempt per-IP (across all accounts)
         $conn->prepare("
@@ -110,13 +112,13 @@ if ($action === 'login') {
                 last_attempt = now(),
                 locked_until = if(
                     failed_attempts + 1 >= :max,
-                    date_add(now(), interval :minutes minute),
+                    :locked_until,
                     locked_until
                 )
         ")->execute([
             ':ip' => 'ip:' . $ip,
             ':max' => $max_ip_attempts,
-            ':minutes' => $lockout_minutes,
+            ':locked_until' => $ip_lockout_datetime,
         ]);
         echo json_encode(['success' => false, 'error' => __('login_error_credentials')]);
         exit();
