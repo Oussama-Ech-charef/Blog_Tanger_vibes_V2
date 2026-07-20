@@ -54,6 +54,19 @@ if (isset($_SESSION['id_user'])) {
             </form>
         </div>
 
+        <div class="lang_dropdown desktop_switcher">
+            <button class="lang_trigger" aria-label="<?= __('lang_select_aria') ?>" data-lang-dropdown>
+                <i class="fa-solid fa-globe lang_globe" aria-hidden="true"></i>
+                <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
+                <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
+            </button>
+            <div class="lang_menu">
+                <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en"><?= __('lang_en') ?></a>
+                <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr"><?= __('lang_fr') ?></a>
+                <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar"><?= __('lang_ar') ?></a>
+            </div>
+        </div>
+
         <div class="auth_actions_desktop">
 
             <?php if (isset($_SESSION['id_user'])): ?>
@@ -61,8 +74,6 @@ if (isset($_SESSION['id_user'])) {
             <div class="user_dropdown">
                 <button class="user_dropdown_trigger" data-user-dropdown aria-haspopup="true" aria-expanded="false">
                     <span class="user_avatar"><?= strtoupper(htmlspecialchars(substr($_SESSION['user_name'], 0, 1))) ?></span>
-                    <span class="user_name_text"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
-                    <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
                 </button>
                 <div class="user_dropdown_menu" role="menu">
                     <div class="user_dropdown_header">
@@ -123,19 +134,6 @@ if (isset($_SESSION['id_user'])) {
             <?php endif; ?>
         </div>
 
-        <div class="lang_dropdown desktop_switcher">
-            <button class="lang_trigger" aria-label="<?= __('lang_select_aria') ?>" data-lang-dropdown>
-                <i class="fa-solid fa-globe lang_globe" aria-hidden="true"></i>
-                <span class="lang_current"><?= strtoupper(get_lang_code()) ?></span>
-                <i class="fa-solid fa-chevron-down lang_chevron" aria-hidden="true"></i>
-            </button>
-            <div class="lang_menu">
-                <a href="<?= lang_url('en') ?>" class="lang_option <?= get_lang_code() === 'en' ? ' active' : '' ?>" data-lang="en"><?= __('lang_en') ?></a>
-                <a href="<?= lang_url('fr') ?>" class="lang_option <?= get_lang_code() === 'fr' ? ' active' : '' ?>" data-lang="fr"><?= __('lang_fr') ?></a>
-                <a href="<?= lang_url('ar') ?>" class="lang_option <?= get_lang_code() === 'ar' ? ' active' : '' ?>" data-lang="ar"><?= __('lang_ar') ?></a>
-            </div>
-        </div>
-
         <div class="menu">
             <button class="menu_btn" id="menu_btn" aria-label="<?= __('menu_toggle_aria') ?>">
                 <i class="fa-solid fa-bars" aria-hidden="true"></i>
@@ -181,31 +179,37 @@ if (isset($_SESSION['id_user'])) {
             </div>
             <div class="mobile_user_links">
                 <a href="../dashboard/index.php" class="mobile_user_link">
-                    <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <?= __('auth_dashboard') ?>
+                    <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                    <span><?= __('auth_dashboard') ?></span>
                 </a>
                 <?php if ($_SESSION['role'] === 'admin'): ?>
                 <a href="../dashboard/posts.php" class="mobile_user_link">
-                    <i class="fa-solid fa-file-lines" aria-hidden="true"></i> <?= __('dashboard_posts_title') ?>
+                    <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                    <span><?= __('dashboard_posts_title') ?></span>
                 </a>
                 <?php else: ?>
                 <a href="../dashboard/posts.php" class="mobile_user_link">
-                    <i class="fa-solid fa-file-lines" aria-hidden="true"></i> <?= __('sidebar_my_posts') ?>
+                    <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                    <span><?= __('sidebar_my_posts') ?></span>
                 </a>
                 <?php endif; ?>
                 <a href="../dashboard/notifications.php" class="mobile_user_link">
-                    <i class="fa-solid fa-bell" aria-hidden="true"></i> <?= __('sidebar_notifications') ?>
+                    <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                    <span><?= __('sidebar_notifications') ?></span>
                     <?php if ($unread_count > 0): ?>
                     <span class="user_dropdown_badge"><?= min($unread_count, 99) . ($unread_count > 99 ? '+' : '') ?></span>
                     <?php endif; ?>
                 </a>
                 <a href="../dashboard/settings.php" class="mobile_user_link">
-                    <i class="fa-solid fa-gear" aria-hidden="true"></i> <?= __('sidebar_settings') ?>
+                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                    <span><?= __('sidebar_settings') ?></span>
                 </a>
             </div>
             <form action="../pages/logout.php" method="POST" class="inline_form mobile_logout_form">
                 <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
                 <button type="submit" class="logout mobile_logout_btn">
-                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <?= __('auth_logout') ?>
+                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                    <span><?= __('auth_logout') ?></span>
                 </button>
             </form>
 
