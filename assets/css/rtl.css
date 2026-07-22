@@ -25,10 +25,52 @@
 
 /* Detail */
 
-/* comment count badge — spacing on the correct side */
+/* meta — keep icons on the correct side in RTL */
+[dir="rtl"] .detail_meta {
+  gap: 10px 24px;
+}
+
+/* content lists — use padding-inline-start for RTL */
+[dir="rtl"] .content ul,
+[dir="rtl"] .content ol {
+  padding-left: 0;
+  padding-right: 1.5em;
+}
+
+/* share actions — push to the right edge in RTL */
+[dir="rtl"] .detail_share_actions {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .share_btn i {
+  margin-right: 0;
+  margin-left: 4px;
+}
+
+/* comment count badge — spacing on correct side */
 [dir="rtl"] .comment_title span {
-    margin-left: 0;
-    margin-right: 8px;
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+[dir="rtl"] .comments_count {
+  margin-right: 0;
+}
+
+[dir="rtl"] .comment_avatar {
+  margin-right: 0;
+  margin-left: 4px;
+}
+
+[dir="rtl"] .comments_show_more i {
+  margin-right: 0;
+  margin-left: 4px;
+}
+
+[dir="rtl"] .comment_form_title i {
+  margin-right: 0;
+  margin-left: 4px;
 }
 
 /* Dashboard */
